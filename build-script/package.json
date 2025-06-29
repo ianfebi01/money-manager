@@ -1,0 +1,12 @@
+{
+  "name": "xml-gen",
+  "version": "1.0.0",
+  "description": "Dependencies for build scripts.",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "ohmyfetch": "^0.4.21",
+    "xmlbuilder2": "^3.1.1",
+    "path-to-regexp": "^6.1.0"
+  }
+}

@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  web-profile-fe:
+    restart: always
+    build: .
+    image: web-profile-fe:latest  # Make sure this is the correct tag
+    container_name: web-profile-fe
+    ports:
+      - 3000:3000
+    networks:
+      - app
+    env_file:
+      - .env
+networks:
+  app:
+    driver: bridge

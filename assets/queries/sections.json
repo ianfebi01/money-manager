@@ -1,0 +1,54 @@
+{
+  "content": {
+    "populate": {
+      "sectionSettings": {
+        "populate": {
+          "bgColour": {
+            "fields": [
+              "name"
+            ]
+          }
+        }
+      },
+      "backgroundImage": {
+        "populate": "*"
+      },
+      "buttons": {
+        "populate": "*"
+      },
+      "image": {
+        "populate": "*"
+      },
+      "biggerColumn": {
+        "populate": "*"
+      },
+      "bodyCopy": {
+        "populate": "*"
+      },
+      "fullWidth": {
+        "populate": "*"
+      },  
+      "reverse": {
+        "populate": "*"
+      },
+      "fullWidthBgImage": {
+        "populate": "*"
+      },
+      "cards": {
+        "populate": "*"
+      },
+      "items": {
+        "populate": "*"
+      },
+      "articles": {
+        "populate": "*"
+      },
+      "icons": {
+        "populate": "*"
+      },
+      "gallery": {
+        "populate": "*"
+      }
+    }
+  }
+}

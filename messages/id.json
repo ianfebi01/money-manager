@@ -1,0 +1,66 @@
+{
+    "back": "Kembali",
+    "contact": "Kontak",
+    "search": "Cari",
+    "read_more": "Baca Selengkapnya",
+    "no-data-found": "Data tidak ditemukan",
+    "article": {
+        "title": "Artikel",
+        "desc": "Daftar artikel oleh Ian Febi Sastrataruna"
+    },
+    "portofolio": {
+        "title": "Portofolio",
+        "desc": "Daftar portofolio oleh Ian Febi Sastrataruna"
+    },
+    "locale-switcher": {
+        "title": "Ubah Bahasa"
+    },
+    "socials-desc": {
+        "linkedin": "Terhubung dengan sisi profesional saya di LinkedIn",
+        "instagram": "Ikuti saya di Instagram untuk lebih dekat dengan saya"
+    },
+    "login": "Masuk",
+    "register": "Daftar",
+    "email": "Email",
+    "username": "Username",
+    "password": "Kata sandi",
+    "dont_have_account": "Tidak punya akun?",
+    "have_an_account": "Sudah punya akun?",
+    "placeholder": {
+        "email": "cth. contoh@mail.com",
+        "username": "cth. ianfebi01",
+        "password": "cth. ********"
+    },
+    "something_went_wrong_title": "Maaf, terjadi kesalahan.",
+    "login_failed": "Login tidak berhasil. Pastikan informasi yang Anda masukkan sudah benar.",
+    "mm_categories": {
+        "food": "Makanan",
+        "social_life": "Kebutuhan Sosial",
+        "apparel": "Pakaian",
+        "culture": "Budaya",
+        "beauty": "Kecantikan",
+        "health": "Kesehatan",
+        "education": "Pendidikan",
+        "gift": "Hadiah",
+        "house_hold": "Rumah Tangga",
+        "work": "Work",
+        "bill_subscription": "Tagihan & Langganan",
+        "transportation": "Transportasi",
+        "other": "Lainnya"
+    },
+    "reset": "Reset",
+    "set_date": "Set tanggal",
+    "close": "Tutup",
+    "date": "Tanggal",
+    "month": "Bulan",
+    "last_14_days": "14 hari lalu",
+    "last_30_days": "30 hari lalu",
+    "select_type": "Pilih Tipe",
+    "select_month": "Pilih Bulan",
+    "select_date": "Pilih Tanggal",
+    "cashflow": "Transaksi",
+    "add_transaction": "Tambah Transaksi",
+    "edit": "Ubah",
+    "cancel": "Batal",
+    "summary": "Rangkuman Transaksi"
+}

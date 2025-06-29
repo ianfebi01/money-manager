@@ -1,0 +1,65 @@
+.react-datepicker {
+  @apply !bg-dark !text-white !border;
+}
+
+.react-datepicker__triangle {
+  @apply !hidden;
+}
+
+.react-datepicker__header {
+  @apply !bg-dark !text-white;
+}
+
+.react-datepicker__day-names .react-datepicker__day-name {
+  @apply !text-white;
+}
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker__time-name {
+  @apply !text-white/75 hover:!bg-dark-secondary hover:!border-white/25 hover:!rounded-sm transition-all duration-500 ease-in-out;
+}
+.react-datepicker__day-name,
+.react-datepicker__day.react-datepicker__day--outside-month,
+.react-datepicker__time-name {
+  @apply !text-white/50;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range,
+.react-datepicker__month-text--selected,
+.react-datepicker__month-text--in-selecting-range,
+.react-datepicker__month-text--in-range,
+.react-datepicker__quarter-text--selected,
+.react-datepicker__quarter-text--in-selecting-range,
+.react-datepicker__quarter-text--in-range,
+.react-datepicker__year-text--selected,
+.react-datepicker__year-text--in-selecting-range,
+.react-datepicker__year-text--in-range,
+.react-datepicker__day--selected.react-datepicker__day--outside-month {
+  @apply !text-white !bg-dark-secondary !rounded-sm;
+}
+
+
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__month-text--keyboard-selected,
+.react-datepicker__quarter-text--keyboard-selected,
+.react-datepicker__year-text--keyboard-selected {
+  @apply !bg-dark-secondary/50 !rounded-sm;
+}
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header {
+  @apply !bg-dark !text-white;
+}
+.react-datepicker__year-wrapper {
+  @apply !max-w-[200px];
+}
+.react-datepicker__year-text,
+.react-datepicker__month-text {
+  @apply border border-none !text-white/75 !m-0 p-2 !w-[unset] min-w-[4rem] basis-1/2 hover:!bg-dark-secondary hover:!border-white/25 hover:!rounded-none transition-all duration-500 ease-in-out;
+}
+.react-datepicker__year-text--selected,
+.react-datepicker__month-text--selected {
+  @apply !text-white !bg-dark-secondary !rounded-sm;
+}

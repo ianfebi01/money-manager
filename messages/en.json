@@ -1,0 +1,66 @@
+{
+    "back": "Back",
+    "contact": "Contact",
+    "search": "Search",
+    "read_more": "Read More",
+    "no-data-found": "Data not found",
+    "article": {
+        "title": "Article",
+        "desc": "Article of Ian Febi Sastrataruna"
+    },
+    "portofolio": {
+        "title": "Portofolio",
+        "desc": "Portofolio of Ian Febi Sastrataruna"
+    },
+    "locale-switcher": {
+        "title": "Change Language"
+    },
+    "socials-desc": {
+        "linkedin": "Connect with my profesional side on LinkedIn",
+        "instagram": "Follow me on Instagram to get closer to me"
+    },
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "dont_have_account": "Doesn't have account?",
+    "have_an_account": "Have an account?",
+    "placeholder": {
+        "email": "eg. example@example.com",
+        "username": "eg. ianfebi01",
+        "password": "eg. ********"
+    },
+    "something_went_wrong_title": "Something went wrong!",
+    "login_failed": "Unable to log in. Make sure your credentials are correct.",
+    "mm_categories": {
+        "food": "Food",
+        "social_life": "Social Life",
+        "apparel": "Apparel",
+        "culture": "Culture",
+        "beauty": "Beauty",
+        "health": "Health",
+        "education": "Education",
+        "gift": "Gift",
+        "house_hold": "Household",
+        "work": "Work",
+        "bill_subscription": "Bill & Subscription",
+        "transportation": "Transportation",
+        "other": "Other"
+    },
+    "reset": "Reset",
+    "set_date": "Select Date",
+    "close": "Close",
+    "date": "Date",
+    "month": "Month",
+    "last_14_days": "Last 14 days",
+    "last_30_days": "Last 30 days",
+    "select_type": "Select Type",
+    "select_month": "Select Month",
+    "select_date": "Select Date",
+    "cashflow": "Cashflow",
+    "add_transaction": "Add Transaction",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "summary": "Transaction Summary"
+}

@@ -1,0 +1,79 @@
+name: Build and Deploy Next.js
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.VPS_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Debug SSH Connection
+        run: ssh -vvv -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+
+      - name: Check if private key exists
+        run: ls -lah private_key.pem
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      - name: Build Docker image with Docker Compose
+        run: |
+          # Create a .env file from GitHub secrets for Docker Compose to use
+          echo "NEXT_PUBLIC_STRAPI_API_URL=${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_ANALYTICS=${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}" >> .env
+          echo "NEXT_PUBLIC_STRAPI_API_TOKEN=${{ secrets.NEXT_PUBLIC_STRAPI_API_TOKEN }}" >> .env
+          echo "NEXT_PUBLIC_SEARCH_URL=${{ secrets.NEXT_PUBLIC_SEARCH_URL }}" >> .env
+          echo "NEXT_PUBLIC_SEARCH_KEY=${{ secrets.NEXT_PUBLIC_SEARCH_KEY }}" >> .env
+
+          # Build the image using Docker Compose
+          docker-compose -f docker-compose.yml build
+
+      - name: Save Docker image as a tar file (Optional for VPS deployment)
+        run: |
+          docker save -o web-profile-fe.tar web-profile-fe:latest
+
+      - name: Copy image to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "web-profile-fe.tar"
+          target: "/tmp"
+          debug: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH into VPS and Deploy
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            docker load -i /tmp/web-profile-fe.tar && \
+            rm /tmp/web-profile-fe.tar && \
+            cd app/web-profile-fe && \
+            docker compose down && \
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d && \
+            exit

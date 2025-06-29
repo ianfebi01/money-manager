@@ -1,0 +1,33 @@
+@layer components {
+    .button {
+        @apply py-2 px-4 text-base flex items-center gap-2 rounded-lg border border-transparent transition-default w-fit hover:border-white/25 no-underline hover:shadow-2xl;
+
+        &-primary {
+            @apply bg-dark text-white;
+        }
+
+        &-secondary {
+            @apply bg-dark-secondary text-white;
+        }
+
+        &-icon {
+            @apply w-8 aspect-square p-2 flex items-center justify-center text-white border hover:border-white/25 border-transparent bg-transparent;
+        }
+
+        &-icon-only {
+            @apply w-fit p-0 hover:opacity-75 focus:opacity-75 text-white border-none;
+        }
+
+        &-link {
+            @apply w-fit p-0 hover:opacity-75 focus:opacity-75 text-white border-none;
+        }
+
+        &-disabled {
+            @apply opacity-50 text-white/50 hover:border-transparent;
+        }
+
+        &-error {
+            @apply text-white border hover:border-red-400 border-red-500 bg-transparent;
+        }
+    }
+}
