@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "init:db": "ts-node scripts/init-db.ts"
+    "init:db": "tsx scripts/init-db.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -64,7 +64,6 @@
     "swiper": "^11.1.14",
     "tailwind-merge": "^2.2.1",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2",
     "universal-cookie": "^6.1.1",
     "yup": "^1.6.1"
   },
@@ -72,8 +71,10 @@
     "@types/pg": "^8.15.4",
     "@types/qs": "^6.9.16",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "dotenv": "^17.0.1",
     "eslint-plugin-react": "^7.33.2",
-    "sass": "^1.68.0"
+    "sass": "^1.68.0",
+    "tsx": "^4.20.3"
   },
   "packageManager": "pnpm@9.15.2+sha512.93e57b0126f0df74ce6bff29680394c0ba54ec47246b9cf321f0121d8d9bb03f750a705f24edc3c1180853afd7c2c3b94196d0a3d53d3e069d9e2793ef11f321"
 }

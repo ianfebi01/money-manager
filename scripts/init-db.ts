@@ -1,3 +1,4 @@
+import './load-env'
 import connectionPool from '../lib/db'
 
 async function initDb() {
