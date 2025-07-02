@@ -1,5 +1,4 @@
-import Login from '@/components/Login'
-import { Link } from '@/i18n/navigation'
+import GoogleSignIn from '@/components/Buttons/GoogleSignIn'
 import { Metadata } from 'next'
 import { Locale } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
@@ -60,15 +59,7 @@ export default async function PageMoneyManagerLogin( { params }: Props ) {
       >
         <div className="max-w-sm mx-auto px-6 lg:px-8 py-6 lg:py-8  flex flex-col gap-4 items-center rounded-lg bg-dark-secondary">
           <h1 className="m-0">{t( 'login' )}</h1>
-          <Login />
-          <p>
-            {t( 'dont_have_account' )}{' '}
-            <Link href={'/register'}
-              className="text-orange"
-            >
-              {t( 'register' )}
-            </Link>
-          </p>
+          <GoogleSignIn/>
         </div>
       </section>
     </main>

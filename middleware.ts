@@ -1,51 +1,62 @@
-import createIntlMiddleware from 'next-intl/middleware'
+import { withAuth } from 'next-auth/middleware'
+import createMiddleware from 'next-intl/middleware'
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { routing } from './i18n/routing'
 
-const intlMiddleware = createIntlMiddleware( routing )
+const { locales } = routing
+const publicPages = ['/', '/login']
 
-function isAuthenticated( req: NextRequest ): boolean {
-  return Boolean( req.cookies.get( 'token' )?.value )
+const handleI18nRouting = createMiddleware( routing )
+
+function isValidLocale( locale: string ): locale is 'en' | 'id' {
+  return locales.includes( locale as 'en' | 'id' )
 }
 
-export default function middleware( req: NextRequest ) {
-  const locale = routing.locales.find( ( locale ) =>
-    req.nextUrl.pathname.startsWith( `/${locale}/` )
+const authMiddleware = withAuth(
+  ( req: NextRequest ) => handleI18nRouting( req ),
+  {
+    callbacks : {
+      authorized : ( { token }: { token: any } ) => !!token, // or define a custom JWT type
+    },
+    pages : {
+      signIn : '/login',
+      error  : '/error',
+    },
+  }
+)
+
+export default async function middleware( req: NextRequest ): Promise<NextResponse> {
+  const publicPathnameRegex = new RegExp(
+    `^(/(${locales.join( '|' )}))?(${publicPages
+      .flatMap( ( p ) => ( p === '/' ? ['', '/'] : p ) )
+      .join( '|' )})/?$`,
+    'i'
   )
 
-  // Get the path without the locale
-  const basePath = locale
-    ? req.nextUrl.pathname.replace( `/${locale}`, '' )
-    : req.nextUrl.pathname
+  const isPublicPage = publicPathnameRegex.test( req.nextUrl.pathname )
 
-  // Run i18n middleware first
-  const intlResponse = intlMiddleware( req )
+  const token = await getToken( {
+    req,
+    secret : process.env.NEXTAUTH_SECRET,
+  } )
 
-  const authed = isAuthenticated( req )
-
-  // If authenticated, redirect away from login/register
-  if (
-    authed &&
-    ( basePath === '/login' ||
-      basePath === '/register' )
-  ) {
-    const dashboardUrl = new URL( `/${locale ?? 'en'}/`, req.url )
+  // Redirect logged-in users away from /login
+  if ( isPublicPage && req.nextUrl.pathname.includes( '/login' ) && token ) {
+    const pathParts = req.nextUrl.pathname.split( '/' )
     
-    return NextResponse.redirect( dashboardUrl )
+    const locale = pathParts[1]
+    const localePrefix = isValidLocale( locale ) ? `/${locale}` : ''
+    
+    return NextResponse.redirect( new URL( `${localePrefix}/dashboard`, req.url ) )
   }
 
-  // If NOT authenticated and accessing protected routes
-  if (
-    !authed &&
-    basePath !== '/login' &&
-    basePath !== '/register'
-  ) {
-    const loginUrl = new URL( `/${locale ?? 'en'}/login`, req.url )
-    
-    return NextResponse.redirect( loginUrl )
+  if ( isPublicPage ) {
+    return handleI18nRouting( req )
   }
 
-  return intlResponse
+  // For protected pages
+  return ( authMiddleware as unknown as ( req: NextRequest ) => Promise<NextResponse> )( req )
 }
 
 export const config = {
