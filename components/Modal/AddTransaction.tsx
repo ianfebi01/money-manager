@@ -8,7 +8,7 @@ import {
   faPlus,
   faSquareMinus,
 } from '@fortawesome/free-solid-svg-icons'
-import { IBodyTransaction } from '@/types/api/transaction'
+import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
 import SingleDatePicker from '../Inputs/SingleDatePicker'
 import TextField from '../Inputs/TextField'
 import DropdownSelect from '../Inputs/DropdownSelect'
@@ -19,6 +19,7 @@ import formatCurency from '@/utils/format-curency'
 import { IOptions } from '@/types/form'
 import { useCreate } from '@/lib/hooks/api/cashFlow'
 import { useTranslations } from 'next-intl'
+import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
 
 interface ITransactionFormInput
   extends Omit<IBodyTransaction, 'date' | 'category'> {
@@ -138,6 +139,22 @@ const AddTransaction = () => {
 
   const modalRef = useRef<HTMLDivElement | null>( null )
 
+  /**
+   * Handle Recent transaction
+   */
+
+  const handleClickRecentTransaction = ( val: ITransaction ) => {
+    setForm( {
+      type        : val?.type,
+      amount      : val?.amount,
+      description : val?.description,
+      category    : {
+        label : val?.category_name || '',
+        value : val?.category_id
+      },
+    } )
+  }
+
   return (
     <div className="w-fit">
       <Button
@@ -177,6 +194,10 @@ const AddTransaction = () => {
               boundaryRef={modalRef}
             />
           </div>
+          <RecentTransactions
+            enabled={isOpen}
+            onClick={handleClickRecentTransaction}
+          />
           <form onSubmit={( e ) => handleAddTransaction( e )}>
             <div
               className={cn(

@@ -56,6 +56,36 @@ export const useGetDatas = (
 
   return data
 }
+/**
+ *  Get recent Transactions
+ */
+export const useGetRecentTransactions = (
+  limit: number = 5,
+  enabled: boolean = true
+): UseQueryResult<{ data: ITransaction[] }> => {
+  const axiosAuth = useAxiosAuth()
+  // query
+  const query = {
+    limit : limit,
+  }
+  const queryString = qs.stringify( query, { addQueryPrefix : true } )
+
+  const data: UseQueryResult<{ data: ITransaction[] }> = useQuery<{
+    data: ITransaction[]
+  }>( {
+    queryKey : ['recent-transactions', limit],
+    queryFn  : async () => {
+      const res: AxiosResponse<{ data: ITransaction[] }> = await axiosAuth(
+        `/transactions/recent${queryString}`
+      )
+
+      return res.data
+    },
+    enabled : enabled,
+  } )
+
+  return data
+}
 
 /**
  *  Create datas
@@ -84,6 +114,9 @@ export const useCreate = () => {
       queryClient.invalidateQueries( {
         queryKey : ['monthly-chart'],
       } )
+      queryClient.invalidateQueries( {
+        queryKey : ['recent-transactions'],
+      } )
 
       return postTransaction
     } catch ( error ) {
@@ -109,6 +142,9 @@ export const useCreate = () => {
       } )
       queryClient.invalidateQueries( {
         queryKey : ['monthly-chart'],
+      } )
+      queryClient.invalidateQueries( {
+        queryKey : ['recent-transactions'],
       } )
 
       return postTransaction
@@ -145,6 +181,9 @@ export const useEdit = () => {
       queryClient.invalidateQueries( {
         queryKey : ['monthly-chart'],
       } )
+      queryClient.invalidateQueries( {
+        queryKey : ['recent-transactions'],
+      } )
 
       return postTransaction
     } catch ( error ) {
@@ -175,6 +214,9 @@ export const useDelete = () => {
       } )
       queryClient.invalidateQueries( {
         queryKey : ['monthly-chart'],
+      } )
+      queryClient.invalidateQueries( {
+        queryKey : ['recent-transactions'],
       } )
 
       return res

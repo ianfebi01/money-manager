@@ -8,7 +8,7 @@ import * as yup from 'yup'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),
-  amount      : yup.number().required(),
+  amount      : yup.number().required().max( 999999999999.99, 'Amount exceeds limit' ),
   description : yup.string().nullable().optional(),
   date        : yup.string().required(), // You can use `.matches()` or `.date()` if needed
   type        : yup

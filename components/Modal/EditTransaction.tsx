@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { IOptions } from '@/types/form'
 import { useEdit } from '@/lib/hooks/api/cashFlow'
 import { useTranslations } from 'next-intl'
+import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
 
 interface ITransactionFormInput
   extends Omit<IBodyTransaction, 'date' | 'category'> {
@@ -121,6 +122,19 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
 
   const modalRef = useRef<HTMLDivElement | null>( null )
 
+  /**
+   * Handle Recent transaction
+   */
+
+  const handleClickRecentTransaction = ( val: ITransaction ) => {
+    setForm( {
+      type        : val?.type,
+      amount      : val?.amount,
+      description : val?.description,
+      category    : val?.category_id,
+    } )
+  }
+
   return (
     <Modal
       title="Edit Transaction"
@@ -151,6 +165,10 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
             boundaryRef={modalRef}
           />
         </div>
+        <RecentTransactions
+          enabled={isOpen}
+          onClick={handleClickRecentTransaction}
+        />
         <form onSubmit={( e ) => handleAddTransaction( e )}>
           <div
             className={cn(
