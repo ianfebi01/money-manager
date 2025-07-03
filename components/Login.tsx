@@ -6,7 +6,7 @@ import FormikField from './Inputs/FormikField'
 import { useTranslations } from 'next-intl'
 import { IBodyLogin } from '@/types/api/auth'
 import { useLogin } from '@/lib/hooks/api/auth'
-import Button2 from './Buttons/Button2'
+import Button from '@/components/Buttons/Button'
 
 const Login = () => {
   const t = useTranslations()
@@ -78,13 +78,13 @@ const Login = () => {
               disabled={loading}
             />
           ) )}
-          <Button2
+          <Button
             variant='primary'
             type="submit"
             loading={loading}
           >
             {t( 'login' )}
-          </Button2>
+          </Button>
         </Form>
       </FormikProvider>
     </div>

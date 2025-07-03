@@ -1,5 +1,6 @@
 'use client'
-import Button2 from '@/components/Buttons/Button2'
+
+import Button from '@/components/Buttons/Button'
 import DefaultCategories from '@/components/DefaultCategories'
 import ErrorLoadingData from '@/components/Layouts/ErrorLoadingData'
 import AddTransaction from '@/components/Modal/AddTransaction'
@@ -144,7 +145,7 @@ const CashFlow = () => {
                         style={{ width : '1px', whiteSpace : 'nowrap' }}
                       >
                         <div className="flex gap-2 items-center translate-y-1">
-                          <Button2
+                          <Button
                             variant="iconOnly"
                             onClick={( e ) => handleDelete( e, subItem.id )}
                           >
@@ -152,7 +153,7 @@ const CashFlow = () => {
                               icon={faSquareMinus}
                               className="text-white-overlay"
                             />
-                          </Button2>
+                          </Button>
                         </div>
                       </td>
                       <td

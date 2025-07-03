@@ -1,6 +1,6 @@
 'use client'
 import toast from 'react-hot-toast'
-import Button2 from '../Buttons/Button2'
+import Button from '@/components/Buttons/Button'
 import CopyIcon from '../Icons/CopyIcon'
 
 type Props = {
@@ -32,12 +32,12 @@ const CopyToClipboard = ( { copyText, className = '', size = 16 }: Props ) => {
     <div className="flex flex-row gap-2 items-center">
       <p className={className}>{copyText}</p>
       {/* Bind our handler function to the onClick button property */}
-      <Button2 variant="iconOnly"
+      <Button variant="iconOnly"
         ariaLabel='Copy to clipboard button'
         onClick={handleCopyClick}
       >
         <CopyIcon size={size} />
-      </Button2>
+      </Button>
     </div>
   )
 }

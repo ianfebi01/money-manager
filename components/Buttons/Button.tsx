@@ -1,61 +1,55 @@
 'use client'
-import { cn } from '@/lib/utils'
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, ReactNode } from 'react'
 import Spinner from '../Icons/Spinner'
+import { cn } from '@/lib/utils'
 
 interface Props {
-  children: React.ReactNode
-  variant?: 'link' | 'normal' | 'icon'
-  onClick?: () => void
+  disabled?: boolean | undefined
+  children: ReactNode
+  onClick?: ( e: React.MouseEvent<HTMLButtonElement, MouseEvent> ) => void
+  type?: 'submit' | 'button' | 'reset'
   className?: string
-  theme?: 'dark' | 'light'
   loading?: boolean
-  disabled?: boolean
+  variant?: 'primary' | 'secondary' | 'icon' | 'iconOnly' | 'link' | 'error'
+  ariaLabel?: string
 }
 
 const Button: FunctionComponent<Props> = ( props ) => {
   const {
+    disabled,
     children,
-    variant = 'normal',
-    onClick = () => null,
+    onClick,
+    type = 'button',
     className,
-    theme = 'dark',
-    loading = false,
-    disabled = false
+    loading,
+    variant = 'primary',
+    ariaLabel
   } = props
 
   return (
     <button
       className={cn(
-        `transition-all duration-300 ease-linear filter hover:brightness-90 relative`,
-        // VAriant
+        'button',
+        // variant
         [
-          [theme === 'dark' && [
-            variant === 'link' && 'bg-none text-white py-0 px-2.5',
-            variant === 'normal' && 'py-2 px-2.5 bg-white-overlay text-white',
-            variant === 'icon' && 'bg-white-overlay text-white w-8 aspect-square',
-          ]],
-          [theme === 'light' && [
-            variant === 'link' && 'bg-none text-dark py-0 px-2.5',
-            variant === 'normal' && 'bg-dark-secondary text-white py-2 px-2.5',
-            variant === 'icon' && 'bg-dark-secondary text-white w-8 aspect-square',
-          ]],
-
+          variant === 'primary' && ['button-primary'],
+          variant === 'error' && ['button-error'],
+          variant === 'secondary' && ['button-secondary'],
+          variant === 'icon' && ['button-icon'],
+          variant === 'iconOnly' && ['button-icon-only'],
+          variant === 'link' && ['button-link'],
         ],
+        disabled && 'button-disabled',
         className
       )}
-      style={{
-        borderRadius : 99999,
-      }}
-      disabled={loading || disabled}
-      onClick={( e )=>{
-        e.stopPropagation()
-        onClick()
-      }}
+      onClick={( e ) => ( onClick ? onClick( e ) : null )}
+      type={type}
+      disabled={disabled || loading}
+      aria-label={ariaLabel}
     >
-      {loading ? <Spinner/> : ''}
-			
-      {variant === 'icon' && loading ? '' : children}
+      {loading ? <Spinner /> : ''}
+
+      {variant === 'iconOnly' && loading ? '' : children}
     </button>
   )
 }

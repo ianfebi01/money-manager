@@ -1,5 +1,5 @@
 'use client'
-import Button2 from '@/components/Buttons/Button2'
+import Button from '@/components/Buttons/Button'
 import Modal from './Modal'
 import { FormEvent, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -140,7 +140,7 @@ const AddTransaction = () => {
 
   return (
     <div className="w-fit">
-      <Button2
+      <Button
         type="button"
         variant="secondary"
         className="gap-2 flex"
@@ -148,7 +148,7 @@ const AddTransaction = () => {
       >
         <FontAwesomeIcon icon={faPlus} />
         {t( 'add_transaction' )}
-      </Button2>
+      </Button>
       <Modal
         title="Add Transaction"
         isOpen={isOpen}
@@ -270,20 +270,20 @@ const AddTransaction = () => {
               <div className="flex flex-row gap-4 items-center"
                 key={index}
               >
-                <Button2 variant="iconOnly">
+                <Button variant="iconOnly">
                   <FontAwesomeIcon
                     icon={faSquareMinus}
                     className="text-white-overlay"
                     onClick={() => handleDelete( index )}
                   />
-                </Button2>
-                <Button2 variant="iconOnly">
+                </Button>
+                <Button variant="iconOnly">
                   <FontAwesomeIcon
                     icon={faPenSquare}
                     className="text-white-overlay"
                     onClick={() => handleEdit( index )}
                   />
-                </Button2>
+                </Button>
                 <DefaultCategories name={item.mm_category.label} />
                 <p className="m-0">{item.description}</p>
                 <div className="grow" />

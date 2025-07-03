@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react'
-import Button2 from './Button2'
+import Button from '@/components/Buttons/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 
@@ -17,7 +17,7 @@ const EditButton: FunctionComponent<Props> = ( props ) => {
   }
 
   return (
-    <Button2
+    <Button
       type="button"
       loading={loading}
       disabled={disabled}
@@ -27,7 +27,7 @@ const EditButton: FunctionComponent<Props> = ( props ) => {
       <FontAwesomeIcon icon={faPen}
         size="sm"
       />
-    </Button2>
+    </Button>
   )
 }
 

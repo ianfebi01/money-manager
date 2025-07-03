@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment, FunctionComponent, ReactNode } from 'react'
-import Button2 from '../Buttons/Button2'
+import Button from '@/components/Buttons/Button'
 import { cn } from '@/lib/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWarning } from '@fortawesome/free-solid-svg-icons'
@@ -162,15 +162,15 @@ const Modal: FunctionComponent<Props> = ( props ) => {
                       'p-4 flex justify-end gap-2 max-w-7xl mx-auto w-full xl:px-0'
                     )}
                   >
-                    <Button2
+                    <Button
                       type="button"
                       onClick={handleCancel}
                       disabled={loading}
                     >
                       {cancelText}
-                    </Button2>
+                    </Button>
 
-                    <Button2
+                    <Button
                       type="button"
                       className={cn(
                         variant !== 'warning' && 'bg-dark-secondary'
@@ -181,7 +181,7 @@ const Modal: FunctionComponent<Props> = ( props ) => {
                       onClick={() => onConfirm()}
                     >
                       {confirmText}
-                    </Button2>
+                    </Button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
