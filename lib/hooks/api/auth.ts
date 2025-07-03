@@ -1,12 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { useRouter } from '@/i18n/navigation'
+import { signOut } from 'next-auth/react'
 
 export const useRemoveUserData = () => {
   const queryClient = useQueryClient()
-  const router = useRouter()
   const removeUserData = () => {
     queryClient.clear()
-    router.replace( '/login' )
+    signOut( { callbackUrl : '/login' } )
   }
 
   return removeUserData

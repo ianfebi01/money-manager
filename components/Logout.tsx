@@ -2,14 +2,12 @@
 import { useRemoveUserData } from '@/lib/hooks/api/auth'
 import { faSignOut } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { signOut } from 'next-auth/react'
 import React from 'react'
 
 const Logout = () => {
   const logout = useRemoveUserData()
   const onLogout = () => {
     logout()
-    signOut( { callbackUrl : '/' } )
   }
 
   return (
