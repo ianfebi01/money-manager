@@ -9,7 +9,7 @@ const MoneyManagerNavbar = () => {
     <div className="flex items-center gap-8">
       <div className="grow" />
       <NavigationLink
-        href={'/money-manager'}
+        href={'/dashboard'}
         className="flex items-center gap-2 no-underline text-white opacity-50"
         activeClass="opacity-100"
       >
@@ -20,7 +20,7 @@ const MoneyManagerNavbar = () => {
         <span className="p m-0">Summary</span>
       </NavigationLink>
       <NavigationLink
-        href={'/money-manager/cash-flow'}
+        href={'/dashboard/cash-flow'}
         className="flex items-center gap-2 no-underline text-white opacity-50"
         activeClass="opacity-100"
       >
