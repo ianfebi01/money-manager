@@ -1,9 +1,9 @@
 import { UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ApiTransactionTransaction } from '@/types/generated/contentTypes';
+import { ApiTransactionTransaction } from '@/types/generated/contentTypes'
 import qs from 'qs'
 import useAxiosAuth from '../useAxiosAuth'
 import { AxiosResponse } from 'axios'
-import { IBodyTransaction } from '@/types/api/transaction'
+import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
 import toast from 'react-hot-toast'
 import { IApi } from '@/types/api'
 import { ICategory } from '@/types/api/categories'
@@ -66,8 +66,8 @@ export const useCreate = () => {
 
   const create = async ( body: IBodyTransaction ) => {
     try {
-      const postTransaction = await axiosAuth.post<ApiTransactionTransaction>(
-        '/api/transactions',
+      const postTransaction = await axiosAuth.post<{ data: ITransaction }>(
+        '/transactions',
         {
           data : {
             ...body,
@@ -94,14 +94,11 @@ export const useCreate = () => {
 
   const createMultiple = async ( body: IBodyTransaction[] ) => {
     try {
-      const postTransactions = await Promise.all(
-        body.map( ( transactionBody ) =>
-          axiosAuth.post<ApiTransactionTransaction>( '/api/transactions', {
-            data : {
-              ...transactionBody,
-            },
-          } )
-        )
+      const postTransaction = await axiosAuth.post<{ data: ITransaction[] }>(
+        '/transactions/bulk',
+        {
+          transactions : body,
+        }
       )
 
       queryClient.invalidateQueries( {
@@ -114,7 +111,7 @@ export const useCreate = () => {
         queryKey : ['monthly-chart'],
       } )
 
-      return postTransactions
+      return postTransaction
     } catch ( error ) {
       toast.error( 'Error creating transactions' )
       throw error
@@ -200,26 +197,24 @@ export const useCategories = (
   page: number,
   pageSize: number,
   type: 'income' | 'expense' | 'all',
-  enabled: boolean = true,
+  enabled: boolean = true
 ): UseQueryResult<IApi<ICategory[]>> => {
   const axiosAuth = useAxiosAuth()
   // query
   const query = {
     page,
     pageSize,
-    type
+    type,
   }
 
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
-  const data: UseQueryResult<
-    IApi<ICategory[]>
-  > = useQuery<IApi<ICategory[]>>( {
+  const data: UseQueryResult<IApi<ICategory[]>> = useQuery<IApi<ICategory[]>>( {
     queryKey : ['categories', page, pageSize, type],
     queryFn  : async () => {
-      const res: AxiosResponse<
-        IApi<ICategory[]>
-      > = await axiosAuth( `/categories${queryString}` )
+      const res: AxiosResponse<IApi<ICategory[]>> = await axiosAuth(
+        `/categories${queryString}`
+      )
 
       return res.data
     },

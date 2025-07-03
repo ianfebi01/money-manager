@@ -21,11 +21,11 @@ import { useCreate } from '@/lib/hooks/api/cashFlow'
 import { useTranslations } from 'next-intl'
 
 interface ITransactionFormInput
-  extends Omit<IBodyTransaction, 'date' | 'mm_category'> {
-  mm_category: IOptions
+  extends Omit<IBodyTransaction, 'date' | 'category'> {
+  category: IOptions
 }
-interface ITransactionForm extends Omit<IBodyTransaction, 'mm_category'> {
-  mm_category: IOptions
+interface ITransactionForm extends Omit<IBodyTransaction, 'category'> {
+  category: IOptions
 }
 
 const AddTransaction = () => {
@@ -39,7 +39,7 @@ const AddTransaction = () => {
     type        : 'expense',
     amount      : 0,
     description : '',
-    mm_category : {
+    category    : {
       label : '',
       value : '',
     },
@@ -73,7 +73,7 @@ const AddTransaction = () => {
       type        : 'expense',
       amount      : 0,
       description : '',
-      mm_category : {
+      category    : {
         label : '',
         value : '',
       },
@@ -89,13 +89,13 @@ const AddTransaction = () => {
         date : sharedDate
           ? new Date( sharedDate ).toISOString()
           : new Date().toISOString(),
-        mm_category : Number( form.mm_category.value ),
+        category : Number( form.category.value ),
       } )
     }
 
     const transformTransactions = transactions.map( ( item ) => ( {
       ...item,
-      mm_category : Number( item.mm_category.value ),
+      category : Number( item.category.value ),
     } ) )
 
     const combined = [...tmp, ...transformTransactions]
@@ -115,7 +115,7 @@ const AddTransaction = () => {
       type        : 'expense',
       amount      : 0,
       description : '',
-      mm_category : {
+      category    : {
         label : '',
         value : '',
       },
@@ -226,16 +226,16 @@ const AddTransaction = () => {
               </div>
               <div className="flex flex-col gap-2 relative">
                 <label
-                  htmlFor={'mm_category'}
+                  htmlFor={'category'}
                   className="w-fit text-sm lg:text-base"
                 >
                   <span>{'Category'}</span>
                 </label>
                 <DropdownCategories
-                  value={form.mm_category.value}
+                  value={form.category.value}
                   enabled={isOpen}
                   onChange={( value: IOptions ) =>
-                    handleChange( value, 'mm_category' )
+                    handleChange( value, 'category' )
                   }
                   type={form.type || 'all'}
                 />
@@ -285,7 +285,7 @@ const AddTransaction = () => {
                     onClick={() => handleEdit( index )}
                   />
                 </Button>
-                <DefaultCategories name={item.mm_category.label} />
+                <DefaultCategories name={item.category.label} />
                 <p className="m-0">{item.description}</p>
                 <div className="grow" />
                 <p
