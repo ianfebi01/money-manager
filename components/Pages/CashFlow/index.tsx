@@ -62,6 +62,7 @@ const CashFlow = () => {
       setDeleteWarningAlert( false )
     } catch ( error ) {
       setDeleteWarningAlert( false )
+      setDeleteIsLoading( false )
       toast.error( 'Failed to delete transaction' )
     }
   }
@@ -111,9 +112,9 @@ const CashFlow = () => {
             />
           ) )}
         {!isLoading &&
-          data?.transactions &&
-          data?.transactions?.length > 0 &&
-          data?.transactions.map( ( item, index ) => (
+          data?.data?.transactions &&
+          data?.data?.transactions?.length > 0 &&
+          data?.data?.transactions.map( ( item, index ) => (
             <div
               key={index}
               className="bg-dark-secondary shadow-xl rounded-lg flex flex-col"
@@ -182,7 +183,7 @@ const CashFlow = () => {
             </div>
           ) )}
       </div>
-      {!isLoading && data?.transactions.length === 0 && <NoDataFound />}
+      {!isLoading && data?.data?.transactions.length === 0 && <NoDataFound />}
       {!isLoading && isError && <ErrorLoadingData />}
       <Modal
         isOpen={deleteWarningAlert}

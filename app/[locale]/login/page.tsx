@@ -53,7 +53,7 @@ export default async function PageMoneyManagerLogin( { params }: Props ) {
   const t = await getTranslations( { locale } )
 
   return (
-    <main className="mt-20 sm:mt-20 grow flex items-center">
+    <main className="grow flex items-center">
       <section id="money-manager"
         className="bg-dark h-full w-full"
       >

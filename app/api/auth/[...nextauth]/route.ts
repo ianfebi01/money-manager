@@ -19,7 +19,7 @@ export const authOptions: AuthOptions = {
   session : {
     strategy  : 'jwt',
     maxAge    : 60 * 60, // 1 hour
-    updateAge : 5 * 60, // refresh token every 5 minutes of activity
+    updateAge : 15 * 60, // refresh token every 5 minutes of activity
   },
   callbacks : {
     async jwt( {

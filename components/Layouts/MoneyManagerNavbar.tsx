@@ -6,7 +6,7 @@ import NavigationLink from '@/components/Buttons/NavigationLink'
 
 const MoneyManagerNavbar = () => {
   return (
-    <div className="flex items-center gap-8">
+    <div className="flex items-center gap-8 h-16">
       <div className="grow" />
       <NavigationLink
         href={'/dashboard'}

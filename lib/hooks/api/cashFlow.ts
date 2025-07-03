@@ -30,7 +30,7 @@ export interface IFilter {
 export const useGetDatas = (
   filter: IFilter,
   enabled: boolean = true
-): UseQueryResult<IMonthlyTransactions> => {
+): UseQueryResult<{data: IMonthlyTransactions}> => {
   const axiosAuth = useAxiosAuth()
   // query
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -41,12 +41,12 @@ export const useGetDatas = (
   }
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
-  const data: UseQueryResult<IMonthlyTransactions> =
-    useQuery<IMonthlyTransactions>( {
+  const data: UseQueryResult<{data: IMonthlyTransactions}> =
+    useQuery<{data: IMonthlyTransactions}>( {
       queryKey : ['transactions-monthly', filter.month, filter.year],
       queryFn  : async () => {
-        const res: AxiosResponse<IMonthlyTransactions> = await axiosAuth(
-          `/api/transactions/monthly${queryString}`
+        const res: AxiosResponse<{data: IMonthlyTransactions}> = await axiosAuth(
+          `/transactions/monthly${queryString}`
         )
 
         return res.data
@@ -167,8 +167,8 @@ export const useDelete = () => {
 
   const deleteTransaction = async ( id: number ) => {
     try {
-      const res = await axiosAuth.delete<ApiTransactionTransaction>(
-        '/api/transactions/' + id
+      const res = await axiosAuth.delete(
+        '/transactions/' + id
       )
 
       queryClient.invalidateQueries( {
