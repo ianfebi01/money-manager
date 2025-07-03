@@ -41,31 +41,6 @@ async function initDb() {
       type "TransactionType" NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-
-      -- User tokens table
-    CREATE TABLE IF NOT EXISTS user_tokens (
-      user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-      access_token TEXT UNIQUE NOT NULL,
-      refresh_token TEXT UNIQUE NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-      -- Trigger to update updated_at on UPDATE
-      CREATE OR REPLACE FUNCTION update_updated_at_column()
-      RETURNS TRIGGER AS $$
-      BEGIN
-        NEW.updated_at = NOW();
-        RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql;
-
-      DROP TRIGGER IF EXISTS trigger_update_user_tokens ON user_tokens;
-
-      CREATE TRIGGER trigger_update_user_tokens
-      BEFORE UPDATE ON user_tokens
-      FOR EACH ROW
-      EXECUTE FUNCTION update_updated_at_column();
   ` )
 
   // eslint-disable-next-line no-console
