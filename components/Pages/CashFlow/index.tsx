@@ -18,8 +18,9 @@ import {
   faSquareMinus,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useAnimation, motion, easeInOut } from 'framer-motion'
 
 const CashFlow = () => {
   const { month, year, spaceMonthYear } = useFormatDate()
@@ -86,6 +87,22 @@ const CashFlow = () => {
     setEditData( item )
   }
 
+  /**
+   * Animation
+   */
+  const animationControl = useAnimation()
+
+  useEffect( () => {
+    if (
+      !isLoading &&
+      data?.data?.transactions &&
+      data?.data?.transactions?.length > 0
+    ) {
+      animationControl.start( 'visible' )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, data] )
+
   return (
     <div>
       <div className="flex gap-4 flex-wrap">
@@ -120,76 +137,95 @@ const CashFlow = () => {
         {!isLoading &&
           data?.data?.transactions &&
           data?.data?.transactions?.length > 0 &&
-          data?.data?.transactions.map( ( item, index ) => (
-            <div
-              key={index}
-              className="bg-dark-secondary shadow-xl rounded-lg flex flex-col"
+          data?.data?.transactions.map( ( item, i ) => (
+            <motion.div
+              key={i}
+              variants={{
+                hidden : {
+                  opacity : 0,
+                  y       : 75,
+                },
+                visible : {
+                  opacity : 1,
+                  y       : 0,
+                },
+              }}
+              initial="hidden"
+              className="h-full flex flex-col"
+              animate={animationControl}
+              transition={{
+                duration : 0.3,
+                delay    : 0 + i / 20,
+                ease     : easeInOut,
+              }}
             >
-              <div className="flex gap-2 items-center px-4 pt-4">
-                <h2 className="m-0">{item.day}</h2>
-                <div className="grow" />
-                <div className="w-28 text-right text-blue-400">
-                  <p className="m-0">{formatCurency( item.income )}</p>
+              <div className="bg-dark-secondary shadow-xl rounded-lg flex flex-col grow">
+                <div className="flex gap-2 items-center px-4 pt-4">
+                  <h2 className="m-0">{item.day}</h2>
+                  <div className="grow" />
+                  <div className="w-28 text-right text-blue-400">
+                    <p className="m-0">{formatCurency( item.income )}</p>
+                  </div>
+                  <div className="w-28 text-right text-orange">
+                    <p className="m-0">{formatCurency( item.expense )}</p>
+                  </div>
                 </div>
-                <div className="w-28 text-right text-orange">
-                  <p className="m-0">{formatCurency( item.expense )}</p>
-                </div>
-              </div>
-              <table border={0}
-                className="border-none table-auto w-full"
-              >
-                <tbody>
-                  {item.transactions.map( ( subItem, subIndex ) => (
-                    <tr
-                      key={subIndex}
-                      className="hover:bg-dark/80 cursor-pointer"
-                      role="button"
-                      onClick={() => handleEdit( subItem )}
-                    >
-                      <td
-                        className={cn( 'px-4 text-white-overlay', [
-                          subIndex + 1 === item.transactions.length && 'pb-8',
-                        ] )}
-                        style={{ width : '1px', whiteSpace : 'nowrap' }}
+                <table border={0}
+                  className="border-none table-auto w-full"
+                >
+                  <tbody>
+                    {item.transactions.map( ( subItem, subIndex ) => (
+                      <tr
+                        key={subIndex}
+                        className="hover:bg-dark/80 cursor-pointer"
+                        role="button"
+                        onClick={() => handleEdit( subItem )}
                       >
-                        <div className="flex gap-2 items-center translate-y-1">
-                          <Button
-                            variant="iconOnly"
-                            onClick={( e ) => handleDelete( e, subItem.id )}
-                          >
-                            <FontAwesomeIcon
-                              icon={faSquareMinus}
-                              className="text-white-overlay"
-                            />
-                          </Button>
-                        </div>
-                      </td>
-                      <td
-                        className="p-0 text-white-overlay"
-                        style={{ width : '1px', whiteSpace : 'nowrap' }}
-                      >
-                        {!!subItem?.category_name && (
-                          <DefaultCategories name={subItem?.category_name} />
-                        )}
-                      </td>
-                      <td className="px-4">
-                        <p className="m-0">{subItem.description}</p>
-                      </td>
-                      <td className="p-0 pr-4 text-right">
-                        <p
-                          className={cn( 'm-0', {
-                            'text-blue-400' : subItem.type === 'income',
-                            'text-orange'   : subItem.type === 'expense',
-                          } )}
+                        <td
+                          className={cn( 'px-4 text-white-overlay', [
+                            subIndex + 1 === item.transactions.length && 'pb-8',
+                          ] )}
+                          style={{ width : '1px', whiteSpace : 'nowrap' }}
                         >
-                          {formatCurency( subItem.amount )}
-                        </p>
-                      </td>
-                    </tr>
-                  ) )}
-                </tbody>
-              </table>
-            </div>
+                          <div className="flex gap-2 items-center translate-y-1">
+                            <Button
+                              variant="iconOnly"
+                              onClick={( e ) => handleDelete( e, subItem.id )}
+                            >
+                              <FontAwesomeIcon
+                                icon={faSquareMinus}
+                                className="text-white-overlay"
+                              />
+                            </Button>
+                          </div>
+                        </td>
+                        <td
+                          className="p-0 text-white-overlay"
+                          style={{ width : '1px', whiteSpace : 'nowrap' }}
+                        >
+                          {!!subItem?.category_name && (
+                            <DefaultCategories name={subItem?.category_name} />
+                          )}
+                        </td>
+                        <td className="px-4">
+                          <p className="m-0">{subItem.description}</p>
+                        </td>
+                        <td className="p-0 pr-4 text-right">
+                          <p
+                            className={cn( 'm-0', {
+                              'text-blue-400' : subItem.type === 'income',
+                              'text-orange'   : subItem.type === 'expense',
+                            } )}
+                          >
+                            {formatCurency( subItem.amount )}
+                          </p>
+                        </td>
+                      </tr>
+                    ) )}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
           ) )}
       </div>
       {!isLoading && data?.data?.transactions.length === 0 && <NoDataFound />}
