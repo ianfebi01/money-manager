@@ -1,7 +1,9 @@
-import NextAuth, { AuthOptions } from 'next-auth'
+import NextAuth, { AuthOptions, Profile } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { JWT } from 'next-auth/jwt'
 import { Session, User, Account } from 'next-auth'
+import connectionPool from '@/lib/db'
+import { AdapterUser } from 'next-auth/adapters'
 
 export const authOptions: AuthOptions = {
   providers : [
@@ -41,6 +43,50 @@ export const authOptions: AuthOptions = {
       session.user = token.user as User
 
       return session
+    },
+    async signIn( {
+      profile,
+    }: {
+      user: User | AdapterUser
+      account: Account | null
+      profile?: Profile
+    } ): Promise<boolean | string> {
+      if ( !profile?.email ) {
+        throw new Error( 'No profile email provided' )
+      }
+
+      const googleProfile = profile as Profile & {
+        sub: string
+        picture?: string
+      }
+
+      try {
+        await connectionPool.query(
+          `
+            INSERT INTO users (email, name, google_id, avatar_url, last_login)
+            VALUES ($1, $2, $3, $4, NOW())
+            ON CONFLICT (google_id)
+            DO UPDATE SET 
+              name = EXCLUDED.name,
+              email = EXCLUDED.email,
+              avatar_url = EXCLUDED.avatar_url,
+              last_login = NOW();
+          `,
+          [
+            googleProfile.email,
+            googleProfile.name ?? null,
+            googleProfile.sub,
+            googleProfile.picture ?? null,
+          ]
+        )
+      } catch ( error ) {
+        // eslint-disable-next-line no-console
+        console.error( 'DB error during signIn:', error )
+
+        return '/error';
+      }
+
+      return true
     },
   },
   pages : {
