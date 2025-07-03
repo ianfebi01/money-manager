@@ -20,33 +20,33 @@ const monthNames = [
   'Dec',
 ]
 
-export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions)
+export async function GET( req: NextRequest ) {
+  const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
-  if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if ( !userId ) {
+    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
   }
 
-  const { searchParams } = new URL(req.url)
-  const year = searchParams.get('year')
-  const timezone = searchParams.get('timezone')
+  const { searchParams } = new URL( req.url )
+  const year = searchParams.get( 'year' )
+  const timezone = searchParams.get( 'timezone' )
 
-  if (!year) {
-    return NextResponse.json({ message: 'Year is required' }, { status: 400 })
+  if ( !year ) {
+    return NextResponse.json( { message : 'Year is required' }, { status : 400 } )
   }
-  if (!timezone) {
+  if ( !timezone ) {
     return NextResponse.json(
-      { message: 'Timezone is required' },
-      { status: 400 }
+      { message : 'Timezone is required' },
+      { status : 400 }
     )
   }
 
-  const localStart = startOfYear(new Date(Number(year), 0))
-  const localEnd = endOfYear(new Date(Number(year), 0))
+  const localStart = startOfYear( new Date( Number( year ), 0 ) )
+  const localEnd = endOfYear( new Date( Number( year ), 0 ) )
 
-  const startDate = fromZonedTime(localStart, timezone).toISOString()
-  const endDate = fromZonedTime(localEnd, timezone).toISOString()
+  const startDate = fromZonedTime( localStart, timezone ).toISOString()
+  const endDate = fromZonedTime( localEnd, timezone ).toISOString()
 
   const { rows: transactions } = await connectionPool.query(
     `
@@ -59,38 +59,38 @@ export async function GET(req: NextRequest) {
     [userId, startDate, endDate]
   )
 
-  const monthlyStats = Array.from({ length: 12 }, (_, i) => ({
-    monthIndex: i,
-    income: 0,
-    expense: 0,
-  }))
+  const monthlyStats = Array.from( { length : 12 }, ( _, i ) => ( {
+    monthIndex : i,
+    income     : 0,
+    expense    : 0,
+  } ) )
 
-  for (const tx of transactions) {
-    const localDate = toZonedTime(tx.date, timezone)
-    const monthIndex = getMonth(localDate) // 0-11
+  for ( const tx of transactions ) {
+    const localDate = toZonedTime( tx.date, timezone )
+    const monthIndex = getMonth( localDate ) // 0-11
 
-    if (tx.type === 'income') {
-      monthlyStats[monthIndex].income += Number(tx.amount)
-    } else if (tx.type === 'expense') {
-      monthlyStats[monthIndex].expense += Number(tx.amount)
+    if ( tx.type === 'income' ) {
+      monthlyStats[monthIndex].income += Number( tx.amount )
+    } else if ( tx.type === 'expense' ) {
+      monthlyStats[monthIndex].expense += Number( tx.amount )
     }
   }
 
-  const filtered = monthlyStats.filter((r) => r.income !== 0 || r.expense !== 0)
+  const filtered = monthlyStats.filter( ( r ) => r.income !== 0 || r.expense !== 0 )
 
-  return NextResponse.json({
-    data: {
-      series: [
+  return NextResponse.json( {
+    data : {
+      series : [
         {
-          name: 'Expense',
-          data: filtered.map((r) => r.expense),
+          name : 'Expense',
+          data : filtered.map( ( r ) => r.expense ),
         },
         {
-          name: 'Income',
-          data: filtered.map((r) => r.income),
+          name : 'Income',
+          data : filtered.map( ( r ) => r.income ),
         },
       ],
-      categories: filtered.map((r) => monthNames[r.monthIndex]),
+      categories : filtered.map( ( r ) => monthNames[r.monthIndex] ),
     },
-  })
+  } )
 }
