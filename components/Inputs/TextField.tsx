@@ -1,21 +1,30 @@
 'use client'
 
-import { InputHTMLAttributes, useState, FormEvent, useRef, useEffect } from 'react'
+import {
+  InputHTMLAttributes,
+  useState,
+  FormEvent,
+  useRef,
+  useEffect,
+} from 'react'
 import { cn } from '@/lib/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { TFieldType } from '@/types/form'
+import capitalizeFirst from '@/utils/capitalize-first'
 
-interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
-    value: string
-    onChange: ( value: string ) => void
-    loading?: boolean
-    type?: TFieldType
-    error?: string
-    touched?: boolean
-    autoFocus?: boolean
-  }
-  
+interface TextFieldProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
+  value: string
+  onChange: ( value: string ) => void
+  loading?: boolean
+  type?: TFieldType
+  error?: string
+  touched?: boolean
+  autoFocus?: boolean
+  capitalizeFirstChar?: boolean
+}
+
 const TextField = ( {
   value,
   onChange,
@@ -26,6 +35,7 @@ const TextField = ( {
   name,
   error,
   touched,
+  capitalizeFirstChar,
   ...props
 }: TextFieldProps ) => {
   const [showPassword, setShowPassword] = useState<boolean>( false )
@@ -33,7 +43,7 @@ const TextField = ( {
   const formatRupiah = ( number: string ) => {
     const parsed = parseInt( number.replace( /\D/g, '' ), 10 )
     if ( isNaN( parsed ) ) return ''
-    
+
     return parsed.toLocaleString( 'id-ID' )
   }
 
@@ -42,6 +52,8 @@ const TextField = ( {
     if ( type === 'currency-id' ) {
       const numericValue = input.replace( /\D/g, '' )
       onChange( numericValue )
+    } else if ( type === 'text' && capitalizeFirstChar ) {
+      onChange( capitalizeFirst( input ) )
     } else {
       onChange( input )
     }
@@ -50,11 +62,11 @@ const TextField = ( {
   const ref = useRef<HTMLInputElement>( null )
 
   // AutoFocus
-  useEffect( ()=> {
+  useEffect( () => {
     if ( props.autoFocus && ref.current ) {
       ref.current?.focus()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] )
 
   return loading ? (

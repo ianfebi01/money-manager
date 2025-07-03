@@ -223,6 +223,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
                 value={form.description}
                 name="description"
                 placeholder="eg. Burger"
+                capitalizeFirstChar
                 onChange={( val: string ) => handleChange( val, 'description' )}
               />
             </div>

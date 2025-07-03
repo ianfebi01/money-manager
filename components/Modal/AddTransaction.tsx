@@ -253,6 +253,7 @@ const AddTransaction = () => {
                   name="description"
                   placeholder="eg. Burger"
                   onChange={( val: string ) => handleChange( val, 'description' )}
+                  capitalizeFirstChar
                 />
               </div>
             </div>
