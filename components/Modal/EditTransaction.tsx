@@ -1,7 +1,7 @@
 'use client'
 import Modal from './Modal'
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { IBodyTransaction } from '@/types/api/transaction'
+import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
 import SingleDatePicker from '../Inputs/SingleDatePicker'
 import TextField from '../Inputs/TextField'
 import DropdownSelect from '../Inputs/DropdownSelect'
@@ -10,17 +10,16 @@ import { cn } from '@/lib/utils'
 import { IOptions } from '@/types/form'
 import { useEdit } from '@/lib/hooks/api/cashFlow'
 import { useTranslations } from 'next-intl'
-import { ApiTransactionTransaction } from '@/types/generated/contentTypes'
 
 interface ITransactionFormInput
-  extends Omit<IBodyTransaction, 'date' | 'mm_category'> {
-  mm_category: IOptions
+  extends Omit<IBodyTransaction, 'date' | 'category'> {
+  category: number
 }
 
 interface Props {
   isOpen: boolean
   setIsOpen: ( value: boolean ) => void
-  initialValue?: ApiTransactionTransaction['attributes'] & { id: number }
+  initialValue?: ITransaction
 }
 
 const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
@@ -30,13 +29,10 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
   const [loading, setLoading] = useState( false )
   const [sharedDate, setSharedDate] = useState<Date | null>( new Date() )
   const [form, setForm] = useState<ITransactionFormInput>( {
-    type        : initialValue?.type,
-    amount      : initialValue?.amount,
-    description : initialValue?.description,
-    mm_category : {
-      label : initialValue?.mm_category?.name,
-      value : initialValue?.mm_category?.id,
-    },
+    type        : initialValue?.type || 'expense',
+    amount      : initialValue?.amount || 0,
+    description : initialValue?.description || '',
+    category    : initialValue?.category_id || 0,
   } )
 
   useEffect( () => {
@@ -45,10 +41,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
         type        : initialValue?.type,
         amount      : initialValue?.amount,
         description : initialValue?.description,
-        mm_category : {
-          label : initialValue?.mm_category?.name,
-          value : initialValue?.mm_category?.id,
-        },
+        category    : initialValue?.category_id,
       } )
 
       if ( initialValue?.date ) setSharedDate( new Date( initialValue?.date ) )
@@ -57,10 +50,22 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
   }, [isOpen] )
 
   const handleChange = ( value: string | number | IOptions, name: string ) => {
-    setForm( ( prev ) => ( {
-      ...prev,
-      [name] : name === 'amount' ? Number( value ) : value,
-    } ) )
+    setForm( ( prev ) => {
+      let newValue: string | number
+
+      if ( name === 'amount' ) {
+        newValue = Number( value )
+      } else if ( name === 'category' ) {
+        newValue = Number( ( value as IOptions ).value )
+      } else {
+        newValue = value as string | number
+      }
+
+      return {
+        ...prev,
+        [name] : newValue,
+      }
+    } )
   }
 
   const handleAddTransaction = ( e: FormEvent ) => {
@@ -76,10 +81,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
       type        : 'expense',
       amount      : 0,
       description : '',
-      mm_category : {
-        label : '',
-        value : '',
-      },
+      category    : 0,
     } )
   }
 
@@ -93,7 +95,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
             date : sharedDate
               ? new Date( sharedDate ).toISOString()
               : new Date().toISOString(),
-            mm_category : Number( form.mm_category.value ),
+            category : Number( form.category ),
           },
           initialValue?.id
         )
@@ -111,10 +113,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
       type        : 'expense',
       amount      : 0,
       description : '',
-      mm_category : {
-        label : '',
-        value : '',
-      },
+      category    : 0,
     } )
 
     setSharedDate( new Date() )
@@ -200,17 +199,16 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
             </div>
             <div className="flex flex-col gap-2 relative">
               <label
-                htmlFor={'mm_category'}
+                htmlFor={'category'}
                 className="w-fit text-sm lg:text-base"
               >
                 <span>{'Category'}</span>
               </label>
               <DropdownCategories
-                value={form.mm_category.value}
+                value={form.category}
                 enabled={isOpen}
-                onChange={( value: IOptions ) =>
-                  handleChange( value, 'mm_category' )
-                }
+                onChange={( value: IOptions ) => handleChange( value, 'category' )}
+                type={form.type || 'expense'}
               />
             </div>
             <div className="flex flex-col gap-2 relative">

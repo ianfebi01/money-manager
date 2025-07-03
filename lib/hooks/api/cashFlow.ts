@@ -15,7 +15,7 @@ interface IMonthlyTransactions {
     day: string
     income: number
     expense: number
-    transactions: ( ApiTransactionTransaction['attributes'] & { id: number } )[]
+    transactions: ( ITransaction & { id: number } )[]
   }[]
 }
 
@@ -30,7 +30,7 @@ export interface IFilter {
 export const useGetDatas = (
   filter: IFilter,
   enabled: boolean = true
-): UseQueryResult<{data: IMonthlyTransactions}> => {
+): UseQueryResult<{ data: IMonthlyTransactions }> => {
   const axiosAuth = useAxiosAuth()
   // query
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -41,18 +41,18 @@ export const useGetDatas = (
   }
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
-  const data: UseQueryResult<{data: IMonthlyTransactions}> =
-    useQuery<{data: IMonthlyTransactions}>( {
-      queryKey : ['transactions-monthly', filter.month, filter.year],
-      queryFn  : async () => {
-        const res: AxiosResponse<{data: IMonthlyTransactions}> = await axiosAuth(
-          `/transactions/monthly${queryString}`
-        )
+  const data: UseQueryResult<{ data: IMonthlyTransactions }> = useQuery<{
+    data: IMonthlyTransactions
+  }>( {
+    queryKey : ['transactions-monthly', filter.month, filter.year],
+    queryFn  : async () => {
+      const res: AxiosResponse<{ data: IMonthlyTransactions }> =
+        await axiosAuth( `/transactions/monthly${queryString}` )
 
-        return res.data
-      },
-      enabled : enabled,
-    } )
+      return res.data
+    },
+    enabled : enabled,
+  } )
 
   return data
 }
@@ -130,11 +130,9 @@ export const useEdit = () => {
   const edit = async ( body: IBodyTransaction, id: number ) => {
     try {
       const postTransaction = await axiosAuth.put<ApiTransactionTransaction>(
-        `/api/transactions/${id}`,
+        `/transactions/${id}`,
         {
-          data : {
-            ...body,
-          },
+          ...body,
         }
       )
 
@@ -167,9 +165,7 @@ export const useDelete = () => {
 
   const deleteTransaction = async ( id: number ) => {
     try {
-      const res = await axiosAuth.delete(
-        '/transactions/' + id
-      )
+      const res = await axiosAuth.delete( '/transactions/' + id )
 
       queryClient.invalidateQueries( {
         queryKey : ['transactions-monthly'],

@@ -37,7 +37,7 @@ async function initDb() {
       category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
       amount NUMERIC(14, 2) NOT NULL,
       description TEXT,
-      date DATE NOT NULL,
+      date TIMESTAMP WITH TIME ZONE NOT NULL,
       type "TransactionType" NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

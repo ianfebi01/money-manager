@@ -10,11 +10,15 @@ import NoDataFound from '@/components/NoDataFound'
 import { IFilter, useDelete, useGetDatas } from '@/lib/hooks/api/cashFlow'
 import { useFormatDate } from '@/lib/hooks/useFormatDate'
 import { cn } from '@/lib/utils'
-import { ApiTransactionTransaction } from '@/types/generated/contentTypes'
+import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
-import { faChevronLeft, faChevronRight, faSquareMinus } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronLeft,
+  faChevronRight,
+  faSquareMinus,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react';
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 
 const CashFlow = () => {
@@ -46,7 +50,10 @@ const CashFlow = () => {
   const [id, setId] = useState<number | null>( null )
   const deleteTransaction = useDelete()
 
-  const handleDelete = ( e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number ) => {
+  const handleDelete = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    id: number
+  ) => {
     e.stopPropagation()
     setId( id )
     setDeleteWarningAlert( true )
@@ -71,13 +78,12 @@ const CashFlow = () => {
    *  Handle Edit
    */
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>( false );
-  const [editData, setEditData] = useState<ApiTransactionTransaction['attributes']  & { id: number } | undefined>();
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>( false )
+  const [editData, setEditData] = useState<ITransaction | undefined>()
 
-  const handleEdit = ( item: ApiTransactionTransaction['attributes']  & { id: number } ) => {
+  const handleEdit = ( item: ITransaction ) => {
     setIsEditModalOpen( true )
     setEditData( item )
-
   }
 
   return (
@@ -134,9 +140,10 @@ const CashFlow = () => {
               >
                 <tbody>
                   {item.transactions.map( ( subItem, subIndex ) => (
-                    <tr key={subIndex}
+                    <tr
+                      key={subIndex}
                       className="hover:bg-dark/80 cursor-pointer"
-                      role='button'
+                      role="button"
                       onClick={() => handleEdit( subItem )}
                     >
                       <td
@@ -161,7 +168,9 @@ const CashFlow = () => {
                         className="p-0 text-white-overlay"
                         style={{ width : '1px', whiteSpace : 'nowrap' }}
                       >
-                        <DefaultCategories name={subItem.mm_category?.name} />
+                        {!!subItem?.category_name && (
+                          <DefaultCategories name={subItem?.category_name} />
+                        )}
                       </td>
                       <td className="px-4">
                         <p className="m-0">{subItem.description}</p>
@@ -196,7 +205,8 @@ const CashFlow = () => {
         confirmText="Confirm"
         loading={deleteIsLoading}
       ></Modal>
-      <EditTransaction isOpen={isEditModalOpen}
+      <EditTransaction
+        isOpen={isEditModalOpen}
         setIsOpen={setIsEditModalOpen}
         initialValue={editData}
       />

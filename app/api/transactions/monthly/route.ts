@@ -86,13 +86,13 @@ export async function GET( req: NextRequest ) {
     }
 
     grouped[day].transactions.push( {
-      id           : t.id,
-      categoryId   : t.category_id,
-      categoryName : t.category_name,
-      amount       : Number( t.amount ),
-      description  : t.description,
-      date         : t.date,
-      type         : t.type,
+      id            : t.id,
+      category_id   : t.category_id,
+      category_name : t.category_name,
+      amount        : Number( t.amount ),
+      description   : t.description,
+      date          : t.date,
+      type          : t.type,
     } )
 
     if ( t.type === 'income' ) grouped[day].income += Number( t.amount )
