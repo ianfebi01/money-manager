@@ -8,16 +8,20 @@ export interface IFilterMonthly {
 }
 
 interface IMonthlyChartTransactions {
-  series: {
-    name: string
-    data: number[]
-  }[]
-  categories: string[]
+  data: {
+    series: {
+      name: string
+      data: number[]
+    }[]
+    categories: string[]
+  }
 }
 
 interface ITopExpenseMonthly {
-  series: number[]
-  categories: string[]
+  data: {
+    series: number[]
+    categories: string[]
+  }
 }
 
 export interface IFilter {
@@ -38,9 +42,9 @@ export const useGetDatas = (
   // query
   const query = {
     year : filter.year,
-    timezone
+    timezone,
   }
-  
+
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
   const data: UseQueryResult<IMonthlyChartTransactions> =
@@ -48,7 +52,7 @@ export const useGetDatas = (
       queryKey : ['monthly-chart', filter.year],
       queryFn  : async () => {
         const res: AxiosResponse<IMonthlyChartTransactions> = await axiosAuth(
-          `/api/transactions/monthly-chart${queryString}`
+          `/transactions/monthly-chart${queryString}`
         )
 
         return res.data
@@ -73,23 +77,23 @@ export const useGetTopExpense = (
   const query = {
     month : filter.month,
     year  : filter.year,
-    timezone
+    timezone,
   }
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
-  const data: UseQueryResult<ITopExpenseMonthly> = useQuery<
-    ITopExpenseMonthly
-  >( {
-    queryKey : ['top-expense-categories', filter.month, filter.year],
-    queryFn  : async () => {
-      const res: AxiosResponse<ITopExpenseMonthly> = await axiosAuth(
-        `/api/transactions/top-expense-categories${queryString}`
-      )
+  const data: UseQueryResult<ITopExpenseMonthly> = useQuery<ITopExpenseMonthly>(
+    {
+      queryKey : ['top-expense-categories', filter.month, filter.year],
+      queryFn  : async () => {
+        const res: AxiosResponse<ITopExpenseMonthly> = await axiosAuth(
+          `/transactions/top-expense-categories${queryString}`
+        )
 
-      return res.data
-    },
-    enabled : enabled,
-  } )
+        return res.data
+      },
+      enabled : enabled,
+    }
+  )
 
   return data
 }

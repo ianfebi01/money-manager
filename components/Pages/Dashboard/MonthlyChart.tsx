@@ -31,7 +31,7 @@ const MonthlyChart = () => {
       title="Monthly Transactions"
       isError={isError}
       isLoading={isFetching}
-      isNoData={( !!data && data.categories.length === 0 ) || !data}
+      isNoData={( !!data && data?.data?.categories.length === 0 ) || !data}
       filterComponent={
         <div className="flex gap-2 items-center">
           <button
@@ -52,8 +52,8 @@ const MonthlyChart = () => {
       loaderComponent={<SkeletonMonthlyChart />}
     >
       <ColumnChart
-        categories={data?.categories || []}
-        series={data?.series || []}
+        categories={data?.data?.categories || []}
+        series={data?.data?.series || []}
       />
     </ChartCard>
   )
