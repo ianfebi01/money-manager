@@ -237,6 +237,7 @@ const AddTransaction = () => {
                   onChange={( value: IOptions ) =>
                     handleChange( value, 'mm_category' )
                   }
+                  type={form.type || 'all'}
                 />
               </div>
               <div className="flex flex-col gap-2 relative">

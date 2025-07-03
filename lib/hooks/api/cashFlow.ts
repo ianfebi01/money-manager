@@ -1,14 +1,12 @@
 import { UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  ApiMmCategoryMmCategory,
-  ApiTransactionTransaction,
-} from '@/types/generated/contentTypes'
+import { ApiTransactionTransaction } from '@/types/generated/contentTypes';
 import qs from 'qs'
 import useAxiosAuth from '../useAxiosAuth'
 import { AxiosResponse } from 'axios'
 import { IBodyTransaction } from '@/types/api/transaction'
 import toast from 'react-hot-toast'
 import { IApi } from '@/types/api'
+import { ICategory } from '@/types/api/categories'
 
 interface IMonthlyTransactions {
   income: number
@@ -39,7 +37,7 @@ export const useGetDatas = (
   const query = {
     month    : filter.month,
     year     : filter.year,
-    timezone : timezone
+    timezone : timezone,
   }
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
@@ -201,32 +199,27 @@ export const useDelete = () => {
 export const useCategories = (
   page: number,
   pageSize: number,
+  type: 'income' | 'expense' | 'all',
   enabled: boolean = true,
-  filters?: Record<string, any>,
-  populate?: Record<string, any>
-): UseQueryResult<IApi<( ApiMmCategoryMmCategory & { id: number } )[]>> => {
+): UseQueryResult<IApi<ICategory[]>> => {
   const axiosAuth = useAxiosAuth()
   // query
   const query = {
-    filters    : filters,
-    populate   : populate,
-    pagination : {
-      page,
-      pageSize,
-    },
-    sort : ['name:asc']
+    page,
+    pageSize,
+    type
   }
 
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
   const data: UseQueryResult<
-    IApi<( ApiMmCategoryMmCategory & { id: number } )[]>
-  > = useQuery<IApi<( ApiMmCategoryMmCategory & { id: number } )[]>>( {
-    queryKey : ['mm-categories', page, pageSize, filters, populate],
+    IApi<ICategory[]>
+  > = useQuery<IApi<ICategory[]>>( {
+    queryKey : ['categories', page, pageSize, type],
     queryFn  : async () => {
       const res: AxiosResponse<
-        IApi<( ApiMmCategoryMmCategory & { id: number } )[]>
-      > = await axiosAuth( `/api/mm-categories${queryString}` )
+        IApi<ICategory[]>
+      > = await axiosAuth( `/categories${queryString}` )
 
       return res.data
     },

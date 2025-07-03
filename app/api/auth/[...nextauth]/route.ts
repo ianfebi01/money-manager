@@ -1,9 +1,13 @@
-import NextAuth, { AuthOptions, Profile } from 'next-auth'
+import NextAuth, { AuthOptions, Profile as DefaultProfile  } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { JWT } from 'next-auth/jwt'
 import { Session, User, Account } from 'next-auth'
 import connectionPool from '@/lib/db'
 import { AdapterUser } from 'next-auth/adapters'
+
+interface ExtendedProfile extends DefaultProfile {
+  id?: string
+}
 
 export const authOptions: AuthOptions = {
   providers : [
@@ -22,13 +26,18 @@ export const authOptions: AuthOptions = {
       token,
       account,
       user,
+      profile,
     }: {
       token: JWT
       account?: Account | null
       user?: User
+      profile?: ExtendedProfile
     } ) {
-      if ( account && user ) {
-        token.user = user
+      if ( account && user && profile && profile.id ) {
+        token.user = {
+          ...user,
+          id : profile.id,
+        }
       }
 
       if ( account ) {
@@ -40,7 +49,9 @@ export const authOptions: AuthOptions = {
       return token
     },
     async session( { session, token }: { session: Session; token: JWT } ) {
-      session.user = token.user as User
+      if ( token?.user ) {
+        session.user = token.user as User & { id: string }
+      }
 
       return session
     },
@@ -49,13 +60,13 @@ export const authOptions: AuthOptions = {
     }: {
       user: User | AdapterUser
       account: Account | null
-      profile?: Profile
+      profile?: ExtendedProfile
     } ): Promise<boolean | string> {
       if ( !profile?.email ) {
         throw new Error( 'No profile email provided' )
       }
 
-      const googleProfile = profile as Profile & {
+      const googleProfile = profile as ExtendedProfile & {
         sub: string
         picture?: string
       }
@@ -64,16 +75,16 @@ export const authOptions: AuthOptions = {
         // Upsert user and return ID in one query
         const { rows } = await connectionPool.query(
           `
-        INSERT INTO users (email, name, google_id, avatar_url, last_login)
-        VALUES ($1, $2, $3, $4, NOW())
-        ON CONFLICT (google_id)
-        DO UPDATE SET 
-          name = EXCLUDED.name,
-          email = EXCLUDED.email,
-          avatar_url = EXCLUDED.avatar_url,
-          last_login = NOW()
-        RETURNING id;
-      `,
+            INSERT INTO users (email, name, google_id, avatar_url, last_login)
+            VALUES ($1, $2, $3, $4, NOW())
+            ON CONFLICT (google_id)
+            DO UPDATE SET 
+              name = EXCLUDED.name,
+              email = EXCLUDED.email,
+              avatar_url = EXCLUDED.avatar_url,
+              last_login = NOW()
+            RETURNING id;
+          `,
           [
             googleProfile.email,
             googleProfile.name ?? null,
@@ -84,6 +95,7 @@ export const authOptions: AuthOptions = {
 
         const userId = rows[0]?.id
         if ( !userId ) throw new Error( 'User ID not found after upsert' )
+        profile.id = userId.toString()
 
         // Check for existing categories
         const { rows: categoryCheck } = await connectionPool.query(

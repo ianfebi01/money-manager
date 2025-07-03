@@ -66,7 +66,7 @@ import axios from 'axios'
 // });
 
 const api = axios.create( {
-  baseURL         : process.env.NEXT_PUBLIC_STRAPI_API_URL || '/api-web',
+  baseURL         : '/api',
   headers         : { 'Content-Type' : 'application/json' },
   withCredentials : false,
 } )
@@ -74,7 +74,7 @@ const api = axios.create( {
 export default api
 
 export const apiAuth = axios.create( {
-  baseURL         : process.env.NEXT_PUBLIC_STRAPI_API_URL || '/api-web',
+  baseURL         : '/api',
   headers         : { 'Content-Type' : 'application/json' },
   withCredentials : false,
 } )

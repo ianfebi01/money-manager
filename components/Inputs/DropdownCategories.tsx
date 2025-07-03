@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Disclosure, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons'
@@ -7,13 +7,13 @@ import { IOptions } from '@/types/form'
 import { cn } from '@/lib/utils'
 import { useCategories } from '@/lib/hooks/api/cashFlow'
 import DefaultCategories from '../DefaultCategories'
-import { getCookie } from 'cookies-next'
 
 interface Props {
   label?: string
   value: IOptions['value']
   onChange: ( value: IOptions ) => void
   enabled: boolean
+  type: 'income' | 'expense' | 'all'
 }
 
 export default function DropdownCategories( {
@@ -21,27 +21,23 @@ export default function DropdownCategories( {
   value,
   onChange,
   enabled = false,
+  type = 'all',
 }: Props ) {
-  const userId = getCookie( 'userId' )
-    ? JSON.parse( getCookie( 'userId' ) as string )
-    : ''
-
-  const [filters] = useState( { user : { id : userId } } )
-  const { data } = useCategories( 1, 100, enabled, filters )
+  const { data } = useCategories( 1, 100, type, enabled )
 
   const options = useMemo( () => {
     if ( !data?.data ) return []
     const withoutOther = data?.data
-      ?.filter( ( item ) => item.attributes.name !== 'other' )
-      .sort( ( a, b ) => a.attributes.name.localeCompare( b.attributes.name ) )
+      ?.filter( ( item ) => item.name !== 'other' )
+      .sort( ( a, b ) => a.name.localeCompare( b.name ) )
 
-    const other = data?.data?.find( ( item ) => item.attributes.name === 'other' )
+    const other = data?.data?.find( ( item ) => item.name === 'other' )
 
     const sorted = other ? [...withoutOther, other] : withoutOther
 
     return (
       sorted?.map( ( category ) => ( {
-        label : category.attributes.name,
+        label : category.name,
         value : category.id,
       } ) ) || []
     )
