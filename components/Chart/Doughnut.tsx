@@ -139,7 +139,7 @@ const Doughnut = ( { series, categories }: Props ) => {
           width={280}
         />
       </div>
-      <div className="flex flex-col gap-4 my-auto mx-4 py-4 h-[280px] overflow-auto w-[calc(100%-2rem)] md:w-[unset] md:grow">
+      <div className="flex flex-col gap-4 my-auto mx-4 py-4 md:h-[280px] overflow-auto w-[calc(100%-2rem)] md:w-[unset] md:grow">
         {categories?.map( ( value, i ) => (
           <motion.div
             key={i}

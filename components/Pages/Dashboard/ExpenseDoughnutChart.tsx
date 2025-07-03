@@ -44,7 +44,7 @@ const ExpenseDoughnutChart = () => {
           >
             <FontAwesomeIcon icon={faChevronLeft} />
           </button>
-          <span className="p font-normal m-0">
+          <span className="p font-normal m-0 text-center">
             {spaceMonthYear( new Date( `${filter.year}-${filter.month}-01` ) )}
           </span>
           <button
