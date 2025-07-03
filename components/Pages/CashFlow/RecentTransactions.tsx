@@ -28,7 +28,7 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
             <button
               type="button"
               key={index}
-              className="flex flex-col justify-center items-center bg-dark-secondary rounded-md p-2 h-[60px] w-40 overflow-hidden"
+              className="flex flex-col justify-center items-center bg-dark-secondary rounded-md p-2 h-[60px] w-40 shrink-0 overflow-hidden"
               onClick={() => onClick( item )}
             >
               <span className="font-bold text-sm m-0 w-full truncate text-ellipsis whitespace-nowrap overflow-hidden text-center">
