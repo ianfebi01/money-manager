@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import React, { createElement, FunctionComponent } from 'react'
+import { createElement, FunctionComponent } from 'react';
 import { useInfiniteHits, UseInfiniteHitsProps } from 'react-instantsearch'
 import NoDataFound from './NoDataFound'
 import { NoResultsBoundary } from './NoResutsBoundary'

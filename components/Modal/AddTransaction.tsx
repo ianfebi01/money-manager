@@ -211,7 +211,7 @@ const AddTransaction = () => {
                   htmlFor={'amount'}
                   className="w-fit text-sm lg:text-base"
                 >
-                  <span>{'Amount'}</span>
+                  <span>{t( 'amount' )}</span>
                 </label>
                 <TextField
                   type="currency-id"
@@ -226,7 +226,7 @@ const AddTransaction = () => {
                 <label htmlFor={'type'}
                   className="w-fit text-sm lg:text-base"
                 >
-                  <span>{'Type'}</span>
+                  <span>{t( 'type' )}</span>
                 </label>
                 <DropdownSelect
                   value={form.type as string | number}
@@ -250,7 +250,7 @@ const AddTransaction = () => {
                   htmlFor={'category'}
                   className="w-fit text-sm lg:text-base"
                 >
-                  <span>{'Category'}</span>
+                  <span>{t( 'category' )}</span>
                 </label>
                 <DropdownCategories
                   value={form.category.value}
@@ -266,7 +266,7 @@ const AddTransaction = () => {
                   htmlFor={'description'}
                   className="w-fit text-sm lg:text-base"
                 >
-                  <span>{'Description'}</span>
+                  <span>{t( 'description' )}</span>
                 </label>
                 <TextField
                   type="text"

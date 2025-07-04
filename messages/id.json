@@ -62,5 +62,10 @@
     "add_transaction": "Tambah Transaksi",
     "edit": "Ubah",
     "cancel": "Batal",
-    "summary": "Rangkuman Transaksi"
+    "summary": "Rangkuman Transaksi",
+    "amount": "Jumlah",
+    "type": "Tipe",
+    "category": "Kategori",
+    "description": "Deskripsi",
+    "no-option": "Tidak ada opsi"
 }

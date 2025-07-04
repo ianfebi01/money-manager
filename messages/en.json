@@ -62,5 +62,10 @@
     "add_transaction": "Add Transaction",
     "edit": "Edit",
     "cancel": "Cancel",
-    "summary": "Transaction Summary"
+    "summary": "Transaction Summary",
+    "amount": "Amount",
+    "type": "Type",
+    "category": "Category",
+    "description": "Description",
+    "no-option": "No options"
 }

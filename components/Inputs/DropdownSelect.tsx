@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { IOptions } from '@/types/form'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   label?: string
@@ -18,6 +19,7 @@ export default function DropdownSelect( {
   value,
   onChange,
 }: Props ) {
+  const t = useTranslations()
   const selectedLabel = useMemo( () => {
     return options.find( ( opt ) => opt.value === value )?.label || ''
   }, [value, options] )
@@ -92,7 +94,7 @@ export default function DropdownSelect( {
                   ) )
                 ) : (
                   <div className="flex items-center justify-between w-full gap-2 py-3 mx-4 text-left">
-                    <p className="m-0">No options</p>
+                    <p className="m-0">{t( 'no_option' )}</p>
                   </div>
                 )}
               </div>
