@@ -57,9 +57,11 @@ export default async function PageMoneyManagerLogin( { params }: Props ) {
       <section id="money-manager"
         className="bg-dark h-full w-full"
       >
-        <div className="max-w-sm mx-auto px-6 lg:px-8 py-6 lg:py-8  flex flex-col gap-4 items-center rounded-lg bg-dark-secondary">
+        <div className="max-w-xs sm:max-w-sm mx-auto px-6 lg:px-8 py-6 lg:py-8  flex flex-col gap-4 items-center rounded-lg bg-dark-secondary">
           <h1 className="m-0">{t( 'login' )}</h1>
-          <GoogleSignIn/>
+          <div className='mb-2 w-full'>
+            <GoogleSignIn/>
+          </div>
         </div>
       </section>
     </main>

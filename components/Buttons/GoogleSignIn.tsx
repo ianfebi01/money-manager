@@ -6,13 +6,13 @@ import { signIn } from 'next-auth/react'
 export default function GoogleSignIn() {
   return (
     <button
-      className="gsi-material-button"
+      className="w-full h-10 overflow-hidden bg-[#F2F2F2] text-[#1F1F1F] rounded-[4px]"
       type="button"
       onClick={() => signIn( 'google', { callbackUrl : '/dashboard' } )}
     >
-      <div className="gsi-material-button-state"></div>
-      <div className="gsi-material-button-content-wrapper">
-        <div className="gsi-material-button-icon">
+      {/* <div className="gsi-material-button-state"></div> */}
+      <div className="w-full flex items-center justify-center">
+        <div className="w-5 h-5 ml-3 mr-[10px]">
           <svg
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
@@ -42,10 +42,9 @@ export default function GoogleSignIn() {
             ></path>
           </svg>
         </div>
-        <span className="gsi-material-button-contents">
+        <span className="text-base font-roboto mr-3">
           Sign in with Google
         </span>
-        <span style={{ display : 'none' }}>Sign in with Google</span>
       </div>
     </button>
   )

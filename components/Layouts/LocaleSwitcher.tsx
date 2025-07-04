@@ -3,14 +3,12 @@ import { cn } from '@/lib/utils'
 import { Popover, Transition } from '@headlessui/react'
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { routing } from '@/i18n/routing'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import { useParams } from 'next/navigation'
-import { useTranslations } from 'next-intl'
 
 export default function LocaleSwitcher() {
-  const t = useTranslations( 'locale-switcher' )
   const [show, setShow] = useState<boolean>( false )
 
   const pathname = usePathname()
@@ -39,13 +37,14 @@ export default function LocaleSwitcher() {
           <>
             <Popover.Button
               className={cn(
-                'py-2 px-4 text-xs xl:text-base flex items-center gap-2 transition-default w-fit rounded-lg border border-transparent',
-                ' hover:border-white/25',
+                'flex items-center gap-2 transition-default w-fit',
                 'ring-0 focus:ring-0 outline-none',
-                show ? 'text-white border-white/25' : 'text-white/50'
+                'text-orange'
               )}
             >
-              <span>{t( 'title' )}</span>
+              <FontAwesomeIcon icon={faGlobe}
+                size="xl"
+              />
               <div
                 className={cn(
                   'transition-default group-hover:text-orange-300/80',
@@ -66,7 +65,7 @@ export default function LocaleSwitcher() {
             >
               <Popover.Panel
                 static
-                className="absolute right-0 z-10 pt-3 w-full px-4 sm:px-0"
+                className="absolute right-0 z-10 pt-3 w-20 sm:px-0"
               >
                 <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
                   <div className="relative grid bg-dark-secondary p-4">
@@ -82,8 +81,8 @@ export default function LocaleSwitcher() {
                           <button
                             onClick={() => changeLocale( item )}
                             className={cn(
-                              'flex items-center rounded-lg p-2 min-h-20   w-full',
-                              ' text-sm xl:text-base font-medium text-left uppercase',
+                              'flex items-center rounded-lg min-h-20   w-full',
+                              'p m-0 font-medium text-left uppercase',
                               'transition duration-150 ease-in-out',
                               'hover:bg-dark focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50 hover:shadow-xl'
                             )}

@@ -12,13 +12,13 @@ const Logout = () => {
 
   return (
     <button className="flex items-center gap-2 no-underline"
+      aria-label='Signout'
       onClick={onLogout}
     >
       <FontAwesomeIcon icon={faSignOut}
         className="text-orange"
         size="xl"
       />
-      <span className="p m-0 text-white">Logout</span>
     </button>
   )
 }

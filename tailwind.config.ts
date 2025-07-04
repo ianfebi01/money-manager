@@ -50,7 +50,9 @@ const config: Config = {
         ],
         code : [
           '"Source Code Pro"'
-        ]
+        ],
+        roboto : ['Roboto', 'Arial', 'sans-serif'],
+
       },
     },
   },

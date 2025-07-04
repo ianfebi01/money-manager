@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import Logout from '../Logout'
 import NavigationLink from '@/components/Buttons/NavigationLink'
+import LocaleSwitcher from './LocaleSwitcher'
 
 const MoneyManagerNavbar = () => {
   return (
@@ -30,6 +31,7 @@ const MoneyManagerNavbar = () => {
         <span className="p m-0">Cashflow</span>
       </NavigationLink>
       <div className="grow" />
+      <LocaleSwitcher/>
       <Logout />
     </div>
   )
