@@ -1,6 +1,7 @@
 'use client'
 
 import { useGetRecentTransactions } from '@/lib/hooks/api/cashFlow'
+import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
 
@@ -19,7 +20,9 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
 
   return (
     <div>
-      <p className='mt-0 mb-1 text-left text-white-overlay text-sm'>Recent transactions:</p>
+      <p className="mt-0 mb-1 text-left text-white-overlay text-sm">
+        Recent transactions:
+      </p>
       <div className="flex overflow-auto gap-2 items-center pb-4">
         {!isFetching &&
           !!data &&
@@ -28,13 +31,17 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
             <button
               type="button"
               key={index}
-              className="flex flex-col justify-center items-center bg-dark-secondary rounded-md p-2 h-[60px] w-40 shrink-0 overflow-hidden"
+              className={cn(
+                'flex flex-col justify-center items-center bg-dark-secondary rounded-md p-2 h-[60px] w-40 shrink-0 overflow-hidden',
+                [item.type === 'income' && 'border border-blue-400'],
+                [item.type === 'expense' && 'border border-orange']
+              )}
               onClick={() => onClick( item )}
             >
-              <span className="font-bold text-sm m-0 w-full truncate text-ellipsis whitespace-nowrap overflow-hidden text-center">
+              <span className="font-bold text-sm m-0 w-full truncate text-ellipsis whitespace-nowrap overflow-hidden text-center line-clamp-1">
                 {formatCurency( item.amount )}
               </span>
-              <span className="p m-0 text-white-overlay">
+              <span className="p m-0 text-white-overlay line-clamp-1">
                 {item.description}
               </span>
             </button>
