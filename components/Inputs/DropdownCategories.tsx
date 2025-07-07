@@ -128,7 +128,7 @@ export default function DropdownCategories( {
                               <button
                                 type="button"
                                 className={cn(
-                                  'flex flex-wrap items-center justify-center w-full gap-2 px-4 py-3 text-left no-underline transition-all duration-300 ease-in-out',
+                                  'flex flex-wrap items-center justify-start w-full gap-2 px-4 py-3 text-left no-underline transition-all duration-300 ease-in-out',
                                   'overflow-hidden',
                                   'text-center'
                                 )}
@@ -139,7 +139,7 @@ export default function DropdownCategories( {
                                 {value === item.value && (
                                   <FontAwesomeIcon
                                     icon={faCheck}
-                                    className="text-white-overlay w-4 h-4 shrink-0"
+                                    className="text-white-overlay w-4 h-4 shrink-0 mx-auto"
                                   />
                                 )}
                               </button>

@@ -308,7 +308,7 @@ const AddTransaction = () => {
                   />
                 </Button>
                 <DefaultCategories name={item.category.label} />
-                <p className="m-0">{item.description}</p>
+                <p className="m-0 line-clamp-1 text-left">{item.description}</p>
                 <div className="grow" />
                 <p
                   className={cn( 'm-0', [
