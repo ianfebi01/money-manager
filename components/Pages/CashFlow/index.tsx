@@ -159,7 +159,7 @@ const CashFlow = () => {
                 ease     : easeInOut,
               }}
             >
-              <div className="bg-dark-secondary shadow-xl rounded-lg flex flex-col grow">
+              <div className="bg-dark-secondary shadow-xl rounded-lg flex flex-col grow pb-4">
                 <div className="flex gap-2 items-center px-4 pt-4">
                   <h2 className="m-0">{item.day}</h2>
                   <div className="grow" />
@@ -182,9 +182,7 @@ const CashFlow = () => {
                         onClick={() => handleEdit( subItem )}
                       >
                         <td
-                          className={cn( 'px-4 text-white-overlay', [
-                            subIndex + 1 === item.transactions.length && 'pb-8',
-                          ] )}
+                          className={cn( 'px-4 text-white-overlay' )}
                           style={{ width : '1px', whiteSpace : 'nowrap' }}
                         >
                           <div className="flex gap-2 items-center translate-y-1">
