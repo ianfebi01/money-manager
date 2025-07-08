@@ -11,6 +11,8 @@ import Error from '../error'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
+import MoneyManagerNavbar from '@/components/Layouts/MoneyManagerNavbar'
+import SessionProviderWrapper from '@/components/Context/SessionPrviderWrapper'
 
 config.autoAddCss = false
 
@@ -45,41 +47,45 @@ export default async function LocaleLayout( {
           <body suppressHydrationWarning={true}
             id="myportal"
           >
-            <NextIntlClientProvider>
-              <NextTopLoader
-                color="#F26B50"
-                initialPosition={0.08}
-                crawlSpeed={200}
-                height={3}
-                crawl={true}
-                showSpinner={false}
-                easing="ease"
-                speed={200}
-                shadow="0 0 10px #F26B50,0 0 5px #F26B50"
-              />
-              <Toaster
-                toastOptions={{
-                  // icon : (
-                  // 	<div className="text-20" data-cy="modal-information-icon">
-                  // 		<ModalInformationIcon />
-                  // 	</div>
-                  // ),
-                  position  : 'top-right',
-                  className : 'bg-white text-dark text-md',
-                  style     : {
-                    boxShadow : '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                    height    : '44px',
-                  },
-                }}
-              />
-              <div className="min-h-screen flex flex-col">
-                {children}
-
-                <SectionProvider>
-                  <Footer />
-                </SectionProvider>
-              </div>
-            </NextIntlClientProvider>
+            <SessionProviderWrapper>
+              <NextIntlClientProvider>
+                <NextTopLoader
+                  color="#F26B50"
+                  initialPosition={0.08}
+                  crawlSpeed={200}
+                  height={3}
+                  crawl={true}
+                  showSpinner={false}
+                  easing="ease"
+                  speed={200}
+                  shadow="0 0 10px #F26B50,0 0 5px #F26B50"
+                />
+                <Toaster
+                  toastOptions={{
+                    // icon : (
+                    // 	<div className="text-20" data-cy="modal-information-icon">
+                    // 		<ModalInformationIcon />
+                    // 	</div>
+                    // ),
+                    position  : 'top-right',
+                    className : 'bg-white text-dark text-md',
+                    style     : {
+                      boxShadow : '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                      height    : '44px',
+                    },
+                  }}
+                />
+                <div className="min-h-screen flex flex-col">
+                  <div className="max-w-7xl px-6 lg:px-8 mx-auto w-full">
+                    <MoneyManagerNavbar />
+                  </div>
+                  {children}
+                  <SectionProvider>
+                    <Footer />
+                  </SectionProvider>
+                </div>
+              </NextIntlClientProvider>
+            </SessionProviderWrapper>
           </body>
         </ReactQueryProvider>
       </ErrorBoundary>
