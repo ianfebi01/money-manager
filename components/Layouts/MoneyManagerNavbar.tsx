@@ -7,6 +7,8 @@ import NavigationLink from '@/components/Buttons/NavigationLink'
 import LocaleSwitcher from './LocaleSwitcher'
 import { useSession } from 'next-auth/react'
 import Login from '../Login'
+import { Link } from '@/i18n/navigation'
+import Image from 'next/image'
 
 const MoneyManagerNavbar = () => {
   const { status } = useSession()
@@ -47,7 +49,19 @@ const MoneyManagerNavbar = () => {
 
       {status === 'unauthenticated' && (
         <>
-          <div className='grow'/>
+          <Link href={'/'}
+            className='flex items-center no-underline gap-2'
+          >
+            <Image
+              src="/logo-no-bg.svg"
+              alt="Logo image"
+              width={33}
+              height={24}
+              priority
+            />
+            <span className='text-base m-0 font-medium text-white-overlay translate-y-1'>Money Manager</span>
+          </Link>
+          <div className="grow" />
           <Login />
         </>
       )}
