@@ -6,6 +6,10 @@
             @apply bg-dark text-white;
         }
 
+        &-outline {
+            @apply bg-dark text-white border-white/25 hover:bg-dark-secondary;
+        }
+
         &-secondary {
             @apply bg-dark-secondary text-white;
         }

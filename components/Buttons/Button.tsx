@@ -10,7 +10,7 @@ interface Props {
   type?: 'submit' | 'button' | 'reset'
   className?: string
   loading?: boolean
-  variant?: 'primary' | 'secondary' | 'icon' | 'iconOnly' | 'link' | 'error'
+  variant?: 'primary' | 'secondary' | 'icon' | 'iconOnly' | 'link' | 'error' | 'outline'
   ariaLabel?: string
 }
 
@@ -33,6 +33,7 @@ const Button: FunctionComponent<Props> = ( props ) => {
         // variant
         [
           variant === 'primary' && ['button-primary'],
+          variant === 'outline' && ['button-outline'],
           variant === 'error' && ['button-error'],
           variant === 'secondary' && ['button-secondary'],
           variant === 'icon' && ['button-icon'],
