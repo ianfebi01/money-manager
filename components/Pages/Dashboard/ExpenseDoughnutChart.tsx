@@ -10,8 +10,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Doughnut from '@/components/Chart/Doughnut'
 import SkeletonExpenseDoughnutChart from './SkeletonExpenseDoughnutChart';
+import { useTranslations } from 'next-intl';
 
 const ExpenseDoughnutChart = () => {
+  const t = useTranslations()
   const date = new Date()
   const { year, month, spaceMonthYear } = useFormatDate()
 
@@ -32,7 +34,7 @@ const ExpenseDoughnutChart = () => {
 
   return (
     <ChartCard
-      title="Monthly Transactions"
+      title={t( 'top_expense' )}
       isError={isError}
       isLoading={isFetching}
       isNoData={( !!data && data?.data?.categories.length === 0 ) || !data}

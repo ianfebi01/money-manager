@@ -18,7 +18,7 @@ export default async function PageMoneyManager( { params }: Props ) {
 
   return (
     <div className='mt-8'>
-      <Header text={t( 'summary' )} />
+      <Header text={t( 'transaction_summary' )} />
       <Dashboard/>
     </div>
   )

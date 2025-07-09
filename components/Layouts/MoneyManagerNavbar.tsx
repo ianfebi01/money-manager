@@ -9,9 +9,11 @@ import { useSession } from 'next-auth/react'
 import Login from '../Login'
 import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 
 const MoneyManagerNavbar = () => {
   const { status } = useSession()
+  const t = useTranslations()
 
   return (
     <div className="flex items-center gap-8 h-16">
@@ -27,7 +29,7 @@ const MoneyManagerNavbar = () => {
               className="text-orange"
               size="xl"
             />
-            <span className="p m-0">Summary</span>
+            <span className="p m-0">{t( 'summary' )}</span>
           </NavigationLink>
           <NavigationLink
             href={'/dashboard/cash-flow'}
@@ -39,7 +41,7 @@ const MoneyManagerNavbar = () => {
               size="xl"
               className="text-orange"
             />
-            <span className="p m-0">Cashflow</span>
+            <span className="p m-0">{t( 'transaction' )}</span>
           </NavigationLink>
           <div className="grow" />
           <LocaleSwitcher />

@@ -17,7 +17,7 @@ export default async function PageMoneyManagerCashFlow( { params }: Props ) {
 
   return (
     <div>
-      <Header text={t( 'cashflow' )} />
+      <Header text={t( 'transaction' )} />
       <CashFlow/>
     </div>
   )

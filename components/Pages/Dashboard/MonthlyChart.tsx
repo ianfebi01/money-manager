@@ -5,10 +5,15 @@ import { IFilterMonthly, useGetDatas } from '@/lib/hooks/api/dashboard'
 import { useFormatDate } from '@/lib/hooks/useFormatDate'
 import ChartCard from '@/components/Cards/ChartCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons'
 import SkeletonMonthlyChart from './SkeletonMonthlyChart'
+import { useTranslations } from 'next-intl'
 
 const MonthlyChart = () => {
+  const t = useTranslations()
   const date = new Date()
   const { year } = useFormatDate()
 
@@ -28,7 +33,7 @@ const MonthlyChart = () => {
 
   return (
     <ChartCard
-      title="Monthly Transactions"
+      title={t( 'monthly_transaction' )}
       isError={isError}
       isLoading={isFetching}
       isNoData={( !!data && data?.data?.categories.length === 0 ) || !data}

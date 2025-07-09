@@ -60,12 +60,16 @@
     "select_date": "Select Date",
     "cashflow": "Cashflow",
     "add_transaction": "Add Transaction",
+    "transaction": "Transaction",
     "edit": "Edit",
     "cancel": "Cancel",
-    "summary": "Transaction Summary",
+    "transaction_summary": "Transaction Summary",
     "amount": "Amount",
     "type": "Type",
     "category": "Category",
     "description": "Description",
-    "no-option": "No options"
+    "no-option": "No options",
+    "monthly_transaction": "Monthly Transactions",
+    "top_expense": "Top Expenses",
+    "summary": "Summary"
 }

@@ -60,12 +60,16 @@
     "select_date": "Pilih Tanggal",
     "cashflow": "Transaksi",
     "add_transaction": "Tambah Transaksi",
+    "transaction": "Transaksi",
     "edit": "Ubah",
     "cancel": "Batal",
-    "summary": "Rangkuman Transaksi",
+    "transaction_summary": "Rangkuman Transaksi",
     "amount": "Jumlah",
     "type": "Tipe",
     "category": "Kategori",
     "description": "Deskripsi",
-    "no-option": "Tidak ada opsi"
+    "no-option": "Tidak ada opsi",
+    "monthly_transaction": "Transaksi Bulanan",
+    "top_expense": "Pengeluaran Tertinggi",
+    "summary": "Ringkasan"
 }
