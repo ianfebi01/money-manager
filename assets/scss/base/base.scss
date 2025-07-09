@@ -1,0 +1,129 @@
+@layer base {
+  :root:has(.no-doc-scroll) {
+    overflow: hidden;
+  }
+
+  a {
+    @apply underline cursor-pointer;
+  }
+
+  .btn-admin-default {
+    @apply bg-dark-secondary border transition-default border-white/25 hover:border-transparent hover:bg-dark;
+  }
+
+  .unready {
+    @apply opacity-10;
+  }
+
+  h1,
+  .h1 {
+    @apply text-xl sm:text-2xl md:text-3xl mt-16 font-bold;
+  }
+
+  h2,
+  .h2 {
+    @apply text-2xl font-bold;
+  }
+
+  h3,
+  .h3 {
+    @apply text-xl font-bold;
+  }
+
+  h4,
+  .h4 {
+    @apply text-lg font-bold;
+  }
+
+  p,
+  .p {
+    @apply text-xs xl:text-sm 2xl:text-base font-normal my-4;
+
+    &:last-child {
+      @apply mb-0;
+    }
+  }
+
+  code {
+    @apply font-code p-4 my-4;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply mb-2;
+
+    &:last-child {
+      @apply mb-0;
+    }
+  }
+
+  table {
+    td,
+    th {
+      @apply px-4 py-2 align-text-top;
+    }
+  }
+
+  ol,
+  ul {
+    @apply ml-4 list-outside;
+  }
+
+  ol {
+    @apply list-decimal;
+  }
+
+  ul {
+    @apply list-disc;
+
+    li {
+      @apply font-[300];
+    }
+  }
+
+  .body-copy {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      @apply font-primary my-4;
+    }
+
+    h1,
+    h2 {
+      @apply text-xl sm:text-2xl md:text-3xl;
+    }
+
+    h4 {
+      @apply text-base 2xl:text-[1.375rem];
+    }
+
+    p,
+    li {
+      @apply text-sm 2xl:text-base font-normal my-4;
+    }
+
+    a {
+      @apply text-orange hover:underline underline-offset-4;
+    }
+
+    mark {
+      @apply bg-transparent underline decoration-2 underline-offset-4 decoration-orange text-inherit;
+    }
+
+    ul {
+      @apply list-disc list-outside ml-4 mb-4;
+    }
+
+    li {
+      @apply my-1 pl-4;
+    }
+  }
+
+  .transition-default {
+    @apply transition-all duration-500 ease-in-out;
+  }
+}

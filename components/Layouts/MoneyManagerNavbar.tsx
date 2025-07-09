@@ -15,7 +15,7 @@ const MoneyManagerNavbar = () => {
 
   return (
     <div className="flex items-center gap-8 h-16">
-      {status === 'authenticated' && (
+      {status !== 'unauthenticated' && (
         <>
           <NavigationLink
             href={'/dashboard'}

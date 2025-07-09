@@ -1,14 +1,19 @@
-import BouncingText from "@/components/BounchingText";
-import CallToAction from "@/components/Heroes/CallToAction";
-import ScrolledImage from "@/components/ScrolledImage";
+import BouncingText from '@/components/BounchingText'
+import CallToAction from '@/components/Heroes/CallToAction'
+import ScrolledImage from '@/components/ScrolledImage'
+import ScrolledImages from '@/components/Sections/ScrolledImages'
 
 export default function HomePage() {
   return (
-    <div className="grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
-      <CallToAction/>
-      <div className="bg-red-400 h-[50vh] w-full mb-16"></div>
-      <ScrolledImage/>
-      <BouncingText text="huhah"/>
+    <div>
+      <section className="grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
+        <CallToAction />
+      </section>
+      <ScrolledImages />
+      <section className="grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
+        <ScrolledImage />
+        <BouncingText text="huhah" />
+      </section>
     </div>
   )
 }

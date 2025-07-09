@@ -1,6 +1,5 @@
 'use client'
 
-import '@/assets/css/google-signin.css'
 import { signIn } from 'next-auth/react'
 
 export default function GoogleSignIn() {

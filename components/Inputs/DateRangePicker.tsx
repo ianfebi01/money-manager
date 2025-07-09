@@ -23,8 +23,8 @@ import {
 import { useLocale, useTranslations } from 'next-intl'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
-import '@/assets/css/react-datepicker.css'
 import { cn } from '@/lib/utils'
+import '@/assets/scss/components/react-datepicker.scss'
 
 interface Props {
   value: ISelectedRange

@@ -5,8 +5,10 @@ const config: Config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './assets/css/**/*.{css}',
   ],
-  theme : {
+  plugins : [],
+  theme   : {
     extend : {
       transitionTimingFunction : {
         burger : 'cubic-bezier(.645, .045, .355, 1)',
@@ -48,14 +50,10 @@ const config: Config = {
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
         ],
-        code : [
-          '"Source Code Pro"'
-        ],
+        code   : ['"Source Code Pro"'],
         roboto : ['Roboto', 'Arial', 'sans-serif'],
-
       },
     },
   },
-  plugins : [],
 }
 export default config

@@ -5,24 +5,21 @@
 @tailwind components;
 @tailwind utilities;
 
-
 // Abstracts
 @import 'abstracts/mixins';
 
-// Global
-@import 'base/global';
-// @import 'base/overrides';
-// @import 'base/color';
-
-// Layouts
-@import 'layouts/global';
-// @import 'layouts/default';
-// @import 'layouts/error';
+// Base
+@import './base/base.scss';
+@import './base/layout.scss';
 
 // Components
-@import 'components/global';
-@import 'components/searchbox';
+@import './components/button.scss';
+@import './components/react-datepicker.scss';
+@import './components/google-signin.scss';
 @import 'components/swiper';
+
+// Utilities
+@import 'utilities.scss';
 
 
 
@@ -30,6 +27,41 @@ body {
   @apply bg-dark text-white text-xs;
 }
 
-p {
-  @apply leading-5
+/* Global transparent scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #393939;
+  border-radius: 4px;
+}
+
+/* Firefox */
+* {
+  scrollbar-color: #393939 transparent;
+  scrollbar-width: thin;
+}
+
+.react-datepicker-wrapper {
+  @apply w-fit;
+}
+
+.react-datepicker__input-container {
+  display: flex !important;
+  align-items: center;
+}
+
+.react-datepicker__calendar-icon {
+  @apply text-white;
+}
+
+.react-datepicker {
+  @apply bg-black;
 }

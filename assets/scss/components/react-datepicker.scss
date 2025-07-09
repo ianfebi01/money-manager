@@ -89,7 +89,9 @@
 .react-datepicker__day--in-selecting-range-end:hover {
   @apply hover:bg-white hover:text-dark transition-all duration-150 ease-in-out relative;
 }
-.react-datepicker__day--selected:not(.react-datepicker__day--range-start)::after,
+.react-datepicker__day--selected:not(
+    .react-datepicker__day--range-start
+  )::after,
 .react-datepicker__day--today::after,
 .react-datepicker__day--in-selecting-range::after,
 .react-datepicker__day--in-selecting-range-end::after {

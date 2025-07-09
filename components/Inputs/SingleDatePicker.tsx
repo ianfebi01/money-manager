@@ -24,6 +24,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
 import { cn } from '@/lib/utils'
+import '@/assets/scss/components/react-datepicker.scss'
 
 interface Props {
   value: Date | null
