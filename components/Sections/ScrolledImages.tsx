@@ -1,0 +1,148 @@
+'use client'
+
+import imageLoader from '@/lib/constans/image-loader'
+import { cn } from '@/lib/utils'
+import Image from 'next/image'
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin( ScrollTrigger )
+
+const ScrolledImages = () => {
+  const images = [
+    '/images/cashflow.png',
+    '/images/transaction-summary-mobile.png',
+    '/images/transaction-summary.png',
+    '/images/add-transaction-mobile.png',
+    '/images/add-transaction.png',
+  ]
+
+  const scrollContainerRef = useRef<HTMLDivElement>( null )
+  const scrollContentRef = useRef<HTMLDivElement>( null )
+  const imagesRef = useRef<HTMLDivElement[] | null[]>( [] )
+
+  useEffect( () => {
+    if ( !scrollContainerRef.current || !scrollContentRef.current ) return
+
+    const container = scrollContainerRef.current
+    const content = scrollContentRef.current
+    const image0 = imagesRef.current?.[0]
+    const image1 = imagesRef.current?.[1]
+    const image3 = imagesRef.current?.[3]
+
+    const ctx = gsap.context( () => {
+      const tl = gsap.timeline( {
+        scrollTrigger : {
+          trigger : container,
+          start   : 'bottom bottom',
+          end     : 'bottom top',
+          scrub   : 1,
+          pin     : false,
+        },
+      } )
+
+      tl.to(
+        content,
+        {
+          x    : -500,
+          ease : 'power2.out',
+        },
+        0
+      )
+
+      tl.to(
+        image3,
+        {
+          height   : '400px',
+          ease     : 'power2.out',
+          duration : 0.3,
+        },
+        0
+      )
+
+      tl.to(
+        imagesRef.current,
+        {
+          height      : '400px',
+          marginRight : '32',
+          ease        : 'power2.out',
+          duration    : 0.3,
+        },
+        0
+      )
+
+      tl.from(
+        image1,
+        {
+          opacity    : '0',
+          translateY : 100,
+          ease       : 'power2.out',
+          duration   : 0.3,
+        },
+        0
+      )
+
+      tl.to(
+        image0,
+        {
+          height   : '400px',
+          ease     : 'power2.out',
+          duration : 0.3,
+        },
+        0
+      )
+
+      tl.from(
+        image0,
+        {
+          translateX : 257.83,
+          ease       : 'power2.out',
+          duration   : 0.3,
+        },
+        0
+      )
+    }, scrollContainerRef )
+
+    return () => ctx.revert()
+  }, [] )
+
+  return (
+    <div ref={scrollContainerRef}
+      className="relative w-full h-[550px] overflow-hidden -translate-y-[112px]"
+    >
+      <div
+        ref={scrollContentRef}
+        className="flex flex-row justify-center items-end h-full"
+      >
+        {images.map( ( item, index ) => (
+          <div
+            ref={( el ) => ( imagesRef.current[index] = el )}
+            key={index}
+            className={cn(
+              'relative overflow-hidden rounded-xl border bg-dark border-dark-secondary shrink-0 mr-14',
+              index % 2 === 1
+                ? 'h-[438px] aspect-[1/2.17]'
+                : 'h-[438px] aspect-video',
+              ( index === 0 || index === 3 ) && 'h-[550px]'
+            )}
+            style={{
+              zIndex : 5 - index,
+            }}
+          >
+            <Image
+              className="h-full object-contain object-center w-full"
+              src={item}
+              fill
+              alt={`Image ${index}`}
+              loading="lazy"
+              placeholder={imageLoader}
+            />
+          </div>
+        ) )}
+      </div>
+    </div>
+  )
+}
+
+export default ScrolledImages

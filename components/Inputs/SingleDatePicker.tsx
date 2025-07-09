@@ -21,7 +21,6 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { useLocale, useTranslations } from 'next-intl'
-import '@/assets/css/react-datepicker.css'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
 import { cn } from '@/lib/utils'
