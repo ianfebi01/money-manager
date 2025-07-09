@@ -9,7 +9,7 @@ import {
 } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { format } from 'date-fns'
+import { format, Locale } from 'date-fns'
 import { id, enUS } from 'date-fns/locale'
 import { ISelectedRange, Placement, TActivatorProps } from '@/types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
