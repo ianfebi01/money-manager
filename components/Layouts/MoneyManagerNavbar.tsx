@@ -12,8 +12,24 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 const MoneyManagerNavbar = () => {
-  const { status } = useSession()
+  const { status, data: session } = useSession()
   const t = useTranslations()
+
+  // Prevent hydration mismatch
+  if ( status === 'loading' ) {
+    return (
+      <div className="flex items-center gap-8 h-16 animate-pulse">
+        <div className="flex gap-2">
+          <div className="h-[18px] w-[18px] bg-dark-secondary"></div>
+          <div className="h-[18px] w-40 bg-dark-secondary"></div>
+        </div>
+        <div className="grow" />
+        <div className="flex gap-2">
+          <div className="h-[18px] w-14 bg-dark-secondary"></div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex items-center gap-8 h-16">
@@ -49,10 +65,10 @@ const MoneyManagerNavbar = () => {
         </>
       )}
 
-      {status === 'unauthenticated' && (
+      {!session && (
         <>
           <Link href={'/'}
-            className='flex items-center no-underline gap-2'
+            className="flex items-center no-underline gap-2"
           >
             <Image
               src="/logo-no-bg.svg"
@@ -61,7 +77,9 @@ const MoneyManagerNavbar = () => {
               height={24}
               priority
             />
-            <span className='text-base m-0 font-medium text-white-overlay translate-y-1'>Money Manager</span>
+            <span className="text-base m-0 font-medium text-white-overlay translate-y-1">
+              Money Manager
+            </span>
           </Link>
           <div className="grow" />
           <Login />
