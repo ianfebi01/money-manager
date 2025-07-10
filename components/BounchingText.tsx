@@ -5,28 +5,24 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin( ScrollTrigger )
 
-const BouncingText = ( { text }: {text: string} ) => {
+const BouncingText = ( { text, y }: {text: string, y?: number} ) => {
   const containerRef = useRef( null )
   const charsRef = useRef<HTMLSpanElement[] | null[]>( [] )
 
   useEffect( () => {
     const ctx = gsap.context( () => {
-      gsap.fromTo(
+      gsap.from(
         charsRef.current,
         {
-          y       : charsRef.current?.[0]?.offsetHeight || 40,
-          opacity : 0,
-        },
-        {
-          y             : 0,
-          opacity       : 1,
+          y             : y || charsRef.current?.[0]?.offsetHeight || 40,
+          opacity       : 0,
           ease          : 'back.out(1)',
-          stagger       : 0.05,
-          duration      : 0.5,
+          stagger       : 0.03,
+          duration      : 0.7,
           scrollTrigger : {
             trigger       : containerRef.current,
-            start         : 'top 80%',
-            toggleActions : 'play none none none'
+            start         : 'top 100%',
+            toggleActions : 'play none none none',
           },
         }
       )
@@ -36,9 +32,8 @@ const BouncingText = ( { text }: {text: string} ) => {
   }, [] )
 
   return (
-    <div
+    <span
       ref={containerRef}
-      className="flex flex-wrap"
     >
       {text.split( '' ).map( ( char, i ) => (
         <span
@@ -49,7 +44,7 @@ const BouncingText = ( { text }: {text: string} ) => {
           {char === ' ' ? '\u00A0' : char}
         </span>
       ) )}
-    </div>
+    </span>
   )
 
 }

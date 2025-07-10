@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     # Only uncomment this to expose the database for direct access
     ports:
-      - 5432:5432
+      - 5431:5432
     networks:
       - database
     restart: unless-stopped

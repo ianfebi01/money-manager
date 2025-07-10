@@ -9,8 +9,10 @@ export default function HomePage() {
       <section className="grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
         <CallToAction />
       </section>
-      <ScrolledImages />
-      <section className="grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
+      <section>
+        <ScrolledImages />
+      </section>
+      <section className="hidden md:block grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
         <ScrolledImage />
         <BouncingText text="huhah" />
       </section>

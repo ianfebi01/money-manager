@@ -159,7 +159,7 @@ const Modal: FunctionComponent<Props> = ( props ) => {
                   </div>
                   <div
                     className={cn(
-                      'p-4 flex justify-end gap-2 max-w-7xl mx-auto w-full xl:px-0'
+                      'p-4 flex justify-end gap-2 max-w-7xl mx-auto w-full'
                     )}
                   >
                     <Button

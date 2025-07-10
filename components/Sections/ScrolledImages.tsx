@@ -31,84 +31,115 @@ const ScrolledImages = () => {
     const image1 = imagesRef.current?.[1]
     const image3 = imagesRef.current?.[3]
 
-    const ctx = gsap.context( () => {
-      const tl = gsap.timeline( {
-        scrollTrigger : {
-          trigger : container,
-          start   : 'bottom bottom',
-          end     : 'bottom top',
-          scrub   : 1,
-          pin     : false,
-        },
-      } )
+    const mm = gsap.matchMedia()
 
-      tl.to(
-        content,
-        {
-          x    : -500,
-          ease : 'power2.out',
-        },
-        0
-      )
+    mm.add( '(min-width: 768px)', () => {
+      const ctx = gsap.context( () => {
+        const tl = gsap.timeline( {
+          scrollTrigger : {
+            trigger : container,
+            start   : 'bottom bottom',
+            end     : 'bottom top',
+            scrub   : 1,
+            pin     : false,
+          },
+        } )
 
-      tl.to(
-        image3,
-        {
-          height   : '400px',
-          ease     : 'power2.out',
-          duration : 0.3,
-        },
-        0
-      )
+        tl.to(
+          content,
+          {
+            x    : -500,
+            ease : 'power2.out',
+          },
+          0
+        )
 
-      tl.to(
-        imagesRef.current,
-        {
-          height      : '400px',
-          marginRight : '32',
-          ease        : 'power2.out',
-          duration    : 0.3,
-        },
-        0
-      )
+        tl.to(
+          image3,
+          {
+            height   : '400px',
+            ease     : 'power2.out',
+            duration : 0.3,
+          },
+          0
+        )
 
-      tl.from(
-        image1,
-        {
-          opacity    : '0',
-          translateY : 100,
-          ease       : 'power2.out',
-          duration   : 0.3,
-        },
-        0
-      )
+        tl.to(
+          imagesRef.current,
+          {
+            height      : '400px',
+            marginRight : '32',
+            ease        : 'power2.out',
+            duration    : 0.3,
+          },
+          0
+        )
 
-      tl.to(
-        image0,
-        {
-          height   : '400px',
-          ease     : 'power2.out',
-          duration : 0.3,
-        },
-        0
-      )
+        tl.from(
+          image1,
+          {
+            opacity    : '0',
+            translateY : 100,
+            ease       : 'power2.out',
+            duration   : 0.3,
+          },
+          0
+        )
 
-      tl.from(
-        image0,
-        {
-          translateX : 257.83,
-          ease       : 'power2.out',
-          duration   : 0.3,
-        },
-        0
-      )
-    }, scrollContainerRef )
+        tl.to(
+          image0,
+          {
+            height   : '400px',
+            ease     : 'power2.out',
+            duration : 0.3,
+          },
+          0
+        )
 
-    return () => ctx.revert()
+        tl.from(
+          image0,
+          {
+            translateX : 257.83,
+            ease       : 'power2.out',
+            duration   : 0.3,
+          },
+          0
+        )
+      }, scrollContainerRef )
+
+      return () => ctx.revert()
+    } )
+    mm.add( '(max-width: 767px)', () => {
+      const ctx = gsap.context( () => {
+        const tl = gsap.timeline( {
+          scrollTrigger : {
+            trigger : container,
+            start   : 'bottom bottom',
+            end     : 'bottom top',
+            scrub   : 1,
+            pin     : false,
+          },
+        } )
+
+        tl.to(
+          content,
+          {
+            x    : -100,
+            ease : 'power2.out',
+          },
+          0
+        )
+      }, scrollContainerRef )
+
+      return () => ctx.revert()
+    } )
+
+    return () => mm.revert()
   }, [] )
 
   return (
-    <div ref={scrollContainerRef}
+    <div
+      ref={scrollContainerRef}
       className="relative w-full h-[550px] overflow-hidden -translate-y-[112px]"
     >
       <div
@@ -120,11 +151,11 @@ const ScrolledImages = () => {
             ref={( el ) => ( imagesRef.current[index] = el )}
             key={index}
             className={cn(
-              'relative overflow-hidden rounded-xl border bg-dark border-dark-secondary shrink-0 mr-14',
+              'relative overflow-hidden rounded-xl border bg-dark border-dark-secondary shrink-0 mr-4 md:mr-14',
               index % 2 === 1
                 ? 'h-[438px] aspect-[1/2.17]'
-                : 'h-[438px] aspect-video',
-              ( index === 0 || index === 3 ) && 'h-[550px]'
+                : 'h-[438px] aspect-video hidden md:block',
+              ( index === 0 || index === 3 ) && 'md:h-[550px]'
             )}
             style={{
               zIndex : 5 - index,
@@ -140,6 +171,21 @@ const ScrolledImages = () => {
             />
           </div>
         ) )}
+        <div
+          className={cn(
+            'relative overflow-hidden rounded-xl border bg-dark border-dark-secondary shrink-0 mr-4 md:mr-14',
+            'h-[438px] aspect-[1/2.17] md:hidden'
+          )}
+        >
+          <Image
+            className="h-full object-contain object-center w-full"
+            src={'/images/cashflow-mobile.png'}
+            fill
+            alt={`Image Cashflow Mobile`}
+            loading="lazy"
+            placeholder={imageLoader}
+          />
+        </div>
       </div>
     </div>
   )
