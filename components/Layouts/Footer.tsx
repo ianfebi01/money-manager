@@ -19,11 +19,7 @@ const Footer = () => {
               width={40}
               height={40}
             />
-            <h2 className="text-lg">Ian Febi Sastrataruna</h2>
-            <p className="text-white/75">
-              RT 02, RW 15, Semuluhkidul, Ngeposari, Semanu, Gunungkidul,
-              Yogyakarta, Indonesia.
-            </p>
+            <h2 className="text-lg">Money Manager</h2>
           </div>
         </div>
 
