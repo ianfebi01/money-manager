@@ -7,6 +7,7 @@ import { faChevronDown, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { routing } from '@/i18n/routing'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import { useParams } from 'next/navigation'
+import { useLocale } from 'next-intl'
 
 export default function LocaleSwitcher() {
   const [show, setShow] = useState<boolean>( false )
@@ -14,6 +15,7 @@ export default function LocaleSwitcher() {
   const pathname = usePathname()
   const router = useRouter()
   const params = useParams()
+  const locale = useLocale()
 
   const changeLocale = ( locale: string ) => {
     router.replace(
@@ -65,10 +67,10 @@ export default function LocaleSwitcher() {
             >
               <Popover.Panel
                 static
-                className="absolute right-0 z-10 pt-3 w-20 sm:px-0"
+                className="absolute right-0 z-10 w-full pt-3 sm:px-0 min-w-[60px]"
               >
                 <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
-                  <div className="relative grid bg-dark-secondary p-4">
+                  <div className="relative grid p-4 bg-dark-secondary">
                     {routing.locales?.map( ( item, i ) => {
                       return (
                         <div
@@ -79,12 +81,14 @@ export default function LocaleSwitcher() {
                           )}
                         >
                           <button
-                            onClick={() => changeLocale( item )}
+                            onClick={(  ) => changeLocale( item )}
                             className={cn(
-                              'flex items-center rounded-lg min-h-20   w-full',
-                              'p m-0 font-medium text-left uppercase',
+                              'flex items-center justify-center w-full',
+                              ' text-sm text-left uppercase',
                               'transition duration-150 ease-in-out',
-                              'hover:bg-dark focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50 hover:shadow-xl'
+                              'focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50',
+                              'text-white/50 hover:text-white',
+                              item === locale && 'text-white'
                             )}
                           >
                             {item}

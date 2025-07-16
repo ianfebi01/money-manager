@@ -82,6 +82,7 @@ const MoneyManagerNavbar = () => {
             </span>
           </Link>
           <div className="grow" />
+          <LocaleSwitcher />
           <Login />
         </>
       )}
