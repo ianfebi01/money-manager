@@ -14,8 +14,14 @@ export default function HomePage() {
       <section>
         <ScrolledImages />
       </section>
-      <div></div>
-      <section className="hidden md:block grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
+      <div className="bg-dark-secondary">
+        <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
+          <Quote
+            quote={`Bukan seberapa banyak yang kamu punya, tapi seberapa baik kamu mengelolanya.`}
+          />
+        </section>
+      </div>
+      <section className="hidden md:block grow max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
         <FeaturedMultiLang />
       </section>
       <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full">
@@ -33,13 +39,6 @@ Tidak perlu khawatir kehilangan data.
             `}
         />
       </section>
-      <div className='bg-dark-secondary'>
-        <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
-          <Quote
-            quote={`Bukan seberapa banyak yang kamu punya, tapi seberapa baik kamu mengelolanya.`}
-          />
-        </section>
-      </div>
     </div>
   )
 }
