@@ -6,7 +6,7 @@ import FeaturedMultiLang from '@/components/Sections/FeaturedMultiLang'
 export default function HomePage() {
   return (
     <div>
-      <section className="grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
+      <section className="grow max-w-7xl px-6 lg:px-8 mx-auto w-full min-h-[70vh] flex items-center justify-center">
         <CallToAction />
       </section>
       <section>

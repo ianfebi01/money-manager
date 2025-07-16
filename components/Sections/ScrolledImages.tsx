@@ -38,7 +38,7 @@ const ScrolledImages = () => {
         const tl = gsap.timeline( {
           scrollTrigger : {
             trigger : container,
-            start   : 'bottom bottom',
+            start   : 'top 50%',
             end     : 'bottom top',
             scrub   : 1,
             pin     : false,
@@ -75,11 +75,11 @@ const ScrolledImages = () => {
           0
         )
 
-        tl.from(
+        tl.to(
           image1,
           {
-            opacity    : '0',
-            translateY : 100,
+            opacity    : '1',
+            translateY : 0,
             ease       : 'power2.out',
             duration   : 0.3,
           },
@@ -96,10 +96,10 @@ const ScrolledImages = () => {
           0
         )
 
-        tl.from(
+        tl.to(
           image0,
           {
-            translateX : 257.83,
+            translateX : 0,
             ease       : 'power2.out',
             duration   : 0.3,
           },
@@ -155,7 +155,9 @@ const ScrolledImages = () => {
               index % 2 === 1
                 ? 'h-[438px] aspect-[1/2.17]'
                 : 'h-[438px] aspect-video hidden md:block',
-              ( index === 0 || index === 3 ) && 'md:h-[550px]'
+              ( index === 0 || index === 3 ) && 'md:h-[550px]',
+              ( index === 0 ) && 'md:translate-x-[257.83px]',
+              ( index === 1 ) && 'md:translate-y-[100px] md:opacity-0',
             )}
             style={{
               zIndex : 5 - index,
