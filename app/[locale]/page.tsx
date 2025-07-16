@@ -1,7 +1,7 @@
 import CallToAction from '@/components/Heroes/CallToAction'
-import ScrolledImage from '@/components/ScrolledImage'
 import FeaturedFeature from '@/components/Sections/FeaturedFeature'
 import ScrolledImages from '@/components/Sections/ScrolledImages'
+import FeaturedMultiLang from '@/components/Sections/FeaturedMultiLang'
 
 export default function HomePage() {
   return (
@@ -13,7 +13,7 @@ export default function HomePage() {
         <ScrolledImages />
       </section>
       <section className="hidden md:block grow max-w-7xl px-6 lg:px-8 mx-auto w-full">
-        <ScrolledImage />
+        <FeaturedMultiLang />
         <FeaturedFeature/>
       </section>
     </div>

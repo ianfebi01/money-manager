@@ -3,13 +3,14 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import BouncingText from './BounchingText'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
+import { faGlobe } from '@fortawesome/free-solid-svg-icons';
+import Image from 'next/image'
+import BouncingText from '../BounchingText'
 
 gsap.registerPlugin( ScrollTrigger )
 
-const ScrolledImage = () => {
+const FeaturedMultiLang = () => {
   const sectionRef = useRef<HTMLDivElement>( null )
   const panel1Ref = useRef<HTMLDivElement>( null )
   const panel1ImageRef = useRef<HTMLDivElement>( null )
@@ -70,16 +71,16 @@ const ScrolledImage = () => {
           '<'
         )
 
-      // tl.to(
-      //   panel1ImageRef.current,
-      //   {
-      //     ease     : 'power2.out',
-      //     width    : '1280px',
-      //     height   : '720px',
-      //     duration : 1,
-      //   },
-      //   '<'
-      // )
+      tl.to(
+        panel1ImageRef.current,
+        {
+          ease     : 'power2.out',
+          width    : '1280px',
+          height   : '720px',
+          duration : 1,
+        },
+        '<'
+      )
 
         .to( panel1Ref.current, {
           clipPath : 'inset(0% 0% 100% 0%)',
@@ -107,15 +108,17 @@ const ScrolledImage = () => {
           ref={hRef}
           className="m-0 text-center leading-[38px] md:text-4xl md:leading-[55px] max-w-xs md:max-w-sm mx-auto flex flex-col"
         >
-          <span>temukan</span>
+          <span>Gunakan aplikasi</span>
           <span>
-            <span className="text-orange py-2 px-4 bg-orange/10 rounded-full w-fit overflow-hidden">
-              <FontAwesomeIcon icon={faPuzzlePiece}
+            dalam
+            {' '}
+            <span className="text-blue-400 py-2 px-4 bg-blue-400/10 rounded-full w-fit overflow-hidden">
+              <FontAwesomeIcon icon={faGlobe}
                 className="mr-4"
               />
-              <BouncingText text="fitur" />
-            </span>{' '}
-            menarik dari money manager
+              <BouncingText text="bahasa" />
+            </span>
+            yang anda inginkan
           </span>
         </h2>
         {/* Panel 3 - final content */}
@@ -124,10 +127,12 @@ const ScrolledImage = () => {
           className="absolute inset-0 z-0 flex items-center justify-center translate-y-32"
         >
           <div className="w-[1024px] h-[576px] overflow-hidden relative flex items-center justify-center rounded-lg border border-dark-secondary">
-            <img
+            <Image
               src="/images/add-transaction-mba.png"
-              className="w-full h-full object-cover object-center"
               alt="Panel 2 Image"
+              fill
+              className="object-cover object-center"
+              priority // optional
             />
           </div>
         </div>
@@ -139,11 +144,15 @@ const ScrolledImage = () => {
           style={{ clipPath : 'inset(0% 0% 0% 0%)' }}
         >
           <div className="w-[1024px] h-[576px] overflow-hidden relative flex items-center justify-center rounded-lg border border-dark-secondary">
-            <img
-              src="/images/transaction-summary-en.webp"
-              className="w-full h-full object-cover object-center"
-              alt="Panel 2 Image"
-            />
+            <div className="relative w-[1280px] h-[720px]">
+              <Image
+                src="/images/scrolled-section/transaction-summary-en.png"
+                alt="Panel 2 Image"
+                fill
+                className="object-cover object-center"
+                priority // optional: loads image ASAP
+              />
+            </div>
           </div>
         </div>
 
@@ -157,10 +166,11 @@ const ScrolledImage = () => {
             ref={panel1ImageRef}
             className="w-[1024px] h-[576px] overflow-hidden relative flex items-center justify-center rounded-lg border border-dark-secondary"
           >
-            <img
-              src="/images/transaction-summary-id.webp"
-              className="w-full h-full object-cover object-center"
+            <Image
+              src="/images/scrolled-section/transaction-summary-id.png"
               alt="Panel 1 Image"
+              fill
+              className="object-cover object-center w-full h-full"
             />
           </div>
         </div>
@@ -169,4 +179,4 @@ const ScrolledImage = () => {
   )
 }
 
-export default ScrolledImage
+export default FeaturedMultiLang
