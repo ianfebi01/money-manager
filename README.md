@@ -33,11 +33,11 @@ git clone https://github.com/your-username/money-manager.git
 cd money-manager
 
 # Install dependencies
-npm install
+pnpm install
 
 # Set up environment variables
 cp .env.example .env
 # Then edit the .env file with your actual credentials
 
 # Run the development server
-npm run dev
+pnpm dev
