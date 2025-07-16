@@ -22,7 +22,7 @@ const BouncingText = ( { text, y }: {text: string, y?: number} ) => {
           scrollTrigger : {
             trigger       : containerRef.current,
             start         : 'top 100%',
-            toggleActions : 'restart none none none',
+            toggleActions : 'play none none none',
           },
         }
       )

@@ -20,7 +20,7 @@ const TextQuote: FunctionComponent<Props> = ( { quote } ) => {
         scrollTrigger : {
           trigger       : containerRef.current,
           start         : 'top 100%',
-          toggleActions : 'restart none none none',
+          toggleActions : 'play none none none',
         },
       } )
     } )

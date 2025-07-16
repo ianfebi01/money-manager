@@ -33,7 +33,7 @@ const FeaturedMultiLang = () => {
 
       // Curtain up panel 1
       tl.to( panel1Ref.current, {
-        ease       : 'power2.out',
+        ease       : 'none',
         height     : '100%',
         translateY : 0,
         duration   : 1,
@@ -42,7 +42,7 @@ const FeaturedMultiLang = () => {
         .to(
           hRef.current,
           {
-            ease       : 'power2.out',
+            ease       : 'none',
             translateY : 80,
             scale      : 0.5,
             duration   : 1,
@@ -54,7 +54,7 @@ const FeaturedMultiLang = () => {
         .to(
           panel2Ref.current,
           {
-            ease       : 'power2.out',
+            ease       : 'none',
             translateY : 0,
             duration   : 1,
           },
@@ -64,7 +64,7 @@ const FeaturedMultiLang = () => {
         .to(
           panel3Ref.current,
           {
-            ease       : 'power2.out',
+            ease       : 'none',
             translateY : 0,
             duration   : 1,
           },
@@ -74,7 +74,7 @@ const FeaturedMultiLang = () => {
       tl.to(
         panel1ImageRef.current,
         {
-          ease     : 'power2.out',
+          ease     : 'none',
           width    : '1280px',
           height   : '720px',
           duration : 1,
@@ -84,13 +84,13 @@ const FeaturedMultiLang = () => {
 
         .to( panel1Ref.current, {
           clipPath : 'inset(0% 0% 100% 0%)',
-          ease     : 'power2.out',
+          ease     : 'none',
           duration : 1,
         } )
 
         .to( panel2Ref.current, {
           clipPath : 'inset(0% 0% 100% 0%)',
-          ease     : 'power2.out',
+          ease     : 'none',
           duration : 1,
         } )
     }, sectionRef )

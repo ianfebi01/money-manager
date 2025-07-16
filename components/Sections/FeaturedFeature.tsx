@@ -25,7 +25,7 @@ const FeaturedFeature = () => {
         scrollTrigger : {
           trigger       : containerRef.current,
           start         : 'top 80%',
-          toggleActions : 'restart none none none',
+          toggleActions : 'play none none none',
         },
       } )
     } )
@@ -50,7 +50,7 @@ const FeaturedFeature = () => {
       <div className="flex flex-col md:flex-row gap-8 mt-12">
         <div
           ref={( el ) => ( itemsRef.current[0] = el )}
-          className="bg-dark-secondary flex flex-col rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-[50px]"
+          className="bg-dark-secondary flex flex-col rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
         >
           <div className="p-4">
             <h2>Grafik Transaksi Interaktif</h2>
@@ -71,7 +71,7 @@ const FeaturedFeature = () => {
           </div>
         </div>
         <div ref={( el ) => ( itemsRef.current[1] = el )}
-          className="bg-dark-secondary flex flex-col rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-[50px]"
+          className="bg-dark-secondary flex flex-col rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
         >
           <div className="p-4">
             <h2>Grafik Transaksi Interaktif</h2>
