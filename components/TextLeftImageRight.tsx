@@ -2,8 +2,6 @@ import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import React from 'react';
 import Markdown from './Parsers/Markdown'
-import imageUrl from '@/utils/imageUrl'
-import { PluginUploadFile } from '@/types/generated/contentTypes'
 import imageLoader from '@/lib/constans/image-loader'
 
 interface Button {
@@ -13,17 +11,17 @@ interface Button {
 }
 
 interface Props {
-  image: { data: PluginUploadFile }
-  fullWidthBgImage: boolean
-  reverse: boolean
-  bgColour: string
-  fullWidth: boolean
-  buttons: Button[]
+  image: string
+  fullWidthBgImage?: boolean
+  reverse?: boolean
+  bgColour?: string
+  fullWidth?: boolean
+  buttons?: Button[]
   accordian?: Array<any>
   bodyCopy: string
   biggerColumn?: 'image' | 'content'
-  buttonsVariation: 'primary' | 'secondary'
-  scaling: 'cover' | 'contain'
+  buttonsVariation?: 'primary' | 'secondary'
+  scaling?: 'cover' | 'contain'
 }
 
 const TextLeftImageRight: React.FC<Props> = ( {
@@ -37,7 +35,7 @@ const TextLeftImageRight: React.FC<Props> = ( {
   bodyCopy,
   biggerColumn = '',
   buttonsVariation,
-  scaling,
+  scaling = 'cover',
 } ) => {
 
   return (
@@ -52,7 +50,7 @@ const TextLeftImageRight: React.FC<Props> = ( {
           }
         )}
         style={{
-          background : fullWidthBgImage ? `url(${imageUrl})` : '',
+          background : fullWidthBgImage ? `url(${image})` : '',
         }}
       >
         <div
@@ -79,7 +77,7 @@ const TextLeftImageRight: React.FC<Props> = ( {
               {/* Assuming you have a Markdown component */}
               <Markdown content={bodyCopy} />
             </div>
-            {buttons?.length > 0 && (
+            {!!buttons && buttons?.length > 0 && (
               <div className="flex items-center gap-4 justify-center lg:justify-start mt-2 flex-wrap">
                 {buttons.map( ( button, index ) => (
                   <a
@@ -127,7 +125,7 @@ const TextLeftImageRight: React.FC<Props> = ( {
               <div className="aspect-square md:aspect-video lg:aspect-[1/0.7] lg:h-full lg:w-full overflow-hidden relative z-[1]">
                 <Image
                   loading="lazy"
-                  src={imageUrl( image.data, 'small' ) || ''}
+                  src={image || ''}
                   alt="Image Content"
                   placeholder={imageLoader}
                   className={cn( {
@@ -141,7 +139,7 @@ const TextLeftImageRight: React.FC<Props> = ( {
                 />
                 <Image
                   loading="lazy"
-                  src={imageUrl( image.data, 'xlarge' ) || ''}
+                  src={image || ''}
                   alt="Image Content"
                   placeholder={imageLoader}
                   className={cn( {
