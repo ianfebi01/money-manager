@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 💰 Money Manager – Personal Finance Tracker
 
-## Getting Started
+**Money Manager** is a clean and modern app that helps you **track income, expenses, and manage your financial goals** with ease. Designed for simplicity and accessibility, it provides an intuitive UI and essential insights to help you stay on top of your finances.
 
-First, run the development server:
+## 🚀 Features
+
+- 📥 Add & categorize income and expenses  
+- 📊 Monthly reports and visual charts  
+- 🎯 Set and monitor financial goals  
+- 🔐 Secure login with **Google (NextAuth.js)**  
+- 🌍 Access your data from any device, anytime  
+- 🌙 Dark mode  
+- 🌐 Supports multiple languages (EN/ID)
+
+## 🛠 Tech Stack
+
+- **Framework:** [Next.js](https://nextjs.org/) (Frontend + API Routes)  
+- **Database:** [PostgreSQL](https://www.postgresql.org/) (no ORM – raw SQL or query builder)  
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/) with Google Provider  
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/), [Headless UI](https://headlessui.com/)  
+- **Animations:** [GSAP](https://gsap.com/)  
+- **Deployment:** Vercel (frontend + API), PostgreSQL hosted on VPS
+
+## 📷 Screenshots
+
+> _Add screenshots here to show off the UI._
+
+## 📦 Getting Started
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/money-manager.git
+cd money-manager
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Then edit the .env file with your actual credentials
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
