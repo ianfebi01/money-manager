@@ -1,47 +1,41 @@
 'use client'
 import React, { FunctionComponent, useEffect, useRef } from 'react'
-import { motion, useAnimation, useInView } from 'framer-motion'
-
-interface Props{
-	quote: string
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+gsap.registerPlugin( ScrollTrigger )
+interface Props {
+  quote: string
 }
 const TextQuote: FunctionComponent<Props> = ( { quote } ) => {
   const textRef = useRef( null )
-  const isInView = useInView( textRef, {
-    once : true,
-  } )
-
-  const textControll = useAnimation()
+  const containerRef = useRef( null )
 
   useEffect( () => {
-    if ( isInView ) {
-      textControll.start( 'visible' )
-    }
-  }, [isInView] )
+    const ctx = gsap.context( () => {
+      gsap.to( textRef.current, {
+        scale         : 1,
+        opacity       : 1,
+        ease          : 'back.out(1.5)',
+        duration      : 0.5,
+        scrollTrigger : {
+          trigger       : containerRef.current,
+          start         : 'top 100%',
+          toggleActions : 'restart none none none',
+        },
+      } )
+    } )
+
+    return () => ctx.revert()
+  }, [] )
 
   return (
-    <div ref={textRef}>
-      <motion.p
-        variants={{
-          hidden : {
-            opacity : 0,
-            scale   : 0,
-          },
-          visible : {
-            opacity : 1,
-            scale   : 1,
-          },
-        }}
-        initial="hidden"
-        transition={{
-          type   : 'spring',
-          bounce : 0.5,
-        }}
-        animate={textControll}
-        className="text-base md:text-2xl font-medium text-center"
+    <div ref={containerRef}>
+      <p
+        ref={textRef}
+        className="text-base md:text-2xl font-medium text-center opacity-0 scale-0"
       >
         {quote}
-      </motion.p>
+      </p>
     </div>
   )
 }
