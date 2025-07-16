@@ -1,8 +1,13 @@
+'use client'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import React from 'react';
+import React, { useEffect, useRef } from 'react'
 import Markdown from './Parsers/Markdown'
 import imageLoader from '@/lib/constans/image-loader'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin( ScrollTrigger )
 
 interface Button {
   url: string
@@ -26,7 +31,7 @@ interface Props {
 
 const TextLeftImageRight: React.FC<Props> = ( {
   image,
-  fullWidthBgImage,
+  fullWidthBgImage = false,
   reverse,
   bgColour,
   fullWidth,
@@ -37,9 +42,48 @@ const TextLeftImageRight: React.FC<Props> = ( {
   buttonsVariation,
   scaling = 'cover',
 } ) => {
+  const containerRef = useRef<HTMLDivElement | null>( null )
+  const itemsRef = useRef<HTMLDivElement[] | null[]>( [] )
+
+  useEffect( () => {
+    const ctx = gsap.context( () => {
+      const tl = gsap.timeline( {
+        scrollTrigger : {
+          trigger : containerRef.current,
+          start   : 'top 100%',
+
+          toggleActions : 'restart none none none',
+        },
+      } )
+
+      tl.to( itemsRef.current[0], {
+        ease       : 'power2.out',
+        translateX : 0,
+        duration   : 1,
+        opacity    : 1,
+        delay      : 0.2,
+      } )
+
+      tl.to(
+        itemsRef.current[1],
+        {
+          ease       : 'power2.out',
+          translateX : 0,
+          duration   : 1,
+          opacity    : 1,
+          delay      : 0.2,
+        },
+        '<'
+      )
+    } )
+
+    return () => ctx.revert()
+  }, [] )
 
   return (
-    <div className="relative overflow-x-clip">
+    <div ref={containerRef}
+      className="relative overflow-x-clip"
+    >
       <div
         className={cn(
           'bg-cover bg-center bg-no-repeat flex flex-col lg:flex-row gap-8 min-h-[564.14px]',
@@ -54,6 +98,7 @@ const TextLeftImageRight: React.FC<Props> = ( {
         }}
       >
         <div
+          ref={( el ) => ( itemsRef.current[0] = el )}
           className={cn( 'flex items-center', {
             'md:basis-[calc(50%-1rem)]' :
               !fullWidthBgImage && !['image', 'content'].includes( biggerColumn ),
@@ -61,9 +106,13 @@ const TextLeftImageRight: React.FC<Props> = ( {
               !fullWidthBgImage && biggerColumn === 'image',
             'md:basis-[calc(60%-1rem)]' :
               !fullWidthBgImage && biggerColumn === 'content',
-            'basis-full' : fullWidthBgImage,
-            'lg:pr-8'    : !reverse,
-            'lg:pl-8'    : reverse,
+            'basis-full'      : fullWidthBgImage,
+            'lg:pr-8'         : !reverse,
+            'lg:pl-8'         : reverse,
+            // Transition
+            '-translate-x-16' : !reverse,
+            'translate-x-16'  : reverse,
+            'opacity-0'       : true,
           } )}
         >
           <div
@@ -106,6 +155,7 @@ const TextLeftImageRight: React.FC<Props> = ( {
 
         {!fullWidthBgImage && (
           <div
+            ref={( el ) => ( itemsRef.current[1] = el )}
             className={cn( {
               'md:basis-[calc(50%-1rem)] lg:aspect-[1/0.7]' :
                 !['image', 'content'].includes( biggerColumn ) && !fullWidth,
@@ -119,6 +169,10 @@ const TextLeftImageRight: React.FC<Props> = ( {
                 biggerColumn === 'content' && fullWidth,
               'flex flex-col gap-8' : accordian?.length,
               'max-h-[796px]'       : !accordian?.length,
+              // Transition
+              'translate-x-16'      : !reverse,
+              '-translate-x-16'     : reverse,
+              'opacity-0'           : true,
             } )}
           >
             <div className="relative w-full h-full">
