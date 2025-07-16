@@ -21,8 +21,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAnimation, motion, easeInOut } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 const CashFlow = () => {
+  const t = useTranslations()
   const { month, year, spaceMonthYear } = useFormatDate()
 
   const date = new Date()
@@ -234,11 +236,11 @@ const CashFlow = () => {
         onConfirm={() => onDeleteOk()}
         onCancel={() => setDeleteWarningAlert( false )}
         variant="warning"
-        title="Are you sure?"
-        desciption="Are you sure want to delete transaction?"
-        confirmText="Confirm"
+        title={t( 'delete_warning.title' )}
+        desciption={t( 'delete_warning.description' )}
+        confirmText={t( 'delete_warning.confirm' )}
         loading={deleteIsLoading}
-      ></Modal>
+      />
       <EditTransaction
         isOpen={isEditModalOpen}
         setIsOpen={setIsEditModalOpen}

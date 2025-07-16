@@ -167,7 +167,7 @@ const AddTransaction = () => {
         {t( 'add_transaction' )}
       </Button>
       <Modal
-        title="Add Transaction"
+        title={t( 'add_transaction' )}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         variant="fullscreen"
@@ -177,6 +177,7 @@ const AddTransaction = () => {
           resetForm()
           setIsOpen( false )
         }}
+        confirmText={t( 'save' )}
       >
         <div
           ref={modalRef}
@@ -186,7 +187,7 @@ const AddTransaction = () => {
             <label htmlFor={'date'}
               className="w-fit text-sm lg:text-base"
             >
-              <span>{'Date'}</span>
+              <span>{t( 'date' )}</span>
             </label>
             <SingleDatePicker
               value={sharedDate}
@@ -285,7 +286,7 @@ const AddTransaction = () => {
               <FontAwesomeIcon icon={faPlus}
                 className="text-orange"
               />
-              Add other
+              {t( 'add_other' )}
             </button>
           </form>
           <div className="flex flex-col gap-2 mt-4">

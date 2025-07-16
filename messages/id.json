@@ -61,6 +61,7 @@
     "select_date": "Pilih Tanggal",
     "cashflow": "Transaksi",
     "add_transaction": "Tambah Transaksi",
+    "edit_transaction": "Ubah Transaksi",
     "transaction": "Transaksi",
     "edit": "Ubah",
     "cancel": "Batal",
@@ -102,5 +103,13 @@
     },
     "text_left_image_right": {
         "body_copy": "## Full Online\nAkses dan kelola keuanganmu dari berbagai perangkat—laptop, tablet, atau ponsel—dengan data yang selalu tersinkron secara real-time.\nTidak perlu khawatir kehilangan data."
+    },
+    "add_other": "Tambah lainnya",
+    "save": "Simpan",
+    "recent_transactions": "Transaksi terbaru",
+    "delete_warning": {
+        "title": "Apakah kamu yakin?",
+        "description": "Yakin ingin menghapus transaksi?",
+        "confirm": "Ya, hapus"
     }
 }

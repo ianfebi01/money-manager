@@ -137,7 +137,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
 
   return (
     <Modal
-      title="Edit Transaction"
+      title={t( 'edit_transaction' )}
       confirmText={t( 'edit' )}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
@@ -157,7 +157,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
           <label htmlFor={'date'}
             className="w-fit text-sm lg:text-base"
           >
-            <span>{'Date'}</span>
+            <span>{t( 'date' )}</span>
           </label>
           <SingleDatePicker
             value={sharedDate}
@@ -181,7 +181,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
               <label htmlFor={'amount'}
                 className="w-fit text-sm lg:text-base"
               >
-                <span>{'Amount'}</span>
+                <span>{t( 'amount' )}</span>
               </label>
               <TextField
                 type="currency-id"
@@ -196,7 +196,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
               <label htmlFor={'type'}
                 className="w-fit text-sm lg:text-base"
               >
-                <span>{'Type'}</span>
+                <span>{t( 'type' )}</span>
               </label>
               <DropdownSelect
                 value={form.type as string | number}
@@ -220,7 +220,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
                 htmlFor={'category'}
                 className="w-fit text-sm lg:text-base"
               >
-                <span>{'Category'}</span>
+                <span>{t( 'category' )}</span>
               </label>
               <DropdownCategories
                 value={form.category}
@@ -234,7 +234,7 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
                 htmlFor={'description'}
                 className="w-fit text-sm lg:text-base"
               >
-                <span>{'Description'}</span>
+                <span>{t( 'description' )}</span>
               </label>
               <TextField
                 type="text"

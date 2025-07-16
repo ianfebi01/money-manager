@@ -4,6 +4,7 @@ import { useGetRecentTransactions } from '@/lib/hooks/api/cashFlow'
 import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   enabled: boolean
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
+  const t = useTranslations()
   const { data, isFetching } = useGetRecentTransactions( 5, enabled )
 
   /**
@@ -21,7 +23,7 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
   return (
     <div>
       <p className="mt-0 mb-1 text-left text-white-overlay text-sm">
-        Recent transactions:
+        {t( 'recent_transactions' )}:
       </p>
       <div className="flex overflow-auto gap-2 items-center pb-4">
         {!isFetching &&

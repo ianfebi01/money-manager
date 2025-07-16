@@ -61,6 +61,7 @@
     "select_date": "Select Date",
     "cashflow": "Cashflow",
     "add_transaction": "Add Transaction",
+    "edit_transaction": "Edit Transaction",
     "transaction": "Transaction",
     "edit": "Edit",
     "cancel": "Cancel",
@@ -102,5 +103,13 @@
     },
     "text_left_image_right": {
         "body_copy": "## Fully Online\nAccess and manage your finances from any device—laptop, tablet, or phone—with data always synced in real-time.\nNo need to worry about losing data."
-    }
+    },
+    "add_other": "Add other",
+    "save": "Save",
+    "recent_transactions": "Recent transactions",
+    "delete_warning": {
+    "title": "Are you sure?",
+    "description": "Are you sure want to delete transaction?",
+    "confirm": "Confirm"
+  }
 }
