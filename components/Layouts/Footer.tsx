@@ -3,6 +3,7 @@ import LinkOpenNewTab from '@/components/Buttons/LinkOpenNewTab'
 import InstagramIcon from '@/components/Icons/InstagramIcon'
 import LinkedinIcon from '@/components/Icons/LinkedinIcon'
 import CopyToClipboard from '@/components/Inputs/CopyToClipboard'
+import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 
 const Footer = () => {
@@ -13,14 +14,20 @@ const Footer = () => {
     >
       <div className="main__container my-8 md:my-16 h-full">
         <div className="w-fit mx-auto mb-4">
-          <div className="flex flex-col gap-2 max-w-2xl items-center text-center">
-            <Image src="/Logo.svg"
+          <Link href={'/'}
+            className="flex items-center no-underline gap-2"
+          >
+            <Image
+              src="/logo-no-bg.svg"
               alt="Logo image"
-              width={40}
-              height={40}
+              width={33}
+              height={24}
+              priority
             />
-            <h2 className="text-lg">Money Manager</h2>
-          </div>
+            <span className="text-base m-0 font-medium text-white-overlay translate-y-1">
+              Money Manager
+            </span>
+          </Link>
         </div>
 
         <div className="text-lg flex gap-4 text-center w-full justify-center items-center flex-wrap">
