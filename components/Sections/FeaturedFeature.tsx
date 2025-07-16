@@ -6,12 +6,14 @@ import BouncingText from '../BounchingText'
 import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useTranslations } from 'next-intl'
 
 gsap.registerPlugin( ScrollTrigger )
 
 const FeaturedFeature = () => {
   const itemsRef = useRef<HTMLDivElement[] | null[]>( [] )
   const containerRef = useRef<HTMLDivElement | null>( null )
+  const t = useTranslations( 'discover_features' )
 
   useEffect( () => {
     const ctx = gsap.context( () => {
@@ -36,32 +38,30 @@ const FeaturedFeature = () => {
   return (
     <div ref={containerRef}>
       <h2 className="m-0 text-center leading-[38px] md:text-4xl md:leading-[55px] max-w-xs md:max-w-sm mx-auto flex flex-col">
-        <span>temukan</span>
+        <span>{t( 'line1' )}</span>
         <span>
-          <span className="text-orange py-2 px-4 bg-orange/10 rounded-full w-fit overflow-hidden">
+          {t( 'line2.prefix' )}{' '}
+          <span className="text-orange py-2 px-4 bg-orange/10 rounded-full w-fit overflow-hidden inline-flex items-center">
             <FontAwesomeIcon icon={faPuzzlePiece}
               className="mr-4"
             />
-            <BouncingText text="fitur" />
+            <BouncingText text={t( 'line2.highlight' )} />
           </span>{' '}
-          menarik dari money manager
+          {t( 'line2.suffix' )}
         </span>
       </h2>
-      <div className="flex flex-col md:flex-row gap-8 mt-12">
+      <div className="flex flex-col md:grid md:grid-cols-2 gap-8 mt-12">
         <div
           ref={( el ) => ( itemsRef.current[0] = el )}
-          className="bg-dark-secondary flex flex-col rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
+          className="bg-dark-secondary flex flex-col justify-between h-full rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
         >
-          <div className="p-4">
-            <h2>Grafik Transaksi Interaktif</h2>
+          <div className="p-6">
+            <h2>{t( 'chart.title' )}</h2>
             <p className="text-white/80">
-              Pantau alur keuanganmu setiap bulan lewat grafik batang dan donat
-              yang intuitif. Lihat perbandingan pemasukan vs pengeluaran, serta
-              distribusi pengeluaran per kategori—semua dalam satu tampilan yang
-              jelas dan modern.
+              {t( 'chart.description' )}
             </p>
           </div>
-          <div className="relative h-64 w-full ml-4">
+          <div className="relative h-64 w-full ml-6">
             <Image
               src="/images/transaction-summary.png"
               alt="Transaction Summary"
@@ -71,18 +71,15 @@ const FeaturedFeature = () => {
           </div>
         </div>
         <div ref={( el ) => ( itemsRef.current[1] = el )}
-          className="bg-dark-secondary flex flex-col rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
+          className="bg-dark-secondary flex flex-col justify-between h-full rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
         >
-          <div className="p-4">
-            <h2>Grafik Transaksi Interaktif</h2>
+          <div className="p-6">
+            <h2>{t( 'add_transaction.title' )}</h2>
             <p className="text-white/80">
-              Pantau alur keuanganmu setiap bulan lewat grafik batang dan donat
-              yang intuitif. Lihat perbandingan pemasukan vs pengeluaran, serta
-              distribusi pengeluaran per kategori—semua dalam satu tampilan yang
-              jelas dan modern.
+              {t( 'add_transaction.description' )}
             </p>
           </div>
-          <div className="relative h-64 w-full mr-4 -translate-x-4">
+          <div className="relative h-64 w-full mr-6 -translate-x-6">
             <Image
               src="/images/add-transaction.png"
               alt="Add Transaction"

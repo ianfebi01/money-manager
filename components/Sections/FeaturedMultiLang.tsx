@@ -4,9 +4,10 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import BouncingText from '../BounchingText'
+import { useTranslations } from 'next-intl'
 
 gsap.registerPlugin( ScrollTrigger )
 
@@ -17,6 +18,7 @@ const FeaturedMultiLang = () => {
   const panel2Ref = useRef<HTMLDivElement>( null )
   const panel3Ref = useRef<HTMLDivElement>( null )
   const hRef = useRef<HTMLDivElement>( null )
+  const t = useTranslations( 'featured_multilang' )
 
   useEffect( () => {
     const ctx = gsap.context( () => {
@@ -108,17 +110,16 @@ const FeaturedMultiLang = () => {
           ref={hRef}
           className="m-0 text-center leading-[38px] md:text-4xl md:leading-[55px] max-w-xs md:max-w-sm mx-auto flex flex-col"
         >
-          <span>Gunakan aplikasi</span>
+          <span>{t( 'line1' )}</span>
           <span>
-            dalam
-            {' '}
-            <span className="text-blue-400 py-2 px-4 bg-blue-400/10 rounded-full w-fit overflow-hidden">
+            {t( 'line2.prefix' )}{' '}
+            <span className="text-blue-400 py-2 px-4 bg-blue-400/10 rounded-full w-fit overflow-hidden inline-flex items-center">
               <FontAwesomeIcon icon={faGlobe}
                 className="mr-4"
               />
-              <BouncingText text="bahasa" />
-            </span>
-            yang anda inginkan
+              <BouncingText text={t( 'line2.highlight' )} />
+            </span>{' '}
+            {t( 'line2.suffix' )}
           </span>
         </h2>
         {/* Panel 3 - final content */}

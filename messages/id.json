@@ -20,6 +20,7 @@
         "instagram": "Ikuti saya di Instagram untuk lebih dekat dengan saya"
     },
     "login": "Masuk",
+    "signin": "Masuk",
     "register": "Daftar",
     "email": "Email",
     "username": "Username",
@@ -71,5 +72,35 @@
     "no-option": "Tidak ada opsi",
     "monthly_transaction": "Transaksi Bulanan",
     "top_expense": "Pengeluaran Tertinggi",
-    "summary": "Ringkasan"
+    "summary": "Ringkasan",
+    "home_cta": "Kelola Uangmu Tanpa Ribet",
+    "home_description": "Aplikasi Money Manager modern untuk melacak pemasukan, pengeluaran, dan mencapai tujuan finansial.",
+    "home_quote": "Bukan seberapa banyak yang kamu punya, tapi seberapa baik kamu mengelolanya.",
+    "featured_multilang": {
+        "line1": "Gunakan aplikasi",
+        "line2": {
+            "prefix": "dalam",
+            "highlight": "bahasa",
+            "suffix": "yang anda inginkan"
+        }
+    },
+    "discover_features": {
+        "line1": "Temukan",
+        "line2": {
+            "prefix": "",
+            "highlight": "fitur",
+            "suffix": "menarik dari money manager"
+        },
+        "chart": {
+            "title": "Grafik Transaksi Interaktif",
+            "description": "Pantau alur keuanganmu setiap bulan lewat grafik batang dan donat yang intuitif. Lihat perbandingan pemasukan vs pengeluaran, serta distribusi pengeluaran per kategori—semua dalam satu tampilan yang jelas dan modern."
+        },
+        "add_transaction": {
+            "title": "Catat Transaksi dengan Mudah",
+            "description": "Tambahkan pemasukan dan pengeluaran hanya dalam beberapa ketukan. Semua data tersimpan otomatis dan siap untuk dianalisis."
+        }
+    },
+    "text_left_image_right": {
+        "body_copy": "## Full Online\nAkses dan kelola keuanganmu dari berbagai perangkat—laptop, tablet, atau ponsel—dengan data yang selalu tersinkron secara real-time.\nTidak perlu khawatir kehilangan data."
+    }
 }

@@ -3,8 +3,11 @@ import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignIn } from '@fortawesome/free-solid-svg-icons'
 import NavigationLink from '../Buttons/NavigationLink'
+import { useTranslations } from 'next-intl'
 
 const CallToAction = () => {
+  const t = useTranslations()
+  
   return (
     <div className="flex flex-col justify-center items-center py-16 gap-7">
       <Link href={'/'}>
@@ -17,7 +20,7 @@ const CallToAction = () => {
         />
       </Link>
       <h1 className="text-[4rem] leading-[4.5rem] text-white text-center max-w-xl m-0">
-        Kelola Uangmu Tanpa Ribet
+        {t( 'home_cta' )}
       </h1>
       <NavigationLink
         href={'/login'}
@@ -30,11 +33,10 @@ const CallToAction = () => {
           className="text-orange mr-2"
           size="lg"
         />
-        <span>Sign in</span>
+        <span>{t( 'signin' )}</span>
       </NavigationLink>
       <p className='max-w-lg text-center m-0'>
-        Aplikasi Money Manager modern untuk melacak pemasukan, pengeluaran, dan
-        mencapai tujuan finansial.
+        {t( 'home_description' )}
       </p>
     </div>
   )

@@ -20,6 +20,7 @@
         "instagram": "Follow me on Instagram to get closer to me"
     },
     "login": "Login",
+    "signin": "Signin",
     "register": "Register",
     "email": "Email",
     "username": "Username",
@@ -71,5 +72,35 @@
     "no-option": "No options",
     "monthly_transaction": "Monthly Transactions",
     "top_expense": "Top Expenses",
-    "summary": "Summary"
+    "summary": "Summary",
+    "home_cta": "Manage Your Money Without Hassle",
+    "home_description": "A modern Money Manager app to track income, expenses, and achieve your financial goals.",
+    "home_quote": "It's not about how much you have, but how well you manage it.",
+    "featured_multilang": {
+        "line1": "Use the app",
+        "line2": {
+            "prefix": "in",
+            "highlight": "your language",
+            "suffix": "of choice"
+        }
+    },
+    "discover_features": {
+        "line1": "Discover",
+        "line2": {
+            "prefix": "",
+            "highlight": "features",
+            "suffix": "from the money manager"
+        },
+        "chart": {
+            "title": "Interactive Transaction Chart",
+            "description": "Track your financial flow every month with intuitive bar and donut charts. See income vs. expense comparison and category distribution—all in one clear and modern view."
+        },
+        "add_transaction": {
+            "title": "Easily Record Transactions",
+            "description": "Add income and expenses in just a few taps. All data is saved automatically and ready to analyze."
+        }
+    },
+    "text_left_image_right": {
+        "body_copy": "## Fully Online\nAccess and manage your finances from any device—laptop, tablet, or phone—with data always synced in real-time.\nNo need to worry about losing data."
+    }
 }

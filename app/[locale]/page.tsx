@@ -4,8 +4,14 @@ import ScrolledImages from '@/components/Sections/ScrolledImages'
 import FeaturedMultiLang from '@/components/Sections/FeaturedMultiLang'
 import TextLeftImageRight from '@/components/TextLeftImageRight'
 import Quote from '@/components/Sections/Quote'
+import { Props } from '@/types'
+import { getTranslations } from 'next-intl/server'
 
-export default function HomePage() {
+export default async function HomePage( props: Omit<Props, 'children'> ) {
+  const { locale } = await props.params
+
+  const t = await getTranslations( { locale } )
+  
   return (
     <div className="grow ">
       <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full min-h-[70vh] flex items-center justify-center">
@@ -17,7 +23,7 @@ export default function HomePage() {
       <div className="bg-dark-secondary">
         <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
           <Quote
-            quote={`Bukan seberapa banyak yang kamu punya, tapi seberapa baik kamu mengelolanya.`}
+            quote={t( 'home_quote' )}
           />
         </section>
       </div>
@@ -33,10 +39,7 @@ export default function HomePage() {
           fullWidthBgImage={false}
           reverse
           scaling="contain"
-          bodyCopy={`## Full Online  
-Akses dan kelola keuanganmu dari berbagai perangkat—laptop, tablet, atau ponsel—dengan data yang selalu tersinkron secara real-time.  
-Tidak perlu khawatir kehilangan data.
-            `}
+          bodyCopy={t( 'text_left_image_right.body_copy' )}
         />
       </section>
     </div>
