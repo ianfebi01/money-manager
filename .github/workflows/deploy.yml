@@ -59,10 +59,12 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t money-manager:latest .
+          docker image ls
 
       - name: Save Docker image as tar
         run: |
-          docker save -o money-manager.tar money-manager:latest
+          docker save money-manager:latest -o money-manager.tar
+          ls -lah money-manager.tar
 
       - name: Copy image and env to VPS
         uses: appleboy/scp-action@v0.1.4
