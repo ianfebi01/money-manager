@@ -79,7 +79,7 @@ jobs:
             money-manager.tar
             docker-compose.yml
             .env.production
-          target: ~/deployments
+          target: ~/tmp
           strip_components: 0
           rm: false  # Optional: keep local files after SCP
           debug: true
@@ -97,8 +97,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            mkdir -p ~/money-manager-temp
-            cd ~/money-manager-temp
+            cd /tmp
             docker load -i money-manager.tar
             rm money-manager.tar
             mkdir -p ~/app/money-manager
@@ -106,4 +105,5 @@ jobs:
             cd ~/app/money-manager
             docker compose --env-file .env.production down
             docker compose --env-file .env.production up -d --build
-            rm -rf ~/money-manager-temp
+            rm -rf /tmp/money-manager.tar
+            rm -rf /tmp/.env.production
