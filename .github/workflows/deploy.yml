@@ -99,6 +99,7 @@ jobs:
             rm money-manager.tar
             mkdir -p ~/app/money-manager
             cp .env.production ~/app/money-manager/.env.production
+            cp docker-compose.yml ~/app/money-manager/docker-compose.yml
             cd ~/app/money-manager
             docker compose --env-file .env.production down
             docker compose --env-file .env.production up -d --build
