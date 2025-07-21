@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import connectionPool from '@/lib/db'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import authOptions from '@/lib/authOptions'
 
 export async function GET( req: NextRequest ) {
   const session = await getServerSession( authOptions )

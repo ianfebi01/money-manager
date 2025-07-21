@@ -2,8 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
 import * as yup from 'yup'
+import authOptions from '@/lib/authOptions'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),

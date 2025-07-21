@@ -1,7 +1,7 @@
+import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
-import { authOptions } from '../auth/[...nextauth]/route'
 
 // app/api/categories/route.ts
 export async function GET( req: Request ) {

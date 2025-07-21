@@ -1,16 +1,18 @@
-import React from 'react';
-import Script from 'next/script';
+import React from 'react'
+import Script from 'next/script'
 
 const GoogleAnalytics = () => {
+  if ( process.env.NODE_ENV !== 'production' ) return null
+  
   return (
     <>
       <Script
-        strategy='lazyOnload'
+        strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
       />
 
-      <Script id=''
-        strategy='lazyOnload'
+      <Script id=""
+        strategy="lazyOnload"
       >
         {`
               window.dataLayer = window.dataLayer || [];
@@ -22,7 +24,7 @@ const GoogleAnalytics = () => {
           `}
       </Script>
     </>
-  );
-};
+  )
+}
 
-export default GoogleAnalytics;
+export default GoogleAnalytics

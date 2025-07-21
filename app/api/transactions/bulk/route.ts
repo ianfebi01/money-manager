@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import authOptions from '@/lib/authOptions'
 
 import * as yup from 'yup'
 
