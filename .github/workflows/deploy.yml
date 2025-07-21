@@ -65,6 +65,8 @@ jobs:
         run: |
           docker save money-manager:latest -o money-manager.tar
           ls -lah money-manager.tar
+      - name: List contents before SCP
+        run: ls -lah
 
       - name: Upload app image & configs to VPS
         uses: appleboy/scp-action@v0.1.4
@@ -79,6 +81,7 @@ jobs:
             .env.production
           target: ~/deployments
           strip_components: 0
+          rm: false  # Optional: keep local files after SCP
           debug: true
 
   deploy:
