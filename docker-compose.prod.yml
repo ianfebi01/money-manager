@@ -1,3 +1,0 @@
-services:
-  web-profile-fe:
-    image: web-profile-fe
