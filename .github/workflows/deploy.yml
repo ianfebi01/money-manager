@@ -76,7 +76,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           source: "money-manager.tar,docker-compose.yml,.env.production"
-          target: ~/tmp
+          target: /tmp
           strip_components: 0
           rm: false  # Optional: keep local files after SCP
           debug: true
@@ -97,9 +97,9 @@ jobs:
             cd /tmp
             docker load -i money-manager.tar
             rm money-manager.tar
-            mkdir -p ~/app/money-manager
-            cp .env.production ~/app/money-manager/.env.production
-            cd ~/app/money-manager
+            mkdir -p /app/money-manager
+            cp .env.production /app/money-manager/.env.production
+            cd /app/money-manager
             docker compose --env-file .env.production down
             docker compose --env-file .env.production up -d --build
             rm -rf /tmp/money-manager.tar
