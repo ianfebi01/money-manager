@@ -5,7 +5,7 @@ import { getToken } from 'next-auth/jwt'
 import { routing } from './i18n/routing'
 
 const { locales } = routing
-const publicPages = ['/', '/login']
+const publicPages = ['/', '/login', '/privacy-policy']
 
 const handleI18nRouting = createMiddleware( routing )
 

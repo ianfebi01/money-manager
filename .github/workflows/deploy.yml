@@ -33,18 +33,27 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
-      - name: Build Docker image with Docker Compose
+      - name: Create .env.production file from secrets
         run: |
-          # Create a .env file from GitHub secrets for Docker Compose to use
-          echo "NEXT_PUBLIC_STRAPI_API_URL=${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}" >> .env
-          echo "NEXT_PUBLIC_GOOGLE_ANALYTICS=${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}" >> .env
-          echo "NEXT_PUBLIC_STRAPI_API_TOKEN=${{ secrets.NEXT_PUBLIC_STRAPI_API_TOKEN }}" >> .env
-          echo "NEXT_PUBLIC_SEARCH_URL=${{ secrets.NEXT_PUBLIC_SEARCH_URL }}" >> .env
-          echo "NEXT_PUBLIC_SEARCH_KEY=${{ secrets.NEXT_PUBLIC_SEARCH_KEY }}" >> .env
+          cat <<EOF > .env.production
+          NEXT_PUBLIC_GOOGLE_ANALYTICS=${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}
 
-          # Build the image using Docker Compose
-          docker-compose -f docker-compose.yml build
+          POSTGRES_URL=${{ secrets.POSTGRES_URL }}
+          POSTGRES_URL_NON_POOLING=${{ secrets.POSTGRES_URL_NON_POOLING }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }}
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
 
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+
+          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+
+          NODE_ENV=production
+          EOF
       - name: Save Docker image as a tar file (Optional for VPS deployment)
         run: |
           docker save -o web-profile-fe.tar web-profile-fe:latest
