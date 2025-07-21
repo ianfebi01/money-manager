@@ -102,7 +102,7 @@ jobs:
             cp docker-compose.yml ~/app/money-manager/docker-compose.yml
             cd ~/app/money-manager
             docker compose --env-file .env.production down
-            docker compose --env-file .env.production up -d --build
+            docker compose --env-file .env.production up -d
             rm -rf /tmp/money-manager.tar
             rm -rf /tmp/.env.production
             rm -rf /tmp/docker-compose.yml
