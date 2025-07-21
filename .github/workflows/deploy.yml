@@ -63,7 +63,7 @@ jobs:
 
       - name: Save Docker image as tar
         run: |
-          docker save money-manager:latest -o money-manager.tar
+          docker save -o money-manager.tar money-manager:latest
           ls -lah money-manager.tar
       - name: List contents before SCP
         run: ls -lah
@@ -75,10 +75,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
-          source: |
-            money-manager.tar
-            docker-compose.yml
-            .env.production
+          source: "money-manager.tar"
           target: ~/tmp
           strip_components: 0
           rm: false  # Optional: keep local files after SCP
