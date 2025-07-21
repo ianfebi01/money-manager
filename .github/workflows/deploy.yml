@@ -54,18 +54,24 @@ jobs:
 
           NODE_ENV=production
           EOF
-      - name: Save Docker image as a tar file (Optional for VPS deployment)
+      - name: Build Docker image
         run: |
-          docker save -o web-profile-fe.tar web-profile-fe:latest
+          docker build -t money-manager:latest .
 
-      - name: Copy image to VPS
+      - name: Save Docker image as tar
+        run: |
+          docker save -o money-manager.tar money-manager:latest
+
+      - name: Copy image and env to VPS
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "web-profile-fe.tar"
-          target: "/tmp"
+          source: |
+            money-manager.tar
+            .env.production
+          target: "~/money-manager-temp"
           debug: true
 
   deploy:
@@ -73,16 +79,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH into VPS and Deploy
+      - name: SSH into VPS and deploy
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            docker load -i /tmp/web-profile-fe.tar && \
-            rm /tmp/web-profile-fe.tar && \
-            cd app/web-profile-fe && \
-            docker compose down && \
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d && \
-            exit
+            mkdir -p ~/money-manager-temp
+            cd ~/money-manager-temp
+
+            # Load Docker image
+            docker load -i money-manager.tar
+            rm money-manager.tar
+
+            # Copy env file into app dir if needed
+            cp .env.production ~/app/money-manager/.env.production
+
+            # Deploy using docker compose
+            cd ~/app/money-manager
+            docker compose --env-file .env.production down
+            docker compose --env-file .env.production up -d --build
+
+            # Cleanup
+            rm -rf ~/money-manager-temp
