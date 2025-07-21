@@ -1,16 +1,35 @@
 version: '3.8'
 services:
-  web-profile-fe:
+  money-manager:
     restart: always
     build: .
-    image: web-profile-fe:latest  # Make sure this is the correct tag
-    container_name: web-profile-fe
-    ports:
-      - 3000:3000
+    image: money-manager:latest  # Make sure this is the correct tag
+    container_name: money-manager
+    # ports:
+    #   - 3000:3000
     networks:
-      - app
+      - proxy
+      - database
     env_file:
       - .env
+  database:
+    image: postgres:16
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      DATABASE_HOST: database
+      POSTGRES_DB: money_manager
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # Only uncomment this to expose the database for direct access
+    # ports:
+    #   - 5431:5432
+    networks:
+      - proxy
+      - database
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
 networks:
-  app:
-    driver: bridge
+  database:
+  proxy:
+    external: true
