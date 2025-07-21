@@ -66,16 +66,19 @@ jobs:
           docker save money-manager:latest -o money-manager.tar
           ls -lah money-manager.tar
 
-      - name: Copy image and env to VPS
+      - name: Upload app image & configs to VPS
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
           source: |
             money-manager.tar
+            docker-compose.yml
             .env.production
-          target: "~/money-manager-temp"
+          target: ~/deployments
+          strip_components: 0
           debug: true
 
   deploy:
@@ -93,18 +96,11 @@ jobs:
           script: |
             mkdir -p ~/money-manager-temp
             cd ~/money-manager-temp
-
-            # Load Docker image
             docker load -i money-manager.tar
             rm money-manager.tar
-
-            # Copy env file into app dir if needed
+            mkdir -p ~/app/money-manager
             cp .env.production ~/app/money-manager/.env.production
-
-            # Deploy using docker compose
             cd ~/app/money-manager
             docker compose --env-file .env.production down
             docker compose --env-file .env.production up -d --build
-
-            # Cleanup
             rm -rf ~/money-manager-temp
