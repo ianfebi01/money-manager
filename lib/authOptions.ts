@@ -9,6 +9,8 @@ interface ExtendedProfile extends DefaultProfile {
   id?: string
 }
 
+const isProd = process.env.NODE_ENV === 'production'
+
 const authOptions: AuthOptions = {
   providers : [
     GoogleProvider( {
@@ -21,6 +23,20 @@ const authOptions: AuthOptions = {
     maxAge    : 60 * 60, // 1 hour
     updateAge : 15 * 60, // refresh token every 5 minutes of activity
   },
+  ...( isProd && {
+    cookies : {
+      sessionToken : {
+        name    : `__Secure-next-auth.session-token`,
+        options : {
+          httpOnly : true,
+          sameSite : 'lax',
+          path     : '/',
+          secure   : true,
+          domain   : '.ianfebisastrataruna.my.id', // <- titik di depan wajib
+        },
+      },
+    },
+  } ),
   callbacks : {
     async jwt( {
       token,
