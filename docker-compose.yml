@@ -4,13 +4,16 @@ services:
     build: .
     image: money-manager:latest  # Make sure this is the correct tag
     container_name: money-manager
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000
     networks:
       - proxy
       - database
     env_file:
       - .env.production
+    environment:
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
   database:
     image: postgres:16
     environment:
