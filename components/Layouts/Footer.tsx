@@ -52,6 +52,11 @@ const Footer = () => {
             />
           </div>
         </div>
+        <Link href={'/privacy-policy'}
+          className="gap-2 flex justify-center text-base m-0 font-medium text-white/80 no-underline hover:text-white-overlay transition-default"
+        >
+          Privacy Policy
+        </Link>
       </div>
     </section>
   )
