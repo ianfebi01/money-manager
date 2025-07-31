@@ -20,8 +20,8 @@ const authOptions: AuthOptions = {
   ],
   session : {
     strategy  : 'jwt',
-    maxAge    : 60 * 60, // 1 hour
-    updateAge : 15 * 60, // refresh token every 5 minutes of activity
+    maxAge    : 30 * 24 * 60 * 60, // 30 days in seconds
+    updateAge : 24 * 60 * 60,   // refresh session every 24 hours
   },
   ...( isProd && {
     cookies : {
