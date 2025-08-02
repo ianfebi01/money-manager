@@ -38,11 +38,29 @@ const CashFlow = () => {
   const mockLoop = new Array( 6 ).fill( 0 )
 
   const changeMonth = ( type: 'prev' | 'next' ) => {
-    if ( type === 'prev' ) {
-      setFilter( ( prev ) => ( { ...prev, month : String( Number( prev.month ) - 1 ) } ) )
-    } else if ( type === 'next' ) {
-      setFilter( ( prev ) => ( { ...prev, month : String( Number( prev.month ) + 1 ) } ) )
-    }
+    setFilter( ( prev ) => {
+      let newMonth = Number( prev.month )
+      let newYear = Number( prev.year )
+
+      if ( type === 'prev' ) {
+        newMonth--
+        if ( newMonth < 1 ) {
+          newMonth = 12
+          newYear--
+        }
+      } else {
+        newMonth++
+        if ( newMonth > 12 ) {
+          newMonth = 1
+          newYear++
+        }
+      }
+
+      return {
+        month : String( newMonth ).padStart( 2, '0' ), // 🔒 Padded, safe month
+        year  : String( newYear ),
+      }
+    } )
   }
 
   /**
