@@ -1,4 +1,4 @@
-'use client';;
+'use client'
 import { useState } from 'react'
 import { IFilter, useGetTopExpense } from '@/lib/hooks/api/dashboard'
 import { useFormatDate } from '@/lib/hooks/useFormatDate'
@@ -9,8 +9,8 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import Doughnut from '@/components/Chart/Doughnut'
-import SkeletonExpenseDoughnutChart from './SkeletonExpenseDoughnutChart';
-import { useTranslations } from 'next-intl';
+import SkeletonExpenseDoughnutChart from './SkeletonExpenseDoughnutChart'
+import { useTranslations } from 'next-intl'
 
 const ExpenseDoughnutChart = () => {
   const t = useTranslations()
@@ -25,11 +25,29 @@ const ExpenseDoughnutChart = () => {
   const { data, isFetching, isError } = useGetTopExpense( filter )
 
   const changeMonth = ( type: 'prev' | 'next' ) => {
-    if ( type === 'prev' ) {
-      setFilter( ( prev ) => ( { ...prev, month : String( Number( prev.month ) - 1 ) } ) )
-    } else if ( type === 'next' ) {
-      setFilter( ( prev ) => ( { ...prev, month : String( Number( prev.month ) + 1 ) } ) )
-    }
+    setFilter( ( prev ) => {
+      let newMonth = Number( prev.month )
+      let newYear = Number( prev.year )
+
+      if ( type === 'prev' ) {
+        newMonth--
+        if ( newMonth < 1 ) {
+          newMonth = 12
+          newYear--
+        }
+      } else {
+        newMonth++
+        if ( newMonth > 12 ) {
+          newMonth = 1
+          newYear++
+        }
+      }
+
+      return {
+        month : String( newMonth ).padStart( 2, '0' ), // 🔒 Padded, safe month
+        year  : String( newYear ),
+      }
+    } )
   }
 
   return (
