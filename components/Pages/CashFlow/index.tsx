@@ -218,7 +218,7 @@ const CashFlow = () => {
                           </div>
                         </td>
                         <td
-                          className="p-0 text-white-overlay"
+                          className="p-0 text-white-overlay translate-y-0.5"
                           style={{ width : '1px', whiteSpace : 'nowrap' }}
                         >
                           {!!subItem?.category_name && (
