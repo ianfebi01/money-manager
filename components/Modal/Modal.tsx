@@ -97,7 +97,7 @@ const Modal: FunctionComponent<Props> = ( props ) => {
                     [variant === 'warning' && 'max-w-sm'],
                     [
                       variant === 'fullscreen' &&
-                        'max-w-[unset] max-h-[unset] h-screen',
+                        'max-w-[unset] max-h-[unset] h-[100dvh]',
                     ]
                   )}
                 >
