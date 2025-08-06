@@ -2,7 +2,7 @@
 import { useMemo } from 'react'
 import { Disclosure, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { IOptions } from '@/types/form'
 import { cn } from '@/lib/utils'
 import { useCategories } from '@/lib/hooks/api/cashFlow'
@@ -72,13 +72,13 @@ export default function DropdownCategories( {
             )}
           >
             {selectedLabel ? (
-              <div className="text-white">
+              <div className="text-white text-base">
                 <DefaultCategories name={selectedLabel}
                   center
                 />
               </div>
             ) : (
-              <span className="line-clamp-1 text-white-overlay">{label}</span>
+              <span className="line-clamp-1 text-white-overlay text-base">{label}</span>
             )}
             <div
               className={`transition-all duration-300 ease-out ${
@@ -128,20 +128,14 @@ export default function DropdownCategories( {
                               <button
                                 type="button"
                                 className={cn(
-                                  'flex flex-wrap items-center justify-start w-full gap-2 px-4 py-3 text-left no-underline transition-all duration-300 ease-in-out',
+                                  'flex flex-wrap items-center justify-center md:justify-start w-full gap-2 px-4 py-3 text-left no-underline transition-all duration-300 ease-in-out',
                                   'overflow-hidden',
-                                  'text-center'
+                                  'text-center text-sm lg:text-base'
                                 )}
                               >
                                 <DefaultCategories name={item?.label}
                                   center
                                 />
-                                {value === item.value && (
-                                  <FontAwesomeIcon
-                                    icon={faCheck}
-                                    className="text-white-overlay w-4 h-4 shrink-0 mx-auto"
-                                  />
-                                )}
                               </button>
                             </td>
                           ) )}

@@ -130,7 +130,7 @@ const SingleDatePicker = ( {
         'w-full min-w-[300px]',
         'flex justify-between items-center text-left',
         'p-2 border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out',
-        'text-sm lg:text-base',
+        'text-base',
         ['focus:border-white/50 border-white/25'],
         ['pr-4'],
         [!value && 'text-white-overlay', !!value && 'text-white']

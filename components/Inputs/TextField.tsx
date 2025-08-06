@@ -77,7 +77,7 @@ const TextField = ( {
     <div className="relative">
       {type === 'currency-id' && (
         <>
-          <span className="absolute left-2 inset-y-0 my-auto pointer-events-none h-fit">
+          <span className="absolute left-2 inset-y-0 my-auto pointer-events-none h-fit text-base">
             Rp.
           </span>
           <input
@@ -94,7 +94,7 @@ const TextField = ( {
               'w-full',
               'py-2 px-8',
               'text-white border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
-              'text-sm lg:text-base',
+              'text-base',
               [
                 'focus:border-white/50 border-white/25',
                 touched && error && 'focus:border-red-500 border-red-500',
@@ -119,7 +119,7 @@ const TextField = ( {
           className={cn(
             'w-full',
             'text-white p-2 border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
-            'text-sm lg:text-base',
+            'text-base',
             [
               'focus:border-white/50 border-white/25',
               touched && error && 'focus:border-red-500 border-red-500',

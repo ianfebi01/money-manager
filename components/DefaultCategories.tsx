@@ -29,7 +29,7 @@ const Wrapper = ( { text, icon, center = false }: WrapperProps ) => (
   <div
     className={cn( [
       center &&
-        'flex flex-wrap md:flex-nowrap gap-2 justify-center items-center w-fit',
+        'flex flex-col md:flex-row flex-wrap md:flex-nowrap gap-2 justify-center items-center w-fit',
       !center && 'flex gap-2 items-center w-fit',
       'shrink-0'
     ] )}
@@ -41,7 +41,7 @@ const Wrapper = ( { text, icon, center = false }: WrapperProps ) => (
         />
       </div>
     )}
-    <p className="m-0 text-inherit break-all line-clamp-1">{text}</p>
+    <span className="m-0 text-inherit break-all line-clamp-1">{text}</span>
   </div>
 )
 
