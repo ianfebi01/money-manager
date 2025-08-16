@@ -218,8 +218,7 @@ const CashFlow = () => {
                           </div>
                         </td>
                         <td
-                          className="p-0 text-white-overlay translate-y-0.5"
-                          style={{ width : '1px', whiteSpace : 'nowrap' }}
+                          className="p-0 text-white-overlay translate-y-0.5 w-1/4 md:w-[35%]"
                         >
                           {!!subItem?.category_name && (
                             <DefaultCategories name={subItem?.category_name} />
