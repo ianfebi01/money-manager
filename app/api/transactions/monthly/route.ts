@@ -3,40 +3,38 @@ import connectionPool from '@/lib/db'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
+import { addMonths } from 'date-fns'
 
-export async function GET( req: NextRequest ) {
-  const session = await getServerSession( authOptions )
+export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions)
   const userId = session?.user?.id
 
-  if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { searchParams } = new URL( req.url )
-  const month = searchParams.get( 'month' )
-  const year = searchParams.get( 'year' )
-  const timezone = searchParams.get( 'timezone' )
+  const { searchParams } = new URL(req.url)
+  const month = searchParams.get('month')
+  const year = searchParams.get('year')
+  const timezone = searchParams.get('timezone')
 
-  if ( !month || !year ) {
+  if (!month || !year) {
     return NextResponse.json(
-      { message : 'Month and year are required' },
-      { status : 400 }
+      { message: 'Month and year are required' },
+      { status: 400 }
     )
   }
-  if ( !timezone ) {
+  if (!timezone) {
     return NextResponse.json(
-      { message : 'Timezone is required' },
-      { status : 400 }
+      { message: 'Timezone is required' },
+      { status: 400 }
     )
   }
 
-  const start = new Date( `${year}-${month.padStart( 2, '0' )}-01` )
-  const end = new Date(
-    `${year}-${String( Number( month ) + 1 ).padStart( 2, '0' )}-01`
-  )
-
-  const startDate = fromZonedTime( start, timezone )
-  const endDate = fromZonedTime( end, timezone )
+  const start = new Date(`${year}-${month.padStart(2, '0')}-01`)
+  const end = addMonths(start, 1)
+  const startDate = fromZonedTime(start, timezone)
+  const endDate = fromZonedTime(end, timezone)
 
   // Get transactions
   const { rows: transactions } = await connectionPool.query(
@@ -56,9 +54,9 @@ export async function GET( req: NextRequest ) {
   let income = 0
   let expense = 0
 
-  for ( const t of transactions ) {
-    if ( t.type === 'income' ) income += Number( t.amount )
-    if ( t.type === 'expense' ) expense += Number( t.amount )
+  for (const t of transactions) {
+    if (t.type === 'income') income += Number(t.amount)
+    if (t.type === 'expense') expense += Number(t.amount)
   }
 
   // Group by day
@@ -72,40 +70,42 @@ export async function GET( req: NextRequest ) {
     }
   > = {}
 
-  for ( const t of transactions ) {
-    const localDate = toZonedTime( new Date( t.date ), timezone )
-    const day = String( localDate.getDate() ).padStart( 2, '0' )
+  for (const t of transactions) {
+    const localDate = toZonedTime(new Date(t.date), timezone)
+    const day = String(localDate.getDate()).padStart(2, '0')
 
-    if ( !grouped[day] ) {
+    if (!grouped[day]) {
       grouped[day] = {
         day,
-        income       : 0,
-        expense      : 0,
-        transactions : [],
+        income: 0,
+        expense: 0,
+        transactions: [],
       }
     }
 
-    grouped[day].transactions.push( {
-      id            : t.id,
-      category_id   : t.category_id,
-      category_name : t.category_name,
-      amount        : Number( t.amount ),
-      description   : t.description,
-      date          : t.date,
-      type          : t.type,
-    } )
+    grouped[day].transactions.push({
+      id: t.id,
+      category_id: t.category_id,
+      category_name: t.category_name,
+      amount: Number(t.amount),
+      description: t.description,
+      date: t.date,
+      type: t.type,
+    })
 
-    if ( t.type === 'income' ) grouped[day].income += Number( t.amount )
-    if ( t.type === 'expense' ) grouped[day].expense += Number( t.amount )
+    if (t.type === 'income') grouped[day].income += Number(t.amount)
+    if (t.type === 'expense') grouped[day].expense += Number(t.amount)
   }
 
-  const transactionsArray = Object.values( grouped )
+  const transactionsArray = Object.values(grouped).sort(
+    (a, b) => b.day.localeCompare(a.day) // DESC by day: '31', '30', ..., '01'
+  )
 
-  return NextResponse.json( {
-    data : {
+  return NextResponse.json({
+    data: {
       income,
       expense,
-      transactions : transactionsArray,
+      transactions: transactionsArray,
     },
-  } )
+  })
 }
