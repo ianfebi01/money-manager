@@ -43,11 +43,16 @@
         "health": "Health",
         "education": "Education",
         "gift": "Gift",
+        "bill_subscription": "Bills & Subscriptions",
         "house_hold": "Household",
-        "work": "Work",
-        "bill_subscription": "Bill & Subscription",
         "transportation": "Transportation",
-        "other": "Other"
+        "other": "Other",
+        "work": "Salary",
+        "freelance": "Freelance",
+        "bonus": "Bonus",
+        "gift_income": "Gift",
+        "interest": "Interest",
+        "investment": "Investment"
     },
     "reset": "Reset",
     "set_date": "Select Date",
@@ -108,8 +113,8 @@
     "save": "Save",
     "recent_transactions": "Recent transactions",
     "delete_warning": {
-    "title": "Are you sure?",
-    "description": "Are you sure want to delete transaction?",
-    "confirm": "Confirm"
-  }
+        "title": "Are you sure?",
+        "description": "Are you sure want to delete transaction?",
+        "confirm": "Confirm"
+    }
 }
