@@ -3,11 +3,7 @@ import Button from '@/components/Buttons/Button'
 import Modal from './Modal'
 import { FormEvent, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faPenSquare,
-  faPlus,
-  faSquareMinus,
-} from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faSquareMinus } from '@fortawesome/free-solid-svg-icons';
 import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
 import SingleDatePicker from '../Inputs/SingleDatePicker'
 import TextField from '../Inputs/TextField'
@@ -150,7 +146,7 @@ const AddTransaction = () => {
       description : val?.description,
       category    : {
         label : val?.category_name || '',
-        value : val?.category_id
+        value : val?.category_id,
       },
     } )
   }
@@ -290,37 +286,68 @@ const AddTransaction = () => {
             </button>
           </form>
           <div className="flex flex-col gap-2 mt-4">
-            {transactions.map( ( item, index ) => (
-              <div className="flex flex-row gap-4 items-center"
-                key={index}
-              >
-                <Button variant="iconOnly">
-                  <FontAwesomeIcon
-                    icon={faSquareMinus}
-                    className="text-white-overlay"
-                    onClick={() => handleDelete( index )}
-                  />
-                </Button>
-                <Button variant="iconOnly">
-                  <FontAwesomeIcon
-                    icon={faPenSquare}
-                    className="text-white-overlay"
-                    onClick={() => handleEdit( index )}
-                  />
-                </Button>
-                <DefaultCategories name={item.category.label} />
-                <p className="m-0 line-clamp-1 text-left">{item.description}</p>
-                <div className="grow" />
-                <p
-                  className={cn( 'm-0', [
-                    item.type === 'income' && 'text-blue-400',
-                    item.type === 'expense' && 'text-orange',
-                  ] )}
-                >
-                  {formatCurency( item.amount )}
-                </p>
-              </div>
-            ) )}
+            <table border={0}
+              className="border-none table-auto w-full"
+            >
+              <tbody>
+                {transactions.map( ( item, index ) => (
+                  <tr
+                    key={index}
+                    className="hover:bg-dark/80 cursor-pointer"
+                    role="button"
+                    onClick={() => handleEdit( index )} // row click = edit
+                  >
+                    {/* Delete button cell */}
+                    <td
+                      className="px-4 text-white-overlay"
+                      style={{ width : '1px', whiteSpace : 'nowrap' }}
+                    >
+                      <div className="flex gap-2 items-center translate-y-1">
+                        <Button
+                          variant="iconOnly"
+                          onClick={( e ) => {
+                            e.stopPropagation() // prevent the row onClick
+                            // if your handler expects an index, keep this:
+                            // handleDelete(index)
+                            // if it expects an id like in your table example, use this:
+                            handleDelete( index )
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={faSquareMinus}
+                            className="text-white-overlay"
+                          />
+                        </Button>
+                      </div>
+                    </td>
+
+                    {/* Category cell */}
+                    <td className="p-0 text-white-overlay translate-y-0.5 w-1/4 md:w-[35%]">
+                      {!!item?.category?.label && (
+                        <DefaultCategories name={item.category.label} />
+                      )}
+                    </td>
+
+                    {/* Description cell */}
+                    <td className="px-4">
+                      <p className="m-0 line-clamp-1">{item.description}</p>
+                    </td>
+
+                    {/* Amount cell */}
+                    <td className="p-0 pr-4 text-right">
+                      <p
+                        className={cn( 'm-0', {
+                          'text-blue-400' : item.type === 'income',
+                          'text-orange'   : item.type === 'expense',
+                        } )}
+                      >
+                        {formatCurency( item.amount )}
+                      </p>
+                    </td>
+                  </tr>
+                ) )}
+              </tbody>
+            </table>
           </div>
         </div>
       </Modal>
