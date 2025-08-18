@@ -2,10 +2,10 @@
 import { useEffect } from 'react'
 import { apiAuth } from '../api'
 import { useRemoveUserData } from './api/auth'
-import { useTranslations } from 'next-intl'
+// import { useTranslations } from 'next-intl'
 
 const useAxiosAuth = () => {
-  const t = useTranslations()
+  // const t = useTranslations()
 
   // const refreshPromise: any = null
   const removeUserData = useRemoveUserData()
