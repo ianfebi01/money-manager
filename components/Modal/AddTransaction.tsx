@@ -3,7 +3,7 @@ import Button from '@/components/Buttons/Button'
 import Modal from './Modal'
 import { FormEvent, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faSquareMinus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSquareMinus } from '@fortawesome/free-solid-svg-icons'
 import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
 import SingleDatePicker from '../Inputs/SingleDatePicker'
 import TextField from '../Inputs/TextField'
@@ -16,6 +16,7 @@ import { IOptions } from '@/types/form'
 import { useCreate } from '@/lib/hooks/api/cashFlow'
 import { useTranslations } from 'next-intl'
 import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
+import toast from 'react-hot-toast'
 
 interface ITransactionFormInput
   extends Omit<IBodyTransaction, 'date' | 'category'> {
@@ -53,9 +54,11 @@ const AddTransaction = () => {
   const handleAddTransaction = ( e: FormEvent ) => {
     e.preventDefault()
     if ( !sharedDate ) {
-      alert( 'Please select a date first.' )
+      return toast.error( t( 'toast.error_date_required' ) )
+    }
 
-      return
+    if ( !form.category?.value ) {
+      return toast.error( t( 'toast.error_category_required' ) )
     }
 
     const newTransaction: ITransactionForm = {
@@ -81,6 +84,13 @@ const AddTransaction = () => {
     const tmp = []
 
     if ( !!form.amount ) {
+      if ( !form.category?.value ) {
+        return toast.error( t( 'toast.error_category_required' ) )
+      }
+      if ( !sharedDate ) {
+        return toast.error( t( 'toast.error_date_required' ) )
+      }
+
       tmp.push( {
         ...form,
         date : sharedDate
@@ -90,12 +100,19 @@ const AddTransaction = () => {
       } )
     }
 
-    const transformTransactions = transactions.map( ( item ) => ( {
-      ...item,
-      category : Number( item.category.value ),
-    } ) )
+    const transformTransactions = transactions.map( ( item ) => {
+      return {
+        ...item,
+        category : Number( item.category.value ),
+      }
+    } )
 
     const combined = [...tmp, ...transformTransactions]
+
+    if ( !combined.length ) {
+      return toast.error( t( 'toast.error_no_transactions' ) )
+    }
+
     try {
       setLoading( true )
       await createMultiple( combined )

@@ -139,6 +139,10 @@
     "toast": {
         "error_create_transaction": "Gagal membuat transaksi",
         "error_delete_transaction": "Gagal menghapus transaksi",
-        "error_edit_transaction": "Gagal mengubah transaksi"
+        "error_edit_transaction": "Gagal mengubah transaksi",
+        "error_category_required": "Silakan pilih kategori terlebih dahulu.",
+        "error_transaction_category": "Salah satu transaksi tidak memiliki kategori.",
+        "error_no_transactions": "Tidak ada transaksi yang valid untuk disimpan.",
+        "error_date_required": "Silakan pilih tanggal terlebih dahulu."
     }
 }

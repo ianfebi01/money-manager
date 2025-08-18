@@ -11,6 +11,7 @@ import { IOptions } from '@/types/form'
 import { useEdit } from '@/lib/hooks/api/cashFlow'
 import { useTranslations } from 'next-intl'
 import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
+import toast from 'react-hot-toast'
 
 interface ITransactionFormInput
   extends Omit<IBodyTransaction, 'date' | 'category'> {
@@ -87,7 +88,10 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
   }
 
   const handleSubmit = async () => {
-    if ( !!form.amount && initialValue?.id ) {
+    if ( !sharedDate ) {
+      return toast.error( t( 'toast.error_date_required' ) )
+    }
+    if ( initialValue?.id ) {
       try {
         setLoading( true )
         await edit(
