@@ -7,6 +7,7 @@ import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
 import toast from 'react-hot-toast'
 import { IApi } from '@/types/api'
 import { ICategory } from '@/types/api/categories'
+import { useTranslations } from 'next-intl'
 
 interface IMonthlyTransactions {
   income: number
@@ -93,6 +94,7 @@ export const useGetRecentTransactions = (
 export const useCreate = () => {
   const axiosAuth = useAxiosAuth()
   const queryClient = useQueryClient()
+  const t = useTranslations()
 
   const create = async ( body: IBodyTransaction ) => {
     try {
@@ -120,7 +122,7 @@ export const useCreate = () => {
 
       return postTransaction
     } catch ( error ) {
-      toast.error( 'Error create transaction' )
+      toast.error( t( 'toast.error_create_transaction' ) )
       throw error
     }
   }
@@ -149,7 +151,7 @@ export const useCreate = () => {
 
       return postTransaction
     } catch ( error ) {
-      toast.error( 'Error creating transactions' )
+      toast.error( t( 'toast.error_create_transaction' ) )
       throw error
     }
   }
@@ -162,6 +164,7 @@ export const useCreate = () => {
 export const useEdit = () => {
   const axiosAuth = useAxiosAuth()
   const queryClient = useQueryClient()
+  const t = useTranslations()
 
   const edit = async ( body: IBodyTransaction, id: number ) => {
     try {
@@ -187,7 +190,7 @@ export const useEdit = () => {
 
       return postTransaction
     } catch ( error ) {
-      toast.error( 'Error edit transaction' )
+      toast.error( t( 'toast.error_create_transaction' ) )
       throw error
     }
   }
@@ -201,6 +204,7 @@ export const useEdit = () => {
 export const useDelete = () => {
   const axiosAuth = useAxiosAuth()
   const queryClient = useQueryClient()
+  const t = useTranslations()
 
   const deleteTransaction = async ( id: number ) => {
     try {
@@ -221,7 +225,7 @@ export const useDelete = () => {
 
       return res
     } catch ( error ) {
-      toast.error( 'Error creating transactions' )
+      toast.error( t( 'toast.error_delete_transaction' ) )
       throw error
     }
   }

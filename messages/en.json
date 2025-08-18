@@ -135,5 +135,10 @@
             "title": "Money Manager | by ianfebi01",
             "desc": "Manage Your Money Without Hassle - Track income, expenses, and reach your financial goals."
         }
+    },
+    "toast": {
+        "error_create_transaction": "Error creating transaction",
+        "error_delete_transaction": "Error deleting transaction",
+        "error_edit_transaction": "Error editing transaction"
     }
 }

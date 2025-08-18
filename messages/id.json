@@ -135,5 +135,10 @@
             "title": "Money Manager | by ianfebi01",
             "desc": "Atur uang tanpa ribet — catat pemasukan, pengeluaran, dan capai tujuan finansial."
         }
+    },
+    "toast": {
+        "error_create_transaction": "Gagal membuat transaksi",
+        "error_delete_transaction": "Gagal menghapus transaksi",
+        "error_edit_transaction": "Gagal mengubah transaksi"
     }
 }
