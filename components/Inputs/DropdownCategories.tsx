@@ -2,7 +2,7 @@
 import { useMemo } from 'react'
 import { Disclosure, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { IOptions } from '@/types/form'
 import { cn } from '@/lib/utils'
 import { useCategories } from '@/lib/hooks/api/cashFlow'
@@ -73,12 +73,12 @@ export default function DropdownCategories( {
           >
             {selectedLabel ? (
               <div className="text-white text-base">
-                <DefaultCategories name={selectedLabel}
-                  center
-                />
+                <DefaultCategories name={selectedLabel} />
               </div>
             ) : (
-              <span className="line-clamp-1 text-white-overlay text-base">{label}</span>
+              <span className="line-clamp-1 text-white-overlay text-base">
+                {label}
+              </span>
             )}
             <div
               className={`transition-all duration-300 ease-out ${
