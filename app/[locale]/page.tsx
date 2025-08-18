@@ -30,7 +30,7 @@ export default async function HomePage( props: Omit<Props, 'children'> ) {
       <section className="hidden md:block grow max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
         <FeaturedMultiLang />
       </section>
-      <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full">
+      <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full max-lg:pt-16">
         <FeaturedFeature />
       </section>
       <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
