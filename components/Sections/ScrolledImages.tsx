@@ -140,7 +140,7 @@ const ScrolledImages = () => {
   return (
     <div
       ref={scrollContainerRef}
-      className="relative w-full h-[550px] overflow-hidden -translate-y-[112px]"
+      className="relative w-full h-[550px] overflow-hidden -translate-y-[112px] pointer-events-none"
     >
       <div
         ref={scrollContentRef}
