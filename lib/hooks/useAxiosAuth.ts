@@ -1,9 +1,8 @@
-'use client'
+'use client';
 import { useEffect } from 'react'
 import { apiAuth } from '../api'
 import { useRemoveUserData } from './api/auth'
 import { useTranslations } from 'next-intl'
-import toast from 'react-hot-toast'
 
 const useAxiosAuth = () => {
   const t = useTranslations()
@@ -18,9 +17,9 @@ const useAxiosAuth = () => {
       },
       async ( error ) => {
         // Error 500
-        if ( error?.response?.status === 500 ) {
-          toast.error( t( 'something_went_wrong_title' ) )
-        }
+        // if ( error?.response?.status === 500 ) {
+        //   toast.error( t( 'something_went_wrong_title' ) )
+        // }
         // When access token invalid
         if ( error?.response?.status === 401 ) {
           removeUserData()
