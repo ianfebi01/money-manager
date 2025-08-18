@@ -56,10 +56,12 @@ const MonthlyChart = () => {
       }
       loaderComponent={<SkeletonMonthlyChart />}
     >
-      <ColumnChart
-        categories={data?.data?.categories || []}
-        series={data?.data?.series || []}
-      />
+      <div className='h-[300px]'>
+        <ColumnChart
+          categories={data?.data?.categories || []}
+          series={data?.data?.series || []}
+        />
+      </div>
     </ChartCard>
   )
 }
