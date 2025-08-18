@@ -127,7 +127,7 @@ const Doughnut = ( { series, categories }: Props ) => {
   }, [] )
 
   return (
-    <div className="flex flex-col md:flex-row items-start gap-4">
+    <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
       <div id="chart"
         className="h-[280px] w-[280px] ml-2"
       >
