@@ -9,7 +9,7 @@ import { useField } from 'formik'
 
 interface Props {
   name: string
-  label: string
+  label?: string
   placeholder: string
   type?: TFieldType
   defaultImageUrl?: string
@@ -21,6 +21,7 @@ interface Props {
   }
   loading?: boolean
   options?: IOptions
+  autoFocus?: boolean
 }
 
 const FormikField = ( props: Props ) => {
@@ -36,14 +37,18 @@ const FormikField = ( props: Props ) => {
 
   return (
     <div className="flex flex-col gap-2 relative">
-      <label htmlFor={name}
-        className="w-fit text-sm lg:text-base"
-      >
-        <span>{label}</span>
-        {requiredIcon}
-      </label>
+      {!!label && (
+        <label htmlFor={name}
+          className="w-fit text-sm lg:text-base"
+        >
+          <span>{label}</span>
+          {requiredIcon}
+        </label>
+      )}
 
-      {['text', 'email', 'password', 'number', 'currency-id'].includes( type ) && (
+      {['text', 'email', 'password', 'number', 'currency-id'].includes(
+        type
+      ) && (
         <TextField
           name={name}
           type={type}
@@ -55,6 +60,7 @@ const FormikField = ( props: Props ) => {
           error={meta.touched ? meta.error : undefined}
           disabled={props.disabled}
           loading={props.loading}
+          autoFocus={props?.autoFocus}
         />
       )}
       {type === 'image' && <ImageField {...props} />}

@@ -41,6 +41,7 @@ const TextField = ( {
   const [showPassword, setShowPassword] = useState<boolean>( false )
 
   const formatRupiah = ( number: string ) => {
+    if ( !number ) return '0'
     const parsed = parseInt( number.replace( /\D/g, '' ), 10 )
     if ( isNaN( parsed ) ) return ''
 
