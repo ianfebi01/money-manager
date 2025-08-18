@@ -1,4 +1,5 @@
 import GoogleSignIn from '@/components/Buttons/GoogleSignIn'
+import { locales } from '@/i18n/config'
 import { Metadata } from 'next'
 import { Locale } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
@@ -10,41 +11,27 @@ type Props = {
   }
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const metadata = {
-    metaTitle : 'Login | Money Manager | Ian Febi Sastrataruna',
-    metaDescription :
-      'Login to access your personal finance dashboard with Money Manager by Ian Febi Sastrataruna.',
-    keywords :
-      'login, money manager, finance, personal budgeting, Ian Febi Sastrataruna',
-    metaRobots : 'index, follow',
-  }
+export async function generateMetadata( {
+  params
+}: {
+  params: {locale: string};
+} ): Promise<Metadata> {
+  const { locale } = params;
+  const t = await getTranslations( { locale, namespace : 'pages.login' } );
 
-  const socialMeta = {
-    twitter : {
-      description :
-        'Securely log in to manage your finances with Money Manager by Ian Febi Sastrataruna.',
-    },
-  }
-
+  const path = `/${locale}/login`;
+  
   return {
-    title       : metadata.metaTitle,
-    description : metadata.metaDescription,
-    keywords    : metadata.keywords,
-    robots      : metadata.metaRobots,
-    openGraph   : {
-      title       : metadata.metaTitle,
-      description : metadata.metaDescription,
-      siteName    : 'Ian Febi Sastrataruna',
-      type        : 'website',
+    title       : t( 'title' ),
+    description : t( 'desc' ),
+    robots      : { index : false, follow : false }, // common for auth pages
+    alternates  : {
+      canonical : path,
+      languages : Object.fromEntries( locales.map( ( l ) => [l, `/${l}/login`] ) )
     },
-    twitter : {
-      card        : 'summary',
-      site        : '@ianfebi01',
-      title       : metadata.metaTitle,
-      description : socialMeta.twitter?.description || '',
-    },
-  }
+    openGraph : { url : path, title : t( 'title' ), description : t( 'desc' ) },
+    twitter   : { title : t( 'title' ), description : t( 'desc' ) }
+  };
 }
 
 export default async function PageMoneyManagerLogin( { params }: Props ) {

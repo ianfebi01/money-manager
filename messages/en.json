@@ -116,5 +116,24 @@
         "title": "Are you sure?",
         "description": "Are you sure want to delete transaction?",
         "confirm": "Confirm"
+    },
+    "seo": {
+        "siteName": "Money Manager",
+        "author": "ianfebi01",
+        "ogAlt": "Money Manager Logo"
+    },
+    "pages": {
+        "privacy": {
+            "title": "Privacy Policy | Money Manager",
+            "desc": "Learn how Money Manager collects, uses, and protects your data."
+        },
+        "login": {
+            "title": "Login | Money Manager",
+            "desc": "Sign in to manage budgets, track expenses, and view reports."
+        },
+        "home": {
+            "title": "Money Manager | by ianfebi01",
+            "desc": "Manage Your Money Without Hassle - Track income, expenses, and reach your financial goals."
+        }
     }
 }

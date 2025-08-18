@@ -1,5 +1,30 @@
 import Markdown from '@/components/Parsers/Markdown'
+import { locales } from '@/i18n/config'
+import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import React from 'react'
+
+export async function generateMetadata( {
+  params,
+}: {
+  params: { locale: string }
+} ): Promise<Metadata> {
+  const { locale } = params
+  const t = await getTranslations( { locale, namespace : 'pages.privacy' } )
+
+  const path = `/${locale}/privacy`
+  
+  return {
+    title       : t( 'title' ),
+    description : t( 'desc' ),
+    alternates  : {
+      canonical : path,
+      languages : Object.fromEntries( locales.map( ( l ) => [l, `/${l}/privacy`] ) ),
+    },
+    openGraph : { url : path, title : t( 'title' ), description : t( 'desc' ) },
+    twitter   : { title : t( 'title' ), description : t( 'desc' ) },
+  }
+}
 
 export default function PrivacyPolicyPage() {
   const privacyContent = `

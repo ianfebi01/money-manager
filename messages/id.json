@@ -6,11 +6,11 @@
     "no-data-found": "Data tidak ditemukan",
     "article": {
         "title": "Artikel",
-        "desc": "Daftar artikel oleh Ian Febi Sastrataruna"
+        "desc": "Daftar artikel by Ian Febi Sastrataruna"
     },
     "portofolio": {
         "title": "Portofolio",
-        "desc": "Daftar portofolio oleh Ian Febi Sastrataruna"
+        "desc": "Daftar portofolio by Ian Febi Sastrataruna"
     },
     "locale-switcher": {
         "title": "Ubah Bahasa"
@@ -116,5 +116,24 @@
         "title": "Apakah kamu yakin?",
         "description": "Yakin ingin menghapus transaksi?",
         "confirm": "Ya, hapus"
+    },
+    "seo": {
+        "siteName": "Money Manager",
+        "author": "ianfebi01",
+        "ogAlt": "Logo Money Manager"
+    },
+    "pages": {
+        "privacy": {
+            "title": "Kebijakan Privasi | Money Manager",
+            "desc": "Pelajari bagaimana Money Manager mengumpulkan, menggunakan, dan melindungi data Anda."
+        },
+        "login": {
+            "title": "Masuk | Money Manager",
+            "desc": "Masuk untuk mengatur anggaran, mencatat pengeluaran, dan melihat laporan."
+        },
+        "home": {
+            "title": "Money Manager | by ianfebi01",
+            "desc": "Atur uang tanpa ribet — catat pemasukan, pengeluaran, dan capai tujuan finansial."
+        }
     }
 }

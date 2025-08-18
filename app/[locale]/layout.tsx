@@ -13,17 +13,61 @@ import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import MoneyManagerNavbar from '@/components/Layouts/MoneyManagerNavbar'
 import SessionProviderWrapper from '@/components/Context/SessionPrviderWrapper'
+import { getTranslations } from 'next-intl/server'
 
 config.autoAddCss = false
 
-export const metadata: Metadata = {
-  title : 'Money Manager | by ianfebi01',
-  description :
-    'Manage Your Money Without Hassle',
-}
-
 export function generateStaticParams() {
   return routing.locales.map( ( locale ) => ( { locale } ) )
+}
+
+export async function generateMetadata( {
+  params,
+}: {
+  params: { locale: string }
+} ): Promise<Metadata> {
+  const { locale } = params
+
+  // Grab translations from your messages/* files
+  // Adjust the namespace keys to match your files
+  const t = await getTranslations( { locale, namespace : 'pages.home' } )
+  const tSeo = await getTranslations( { locale, namespace : 'seo' } )
+
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    'https://money-manager.ianfebisastrataruna.my.id'
+
+  return {
+    title        : t( 'title' ), // e.g. "Money Manager | by ianfebi01" / "oleh ianfebi01"
+    description  : t( 'desc' ), // localized description
+    metadataBase : new URL( baseUrl ),
+    alternates   : {
+      canonical : `/${locale}`,
+      languages : Object.fromEntries(
+        routing.locales.map( ( loc ) => [loc, `/${loc}`] )
+      ),
+    },
+    openGraph : {
+      type        : 'website',
+      title       : t( 'title' ),
+      description : t( 'desc' ),
+      url         : `/${locale}`,
+      images      : [
+        {
+          url    : '/logo.svg',
+          width  : 512,
+          height : 512,
+          alt    : tSeo( 'ogAlt' ), // localized image alt text
+        },
+      ],
+    },
+    twitter : {
+      card        : 'summary_large_image',
+      title       : t( 'title' ),
+      description : t( 'desc' ),
+      images      : ['/logo.svg'],
+    },
+  }
 }
 
 export default async function LocaleLayout( {
