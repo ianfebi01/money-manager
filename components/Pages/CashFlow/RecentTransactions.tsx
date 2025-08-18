@@ -13,7 +13,7 @@ interface Props {
 
 const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
   const t = useTranslations()
-  const { data, isFetching } = useGetRecentTransactions( 5, enabled )
+  const { data, isFetching } = useGetRecentTransactions( 100, enabled )
 
   /**
    * fake array
