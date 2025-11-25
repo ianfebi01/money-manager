@@ -23,6 +23,7 @@
     "@meilisearch/instant-meilisearch": "^0.21.1",
     "@popperjs/core": "^2.11.8",
     "@tanstack/react-query": "^5.8.4",
+    "@tanstack/react-table": "^8.21.3",
     "@types/d3-scale": "^4.0.8",
     "@types/negotiator": "^0.6.3",
     "@types/node": "20.6.3",
