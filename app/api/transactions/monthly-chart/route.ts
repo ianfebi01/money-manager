@@ -5,21 +5,6 @@ import connectionPool from '@/lib/db'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { startOfYear, endOfYear, getMonth } from 'date-fns'
 
-const monthNames = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-]
-
 export async function GET( req: NextRequest ) {
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
@@ -59,6 +44,7 @@ export async function GET( req: NextRequest ) {
     [userId, startDate, endDate]
   )
 
+  // Always return 12 months, use month index for categories
   const monthlyStats = Array.from( { length : 12 }, ( _, i ) => ( {
     monthIndex : i,
     income     : 0,
@@ -76,21 +62,20 @@ export async function GET( req: NextRequest ) {
     }
   }
 
-  const filtered = monthlyStats.filter( ( r ) => r.income !== 0 || r.expense !== 0 )
-
+  // Return all months, categories as month indices
   return NextResponse.json( {
     data : {
       series : [
         {
           name : 'Expense',
-          data : filtered.map( ( r ) => r.expense ),
+          data : monthlyStats.map( ( r ) => r.expense ),
         },
         {
           name : 'Income',
-          data : filtered.map( ( r ) => r.income ),
+          data : monthlyStats.map( ( r ) => r.income ),
         },
       ],
-      categories : filtered.map( ( r ) => monthNames[r.monthIndex] ),
+      categories : monthlyStats.map( ( r ) => r.monthIndex ),
     },
   } )
 }
