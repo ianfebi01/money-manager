@@ -54,12 +54,32 @@ const BarLineChart = () => {
     }
   }, [data, locale] )
 
+  const isNoData = useMemo( () => {
+    if ( !data || !data.data ) {
+      return true
+    }
+    if ( data.data.categories.length === 0 ) {
+      return true
+    }
+    if ( !data.data.series || data.data.series.length === 0 ) {
+      return true
+    }
+
+    return data.data.series.every( ( serie ) => {
+      return (
+        !serie.data ||
+        serie.data.length === 0 ||
+        serie.data.every( ( val ) => !val || val === 0 )
+      )
+    } )
+  }, [data] )
+
   return (
     <ChartCard
       title={t( 'monthly_transaction' )}
       isError={isError}
       isLoading={isFetching}
-      isNoData={( !!data && data?.data?.categories.length === 0 ) || !data}
+      isNoData={isNoData}
       filterComponent={
         <div className="flex gap-2 items-center">
           <button
