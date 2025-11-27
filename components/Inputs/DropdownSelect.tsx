@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRotateRight, faCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRotateLeft, faCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { IOptions } from '@/types/form'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -14,6 +14,7 @@ interface Props {
   resettable?: boolean
   resetLabel?: string
   resetValue?: IOptions['value']
+  icon?: React.ReactNode // custom icon prop
 }
 
 export default function DropdownSelect( {
@@ -24,6 +25,7 @@ export default function DropdownSelect( {
   resettable = false,
   resetLabel = 'Reset',
   resetValue = '',
+  icon, // custom icon
 }: Props ) {
   const t = useTranslations()
   const selectedLabel = useMemo( () => {
@@ -42,8 +44,8 @@ export default function DropdownSelect( {
         <>
           <Menu.Button
             className={cn(
-              'min-w-[150px]', // match DataTable column dropdown min width
-              'flex justify-between items-center text-left',
+              'min-w-[120px]',
+              'flex justify-between items-center text-left gap-4',
               'p-2 border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out',
               'text-base',
               ['focus:border-white/50 border-white/25'],
@@ -52,12 +54,16 @@ export default function DropdownSelect( {
           >
             <span className="p m-0 line-clamp-1 text-base">{selectedLabel || label}</span>
             <div
-              className={`transition-all duration-300 ease-out ${open ? '-rotate-180' : ''}`}
+              className={`transition-all duration-300 ease-out ${open && !icon ? '-rotate-180' : ''}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className="text-white-overlay"
-              />
+              {icon ? (
+                icon
+              ) : (
+                <FontAwesomeIcon
+                  icon={faChevronDown}
+                  className="text-white-overlay"
+                />
+              )}
             </div>
           </Menu.Button>
 
@@ -73,15 +79,20 @@ export default function DropdownSelect( {
             <Menu.Items className="absolute right-0 mt-2 origin-top-left bg-dark border border-white-overlay-2 w-[150px] shadow-2xl focus:outline-none z-[11] rounded-lg overflow-hidden p-1">
               <div className="max-h-[250px] overflow-y-auto">
                 {resettable && (
-                  <div className="mb-1 pb-1 border-b border-white-overlay-2">
-                    <button
-                      type="button"
-                      onClick={() => handleSelect( resetValue )}
-                      className="flex items-center justify-start w-full gap-2 px-2 py-1.5 text-left no-underline transition-all duration-300 ease-in-out cursor-pointer hover:bg-dark-secondary rounded-lg text-xs text-white-overlay"
-                    >
-                      <FontAwesomeIcon icon={faArrowRotateRight}/>
-                      <span>{resetLabel}</span>
-                    </button>
+                  <div className='mb-1 pb-1 border-b border-white-overlay-2'>
+                  
+                    <Menu.Item>
+                      <button
+                        type="button"
+                        onClick={() => handleSelect( resetValue )}
+                        className="flex items-center justify-start w-full gap-2 px-2 py-1.5 text-left no-underline transition-all duration-300 ease-in-out cursor-pointer hover:bg-dark-secondary rounded-lg text-xs"
+                      >
+                        <FontAwesomeIcon icon={faArrowRotateLeft}
+                          className='text-orange'
+                        />
+                        <span>{resetLabel}</span>
+                      </button>
+                    </Menu.Item>
                   </div>
                 )}
                 {options.length ? (

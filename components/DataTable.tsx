@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheck,
+  faFolderOpen,
   faMinus,
   faPlus,
   faSliders,
@@ -255,6 +256,10 @@ const DataTable = <TData, >( {
           <DropdownSelect
             label={t( 'group_by' )}
             resettable
+            icon={<FontAwesomeIcon
+              icon={faFolderOpen}
+              className="text-white-overlay"
+            />}
             options={columns
               .filter( ( col ) => typeof col.header === 'string' )
               .map( ( col ) => ( { value : String( col.id ), label : String( col.header ) } ) )}
