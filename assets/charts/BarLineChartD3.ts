@@ -131,8 +131,7 @@ export class BarLineChartD3 {
     } = this
 
     // Remove only bars and legend, not the line path
-    chart.selectAll( '.bar1' ).remove();
-    chart.selectAll( '.legend' ).remove();
+    chart.selectAll( '*' ).remove();
     yAxisGroup.selectAll( '*' ).remove()
 
     // Dynamically adjust margin for small containers

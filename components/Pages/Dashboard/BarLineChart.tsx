@@ -99,7 +99,7 @@ const BarLineChart = () => {
       }
       loaderComponent={<SkeletonMonthlyChart />}
     >
-      <div className="h-[300px] flex flex-col p-4">
+      <div className="h-[200px] md:h-[300px] flex flex-col p-4 pt-0">
         <BarLineChartD3 datas={chartData} />
       </div>
     </ChartCard>

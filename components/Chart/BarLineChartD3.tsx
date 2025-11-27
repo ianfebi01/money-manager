@@ -23,19 +23,6 @@ const BarLineChartD3 = ( { datas }: Props ) => {
       chart?.update( chartData )
     }
 
-    const handleResize = new ResizeObserver( () => {
-      chart?.update( chartData )
-    } )
-
-    if ( chartContainer.current ) {
-      handleResize.observe( chartContainer.current )
-    }
-
-    return () => {
-      if ( chartContainer.current ) {
-        handleResize.unobserve( chartContainer.current )
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] )
 
@@ -44,6 +31,21 @@ const BarLineChartD3 = ( { datas }: Props ) => {
     chart.update( datas )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datas] )
+
+  useEffect( () => {
+    if ( !chart || !chartContainer.current ) return;
+
+    const handleResize = () => {
+      chart.update( datas );
+    };
+
+    const resizeObserver = new ResizeObserver( handleResize );
+    resizeObserver.observe( chartContainer.current );
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [ chart, datas ] );
 
   return (
     <div

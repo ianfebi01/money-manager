@@ -30,7 +30,7 @@ const ChartCard = ( {
             icon={faArrowRightArrowLeft}
             className="text-orange"
           />
-          <h4>{title}</h4>
+          <h4 className='line-clamp-1'>{title}</h4>
         </div>
         {!!filterComponent && <div>{filterComponent}</div>}
       </div>
