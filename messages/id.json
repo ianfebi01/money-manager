@@ -59,6 +59,7 @@
     "close": "Tutup",
     "date": "Tanggal",
     "month": "Bulan",
+    "group_by": "Kelompokkan",
     "last_14_days": "14 hari lalu",
     "last_30_days": "30 hari lalu",
     "select_type": "Pilih Tipe",
@@ -69,6 +70,7 @@
     "edit_transaction": "Ubah Transaksi",
     "transaction": "Transaksi",
     "edit": "Ubah",
+    "action": "Aksi",
     "cancel": "Batal",
     "transaction_summary": "Rangkuman Transaksi",
     "amount": "Jumlah",
@@ -144,5 +146,14 @@
         "error_transaction_category": "Salah satu transaksi tidak memiliki kategori.",
         "error_no_transactions": "Tidak ada transaksi yang valid untuk disimpan.",
         "error_date_required": "Silakan pilih tanggal terlebih dahulu."
-    }
+    },
+    "columns": "Kolom",
+    "toggle_columns": "Tampilkan kolom",
+    "no_hideable_columns": "Tidak ada kolom yang bisa disembunyikan",
+    "selected": "terpilih",
+    "rows_per_page": "Baris per halaman",
+    "of": "dari",
+    "prev": "Sebelumnya",
+    "next": "Berikutnya",
+    "page": "Halaman"
 }

@@ -1,6 +1,6 @@
 const SkeletonMonthlyChart = () => {
   return (
-    <div className="p-8 flex flex-col gap-4 animate-pulse h-[300px]">
+    <div className="p-8 flex flex-col gap-4 animate-pulse h-[200px] md:h-[300px]">
       <div className="flex h-full gap-6">
         <div className="w-8 h-full flex flex-col justify-between">
           <div className="w-full h-2 bg-dark/25 rounded-sm" />

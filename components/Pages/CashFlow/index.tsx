@@ -1,27 +1,25 @@
 'use client'
-
-import Button from '@/components/Buttons/Button'
-import DefaultCategories from '@/components/DefaultCategories'
-import ErrorLoadingData from '@/components/Layouts/ErrorLoadingData'
 import AddTransaction from '@/components/Modal/AddTransaction'
 import EditTransaction from '@/components/Modal/EditTransaction'
 import Modal from '@/components/Modal/Modal'
-import NoDataFound from '@/components/NoDataFound'
-import { IFilter, useDelete, useGetDatas } from '@/lib/hooks/api/cashFlow'
+import { IFilter, useDelete } from '@/lib/hooks/api/cashFlow'
 import { useFormatDate } from '@/lib/hooks/useFormatDate'
-import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
-import formatCurency from '@/utils/format-curency'
 import {
   faChevronLeft,
   faChevronRight,
-  faSquareMinus,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useAnimation, motion, easeInOut } from 'framer-motion'
 import { useTranslations } from 'next-intl'
+import TransactionTable from './TransactionTable'
+import TransactionCards from './TransactionCards'
+import { Switch } from '@headlessui/react'
+import { cn } from '@/lib/utils'
+import Spinner from '@/components/Icons/Spinner'
+
+const VIEW_KEY = 'cashflow_view_mode'
 
 const CashFlow = () => {
   const t = useTranslations()
@@ -32,10 +30,6 @@ const CashFlow = () => {
     month : month( date ),
     year  : year( date ),
   } )
-
-  const { data, isLoading, isError } = useGetDatas( filter )
-
-  const mockLoop = new Array( 6 ).fill( 0 )
 
   const changeMonth = ( type: 'prev' | 'next' ) => {
     setFilter( ( prev ) => {
@@ -71,14 +65,14 @@ const CashFlow = () => {
   const [id, setId] = useState<number | null>( null )
   const deleteTransaction = useDelete()
 
-  const handleDelete = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    id: number
-  ) => {
-    e.stopPropagation()
-    setId( id )
-    setDeleteWarningAlert( true )
-  }
+  const handleDelete = useCallback(
+    ( e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number ) => {
+      e.stopPropagation()
+      setId( id )
+      setDeleteWarningAlert( true )
+    },
+    []
+  )
 
   const onDeleteOk = async () => {
     try {
@@ -107,26 +101,42 @@ const CashFlow = () => {
     setEditData( item )
   }
 
-  /**
-   * Animation
-   */
-  const animationControl = useAnimation()
+  // View mode state
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>( 'table' )
+  const [hydrated, setHydrated] = useState( false )
 
+  // On mount, sync viewMode from localStorage
   useEffect( () => {
-    if (
-      !isLoading &&
-      data?.data?.transactions &&
-      data?.data?.transactions?.length > 0
-    ) {
-      animationControl.start( 'visible' )
+    if ( typeof window !== 'undefined' ) {
+      const stored = localStorage.getItem( VIEW_KEY ) as 'table' | 'cards' | null
+      if ( stored ) setViewMode( stored )
+      setHydrated( true )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, data] )
+  }, [] )
+
+  // Sync view mode to localStorage
+  useEffect( () => {
+    if ( typeof window !== 'undefined' ) {
+      localStorage.setItem( VIEW_KEY, viewMode )
+    }
+  }, [viewMode] )
+
+  // Sync view mode from localStorage on storage event
+  useEffect( () => {
+    const syncView = ( e: StorageEvent ) => {
+      if ( e.key === VIEW_KEY && e.newValue ) {
+        setViewMode( e.newValue as 'table' | 'cards' )
+      }
+    }
+    window.addEventListener( 'storage', syncView )
+
+    return () => window.removeEventListener( 'storage', syncView )
+  }, [] )
 
   return (
     <div>
       <div className="flex gap-4 flex-wrap">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center h-[42px]">
           <button
             className="border rounded-md w-6 h-6 border-white-overlay-2 hover:border-white-overlay transition-default"
             onClick={() => changeMonth( 'prev' )}
@@ -143,116 +153,61 @@ const CashFlow = () => {
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
-        <div className="grow"></div>
+        <div className="grow" />
         <AddTransaction />
       </div>
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 mt-8">
-        {isLoading &&
-          mockLoop.map( ( _item, i ) => (
-            <div
-              key={i}
-              className="animate-pulse h-32 w-full rounded-lg bg-dark-secondary"
-            />
-          ) )}
-        {!isLoading &&
-          data?.data?.transactions &&
-          data?.data?.transactions?.length > 0 &&
-          data?.data?.transactions.map( ( item, i ) => (
-            <motion.div
-              key={i}
-              variants={{
-                hidden : {
-                  opacity : 0,
-                  y       : 75,
-                },
-                visible : {
-                  opacity : 1,
-                  y       : 0,
-                },
-              }}
-              initial="hidden"
-              className="h-full flex flex-col"
-              animate={animationControl}
-              transition={{
-                duration : 0.3,
-                delay    : 0 + i / 20,
-                ease     : easeInOut,
-              }}
+      {/* Loader while waiting for hydration */}
+      {!hydrated ? (
+        <div className="flex items-center justify-center h-32 mt-6">
+          <Spinner classes="!h-10 !w-10" />
+        </div>
+      ) : (
+        <>
+          {/* Display Switcher */}
+          <div className="flex items-center sm:justify-end gap-2 mt-6">
+            <span className="text-xs text-white-overlay mr-2">Table</span>
+            <Switch
+              checked={viewMode === 'cards'}
+              onChange={() =>
+                setViewMode( viewMode === 'cards' ? 'table' : 'cards' )
+              }
+              className={cn(
+                'relative inline-flex h-6 w-11 items-center rounded-full border border-transparent transition-default',
+                viewMode === 'cards' ? 'bg-orange' : 'bg-dark-secondary'
+              )}
             >
-              <div className="bg-dark-secondary shadow-xl rounded-lg flex flex-col grow pb-4">
-                <div className="flex gap-2 items-center px-4 pt-4">
-                  <h2 className="m-0">{item.day}</h2>
-                  <div className="grow" />
-                  <div className="w-28 text-right text-blue-400">
-                    <p className="m-0">{formatCurency( item.income )}</p>
-                  </div>
-                  <div className="w-28 text-right text-orange">
-                    <p className="m-0">{formatCurency( item.expense )}</p>
-                  </div>
-                </div>
-                <table border={0}
-                  className="border-none table-auto w-full"
-                >
-                  <tbody>
-                    {item.transactions.map( ( subItem, subIndex ) => (
-                      <tr
-                        key={subIndex}
-                        className="hover:bg-dark/80 cursor-pointer"
-                        role="button"
-                        onClick={() => handleEdit( subItem )}
-                      >
-                        <td
-                          className={cn( 'px-4 text-white-overlay' )}
-                          style={{ width : '1px', whiteSpace : 'nowrap' }}
-                        >
-                          <div className="flex gap-2 items-center translate-y-1">
-                            <Button
-                              variant="iconOnly"
-                              onClick={( e ) => handleDelete( e, subItem.id )}
-                            >
-                              <FontAwesomeIcon
-                                icon={faSquareMinus}
-                                className="text-white-overlay"
-                              />
-                            </Button>
-                          </div>
-                        </td>
-                        <td
-                          className="p-0 text-white-overlay translate-y-0.5 w-1/4 md:w-[35%]"
-                        >
-                          {!!subItem?.category_name && (
-                            <DefaultCategories name={subItem?.category_name} />
-                          )}
-                        </td>
-                        <td className="px-4">
-                          <p className="m-0">{subItem.description}</p>
-                        </td>
-                        <td className="p-0 pr-4 text-right">
-                          <p
-                            className={cn( 'm-0', {
-                              'text-blue-400' : subItem.type === 'income',
-                              'text-orange'   : subItem.type === 'expense',
-                            } )}
-                          >
-                            {formatCurency( subItem.amount )}
-                          </p>
-                        </td>
-                      </tr>
-                    ) )}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          ) )}
-      </div>
-      {!isLoading && data?.data?.transactions.length === 0 && <NoDataFound />}
-      {!isLoading && isError && <ErrorLoadingData />}
+              <span className="sr-only">Toggle view mode</span>
+              <span
+                className={cn(
+                  'inline-block h-4 w-4 transform rounded-full bg-white transition',
+                  viewMode === 'cards' ? 'translate-x-6' : 'translate-x-1'
+                )}
+              />
+            </Switch>
+            <span className="text-xs text-white-overlay ml-2">Cards</span>
+          </div>
+          <div className="mt-6">
+            {viewMode === 'table' ? (
+              <TransactionTable
+                filter={filter}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+              />
+            ) : (
+              <TransactionCards
+                filter={filter}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+              />
+            )}
+          </div>
+        </>
+      )}
       <Modal
         isOpen={deleteWarningAlert}
         setIsOpen={setDeleteWarningAlert}
         onConfirm={() => onDeleteOk()}
         onCancel={() => setDeleteWarningAlert( false )}
-        variant="warning"
         title={t( 'delete_warning.title' )}
         desciption={t( 'delete_warning.description' )}
         confirmText={t( 'delete_warning.confirm' )}

@@ -26,9 +26,9 @@ export interface IFilter {
 }
 
 /**
- *  Get datas
+ *  Get MonthlyDatas
  */
-export const useGetDatas = (
+export const useGetMonthlyDatas = (
   filter: IFilter,
   enabled: boolean = true
 ): UseQueryResult<{ data: IMonthlyTransactions }> => {
@@ -57,6 +57,7 @@ export const useGetDatas = (
 
   return data
 }
+
 /**
  *  Get recent Transactions
  */
@@ -83,6 +84,44 @@ export const useGetRecentTransactions = (
       return res.data
     },
     enabled : enabled,
+  } )
+
+  return data
+}
+
+/**
+ *  Get Datas
+ */
+export const useGetDatas = (
+  limit: number = 5,
+  page: number = 1,
+  filter: IFilter,
+  enabled: boolean = true
+): UseQueryResult<{ data: ITransaction[] }> => {
+  const axiosAuth = useAxiosAuth()
+  // query
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const query = {
+    limit    : limit,
+    page     : page,
+    ...filter,
+    timezone : timezone,
+  }
+  const queryString = qs.stringify( query, { addQueryPrefix : true } )
+
+  const data: UseQueryResult<{ data: ITransaction[] }> = useQuery<{
+    data: ITransaction[]
+  }>( {
+    queryKey : ['transactions', limit, page, { timezone : timezone, ...filter },],
+    queryFn  : async () => {
+      const res: AxiosResponse<{ data: ITransaction[] }> = await axiosAuth(
+        `/transactions${queryString}`
+      )
+
+      return res.data
+    },
+    enabled : enabled,
+    retry   : false
   } )
 
   return data
@@ -119,6 +158,9 @@ export const useCreate = () => {
       queryClient.invalidateQueries( {
         queryKey : ['recent-transactions'],
       } )
+      queryClient.invalidateQueries( {
+        queryKey : ['transactions'],
+      } )
 
       return postTransaction
     } catch ( error ) {
@@ -146,7 +188,7 @@ export const useCreate = () => {
         queryKey : ['monthly-chart'],
       } )
       queryClient.invalidateQueries( {
-        queryKey : ['recent-transactions'],
+        queryKey : ['transactions'],
       } )
 
       return postTransaction
@@ -187,6 +229,9 @@ export const useEdit = () => {
       queryClient.invalidateQueries( {
         queryKey : ['recent-transactions'],
       } )
+      queryClient.invalidateQueries( {
+        queryKey : ['transactions'],
+      } )
 
       return postTransaction
     } catch ( error ) {
@@ -221,6 +266,12 @@ export const useDelete = () => {
       } )
       queryClient.invalidateQueries( {
         queryKey : ['recent-transactions'],
+      } )
+      queryClient.invalidateQueries( {
+        queryKey : ['recent-transactions'],
+      } )
+      queryClient.invalidateQueries( {
+        queryKey : ['transactions'],
       } )
 
       return res
