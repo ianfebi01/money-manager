@@ -44,7 +44,7 @@ export default function DropdownSelect( {
         <>
           <Menu.Button
             className={cn(
-              'min-w-[120px]',
+              'min-w-[120px] w-full',
               'flex justify-between items-center text-left gap-4',
               'p-2 border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out',
               'text-base',
@@ -76,7 +76,7 @@ export default function DropdownSelect( {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Menu.Items className="absolute right-0 mt-2 origin-top-left bg-dark border border-white-overlay-2 w-[150px] shadow-2xl focus:outline-none z-[11] rounded-lg overflow-hidden p-1">
+            <Menu.Items className="absolute right-0 mt-2 origin-top-left bg-dark border border-white-overlay-2 min-w-[150px] w-full shadow-2xl focus:outline-none z-[11] rounded-lg overflow-hidden p-1">
               <div className="max-h-[250px] overflow-y-auto">
                 {resettable && (
                   <div className='mb-1 pb-1 border-b border-white-overlay-2'>
