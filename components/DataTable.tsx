@@ -1,12 +1,5 @@
-'use client';
-import {
-  Fragment,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+'use client'
+import { Fragment, ReactNode, useEffect, useMemo, useState } from 'react'
 import {
   ColumnDef,
   GroupingState,
@@ -23,10 +16,16 @@ import {
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck, faMinus, faPlus, faSliders } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheck,
+  faMinus,
+  faPlus,
+  faSliders,
+} from '@fortawesome/free-solid-svg-icons'
 import { useTranslations } from 'next-intl'
 import { Menu, Transition } from '@headlessui/react'
-import TextField from './Inputs/TextField';
+import TextField from './Inputs/TextField'
+import DropdownSelect from './Inputs/DropdownSelect'
 
 type DataTableProps<TData> = {
   columns: ColumnDef<TData, any>[]
@@ -80,9 +79,7 @@ const DataTable = <TData, >( {
   const [searchQuery, setSearchQuery] = useState( '' )
   const [grouping, setGrouping] = useState<GroupingState>( initialGrouping )
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>( {} )
-  const [showColumnMenu, setShowColumnMenu] = useState( false )
   const [expanded, setExpanded] = useState( {} )
-  const columnMenuRef = useRef<HTMLDivElement | null>( null )
 
   const searchableKeys = useMemo( () => {
     if ( searchKeys && searchKeys.length > 0 ) {
@@ -192,25 +189,7 @@ const DataTable = <TData, >( {
     table.setPageIndex( 0 )
   }, [searchQuery, filteredData.length, table] )
 
-  useEffect( () => {
-    const handleClickOutside = ( event: MouseEvent ) => {
-      if (
-        columnMenuRef.current &&
-        !columnMenuRef.current.contains( event.target as Node )
-      ) {
-        setShowColumnMenu( false )
-      }
-    }
-
-    if ( showColumnMenu ) {
-      document.addEventListener( 'mousedown', handleClickOutside )
-    }
-
-    return () => {
-      document.removeEventListener( 'mousedown', handleClickOutside )
-    }
-  }, [showColumnMenu] )
-
+  // Grouping
   useEffect( () => {
     if ( grouping.length > 0 && filteredData.length > 0 ) {
       setTimeout( () => {
@@ -271,11 +250,24 @@ const DataTable = <TData, >( {
 
         <div className="grow" />
 
+        {/* Grouping Dropdown */}
+        <div className='w-fit'>
+          <DropdownSelect
+            label={t( 'group_by' )}
+            resettable
+            options={columns
+              .filter( ( col ) => typeof col.header === 'string' )
+              .map( ( col ) => ( { value : String( col.id ), label : String( col.header ) } ) )}
+            value={grouping[0] || ''}
+            onChange={( val ) => setGrouping( val ? [String( val )] : [] )}
+          />
+        </div>
+
         {enableColumnVisibility && (
           <Menu as="div"
             className="relative text-left"
           >
-            {( ) => (
+            {() => (
               <>
                 <Menu.Button
                   className={cn(
@@ -290,9 +282,7 @@ const DataTable = <TData, >( {
                   <span className="p m-0 line-clamp-1 text-base">
                     {t( 'columns' )}
                   </span>
-                  <div
-                    className={`transition-all duration-300 ease-out`}
-                  >
+                  <div className={`transition-all duration-300 ease-out`}>
                     <FontAwesomeIcon
                       icon={faSliders}
                       className="text-white-overlay"
@@ -319,7 +309,7 @@ const DataTable = <TData, >( {
                           .filter( ( column ) => column.getCanHide() )
                           .map( ( column, index ) => (
                             <Menu.Item key={index}>
-                              {( ) => (
+                              {() => (
                                 <button
                                   type="button"
                                   onClick={( e ) => {

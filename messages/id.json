@@ -59,6 +59,7 @@
     "close": "Tutup",
     "date": "Tanggal",
     "month": "Bulan",
+    "group_by": "Kelompokkan",
     "last_14_days": "14 hari lalu",
     "last_30_days": "30 hari lalu",
     "select_type": "Pilih Tipe",

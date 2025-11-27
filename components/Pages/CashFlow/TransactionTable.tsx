@@ -48,6 +48,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'description',
+        id          : 'description',
         header      : t( 'description' ),
         cell        : ( { row } ) => (
           <span className="line-clamp-1">{row.original.description}</span>
@@ -62,6 +63,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'category_name',
+        id          : 'category_name',
         header      : t( 'category' ),
         cell        : ( { row } ) => (
           <div className="min-w-[120px] text-white-overlay">
@@ -76,6 +78,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'type',
+        id          : 'type',
         header      : t( 'type' ),
         cell        : ( { row } ) => (
           <span
@@ -94,6 +97,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'amount',
+        id          : 'amount',
         header      : t( 'amount' ),
         cell        : ( { row } ) => (
           <p
@@ -114,6 +118,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'date',
+        id          : 'date',
         header      : t( 'date' ),
         cell        : ( { getValue } ) => {
           const dateValue = getValue<string | undefined>()
