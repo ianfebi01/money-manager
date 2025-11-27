@@ -63,6 +63,9 @@ export class BarLineChartD3 {
 
   colour!: d3.ScaleOrdinal<string, string, never>
 
+  // Store previous line data for animation
+  private prevLineData?: number[]
+
   constructor(
     element: HTMLElement | null,
     apiData: ChartApiData,
@@ -127,8 +130,10 @@ export class BarLineChartD3 {
       colour,
     } = this
 
-    chart.selectAll( "*" ).remove()
-    yAxisGroup.selectAll( "*" ).remove()
+    // Remove only bars and legend, not the line path
+    chart.selectAll( '.bar1' ).remove();
+    chart.selectAll( '.legend' ).remove();
+    yAxisGroup.selectAll( '*' ).remove()
 
     // Dynamically adjust margin for small containers
     const rect = container.getBoundingClientRect()
@@ -200,32 +205,43 @@ export class BarLineChartD3 {
 
     bar
       .append( "rect" )
-      .attr( "y", ( d, i ) => yScale( apiData.series[0].data[i] ) )
-      .attr( "height", ( d, i ) => Math.abs( yScale( apiData.series[0].data[i] ) - yScale( 0 ) ) )
+      .attr( "y", yScale( 0 ) ) // Start at baseline
+      .attr( "height", 0 )    // Start with height 0
       .attr( "width", xScale.bandwidth() )
       .attr( "fill", () => colour( apiData.series[0].name ) )
       .attr( "fill-opacity", ( d, i ) => ( apiData.series[0].data[i] > 0 ? 1 : 0.5 ) )
       .attr( "rx", "6" )
+      .transition()
+      .duration( 600 )
+      .attr( "y", ( d, i ) => yScale( apiData.series[0].data[i] ) )
+      .attr( "height", ( d, i ) => Math.abs( yScale( apiData.series[0].data[i] ) - yScale( 0 ) ) )
 
-    // Draw line for second series
+    // Draw or update line for second series
     const line = d3
       .line<number>()
       .x( ( d, i ) => ( xScale( apiData.categories[i] ) || 0 ) + xScale.bandwidth() / 2 )
-      .y( ( d ) => yScale( d ) )
+      .y( ( d ) => yScale( d ) );
 
-    chart
-      .append( "path" )
-      .datum( apiData.series[1].data )
-      .attr( "fill", "none" )
-      .attr( "stroke-width", 5 )
-      .attr( "stroke", () => colour( apiData.series[1].name ) )
-      .attr( "d", line )
+    let linePath = chart.select<SVGPathElement>( '.chart-line' );
+    if ( linePath.empty() ) {
+      linePath = chart
+        .append( 'path' )
+        .attr( 'class', 'chart-line' )
+        .attr( 'fill', 'none' )
+        .attr( 'stroke-width', 5 )
+        .attr( 'stroke', () => colour( apiData.series[1].name ) );
+    }
+    // Directly update the line path without animation
+    linePath.attr( 'd', line( apiData.series[1].data ) );
 
     // Draw x axis
     chart
       .append( "g" )
       .attr( "transform", `translate(0, ${height})` )
+      .transition()
+      .duration( 600 )
       .call( xAxis )
+      .selection()
       .call( ( g ) => g.select( ".domain" ).remove() )
       .selectAll( "text" )
       .attr( "text-transform", "uppercase" )
@@ -236,7 +252,10 @@ export class BarLineChartD3 {
     // Draw y axis
     yAxisGroup
       .attr( "transform", `translate(${dynamicMargin.left}, ${dynamicMargin.top})` )
+      .transition()
+      .duration( 600 )
       .call( yAxis )
+      .selection()
       .call( g => g.select( ".domain" ).remove() )
       .selectAll( "text" )
       .attr( "text-transform", "uppercase" )
