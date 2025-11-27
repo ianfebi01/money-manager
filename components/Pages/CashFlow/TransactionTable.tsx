@@ -119,6 +119,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       {
         accessorKey : 'date',
         id          : 'date',
+        accessorFn  : ( row ) => row.date?.split( 'T' )[0] || row.date,
         header      : t( 'date' ),
         cell        : ( { getValue } ) => {
           const dateValue = getValue<string | undefined>()
