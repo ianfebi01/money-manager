@@ -249,7 +249,7 @@ const DataTable = <TData, >( {
           </span>
         )}
 
-        <div className="grow" />
+        <div className="hidden md:block md:grow" />
 
         {/* Grouping Dropdown */}
         <div className='w-fit'>
@@ -509,7 +509,7 @@ const DataTable = <TData, >( {
         </table>
 
         {!isLoading && table.getRowModel().rows.length === 0 && (
-          <div className="border-t border-white-overlay-2 px-4 py-6 text-center text-white-overlay">
+          <div className=" px-4 py-6 text-center text-white-overlay">
             {emptyMessage || t( 'no-data-found' )}
           </div>
         )}
