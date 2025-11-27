@@ -135,7 +135,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         id     : 'actions',
-        header : '',
+        header : t( 'action' ),
         size   : 60,
         cell   : ( { row } ) => (
           <div className="flex justify-end">

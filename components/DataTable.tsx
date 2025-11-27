@@ -1,6 +1,12 @@
-'use client'
-
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+'use client';
+import {
+  Fragment,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   ColumnDef,
   GroupingState,
@@ -17,8 +23,9 @@ import {
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faMinus, faPlus, faSliders } from '@fortawesome/free-solid-svg-icons';
 import { useTranslations } from 'next-intl'
+import { Menu, Transition } from '@headlessui/react'
 
 type DataTableProps<TData> = {
   columns: ColumnDef<TData, any>[]
@@ -66,7 +73,7 @@ const DataTable = <TData, >( {
   enableColumnVisibility = true,
   initialGrouping = [],
 }: DataTableProps<TData> ) => {
-  const t = useTranslations();
+  const t = useTranslations()
   const [sorting, setSorting] = useState<SortingState>( [] )
   const [rowSelection, setRowSelection] = useState<RowSelectionState>( {} )
   const [searchQuery, setSearchQuery] = useState( '' )
@@ -207,22 +214,26 @@ const DataTable = <TData, >( {
     if ( grouping.length > 0 && filteredData.length > 0 ) {
       setTimeout( () => {
         const collectGroupedRowIds = ( rows: any[] ): string[] => {
-          let ids: string[] = [];
+          let ids: string[] = []
           for ( const row of rows ) {
             if ( row.getIsGrouped() ) {
-              ids.push( row.id );
+              ids.push( row.id )
               if ( row.subRows && row.subRows.length > 0 ) {
-                ids = ids.concat( collectGroupedRowIds( row.subRows ) );
+                ids = ids.concat( collectGroupedRowIds( row.subRows ) )
               }
             }
           }
-          
-          return ids;
-        };
-        const allGroupIds = collectGroupedRowIds( table.getPrePaginationRowModel().rows );
-        const expandedState = Object.fromEntries( allGroupIds.map( id => [id, true] ) );
-        setExpanded( expandedState );
-      }, 0 );
+
+          return ids
+        }
+        const allGroupIds = collectGroupedRowIds(
+          table.getPrePaginationRowModel().rows
+        )
+        const expandedState = Object.fromEntries(
+          allGroupIds.map( ( id ) => [id, true] )
+        )
+        setExpanded( expandedState )
+      }, 0 )
     }
   }, [grouping, filteredData, table] )
 
@@ -246,9 +257,11 @@ const DataTable = <TData, >( {
             value={searchQuery}
             placeholder={searchPlaceholder || t( 'search' )}
             onChange={( event ) => setSearchQuery( event.target.value )}
-            className="w-full rounded-md border border-white-overlay-2 bg-dark px-3 py-2 text-sm text-white placeholder:text-white-overlay focus:border-white focus:outline-none"
+            className="w-full rounded-md border border-white-overlay-2 bg-dark px-3 h-[42px] text-sm text-white placeholder:text-white-overlay focus:border-white focus:outline-none"
           />
         </div>
+
+        {renderToolbar}
 
         {enableSelection && (
           <span className="text-sm text-white-overlay">
@@ -256,13 +269,103 @@ const DataTable = <TData, >( {
           </span>
         )}
 
+        <div className="grow" />
+
         {enableColumnVisibility && (
+          <Menu as="div"
+            className="relative text-left"
+          >
+            {( ) => (
+              <>
+                <Menu.Button
+                  className={cn(
+                    'min-w-[100px]',
+                    'flex justify-between items-center text-left',
+                    'p-2 border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out',
+                    'text-base',
+                    ['focus:border-white/50 border-white/25'],
+                    ['pr-4']
+                  )}
+                >
+                  <span className="p m-0 line-clamp-1 text-base">
+                    {t( 'columns' )}
+                  </span>
+                  <div
+                    className={`transition-all duration-300 ease-out`}
+                  >
+                    <FontAwesomeIcon
+                      icon={faSliders}
+                      className="text-white-overlay"
+                    />
+                  </div>
+                </Menu.Button>
+
+                <Transition
+                  as={Fragment}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-in"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  <Menu.Items className="absolute right-0 mt-2 origin-top-left bg-dark border border-white-overlay-2 w-[150px] shadow-2xl focus:outline-none z-[11] rounded-lg overflow-hidden p-1">
+                    <div className="max-h-[250px] overflow-y-auto">
+                      {table
+                        .getAllLeafColumns()
+                        .filter( ( column ) => column.getCanHide() )?.length
+                        ? table
+                          .getAllLeafColumns()
+                          .filter( ( column ) => column.getCanHide() )
+                          .map( ( column, index ) => (
+                            <Menu.Item key={index}>
+                              {( ) => (
+                                <button
+                                  type="button"
+                                  onClick={( e ) => {
+                                    e.preventDefault()
+                                    column.toggleVisibility()
+                                  }}
+                                  className={`flex items-center justify-between w-full gap-2 px-2 py-1.5 text-left no-underline transition-all duration-300 ease-in-out cursor-pointer hover:bg-dark-secondary rounded-lg`}
+                                >
+                                  <span className="p m-0 line-clamp-2 text-sm">
+                                    {column.columnDef.header &&
+                                      typeof column.columnDef.header ===
+                                        'string'
+                                      ? column.columnDef.header
+                                      : column.id}
+                                  </span>
+                                  {column.getIsVisible() && (
+                                    <FontAwesomeIcon
+                                      icon={faCheck}
+                                      className="text-white-overlay w-4 h-4 shrink-0"
+                                    />
+                                  )}
+                                </button>
+                              )}
+                            </Menu.Item>
+                          ) )
+                        : !table
+                          .getAllLeafColumns()
+                          .some( ( column ) => column.getCanHide() ) && (
+                          <span className="text-xs text-white-overlay">
+                            {t( 'no_hideable_columns' )}
+                          </span>
+                        )}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </>
+            )}
+          </Menu>
+        )}
+        {/* {enableColumnVisibility && (
           <div className="relative"
             ref={columnMenuRef}
           >
             <button
               type="button"
-              className="rounded-md border border-white-overlay-2 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-white hover:bg-dark"
+              className="button button-outline"
               onClick={() => setShowColumnMenu( ( prev ) => !prev )}
             >
               {t( 'columns' )}
@@ -306,10 +409,7 @@ const DataTable = <TData, >( {
               </div>
             )}
           </div>
-        )}
-
-        <div className="flex-1" />
-        {renderToolbar}
+        )} */}
       </div>
       {/* End Toolbar */}
 
@@ -358,7 +458,8 @@ const DataTable = <TData, >( {
           <tbody>
             {isLoading &&
               Array.from( { length : loadingRows } ).map( ( _, rowIndex ) => (
-                <tr key={`loading-${rowIndex}`}
+                <tr
+                  key={`loading-${rowIndex}`}
                   className="border-dark-secondary border-t first:border-none"
                 >
                   {Array.from( { length : columnCount } ).map( ( _, cellIndex ) => (
@@ -411,11 +512,13 @@ const DataTable = <TData, >( {
                               />
                             )}
                           </button>
-                          {cell.column.columnDef.cell && cell.column.columnDef.header && flexRender(
-                            cell.column.columnDef.cell ??
-                              cell.column.columnDef.header,
-                            cell.getContext()
-                          )}
+                          {cell.column.columnDef.cell &&
+                            cell.column.columnDef.header &&
+                            flexRender(
+                              cell.column.columnDef.cell ??
+                                cell.column.columnDef.header,
+                              cell.getContext()
+                            )}
                           <span className="ml-2 text-xs text-white-overlay">
                             ({row.subRows?.length ?? 0})
                           </span>

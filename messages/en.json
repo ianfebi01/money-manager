@@ -69,6 +69,7 @@
     "edit_transaction": "Edit Transaction",
     "transaction": "Transaction",
     "edit": "Edit",
+    "action": "Action",
     "cancel": "Cancel",
     "transaction_summary": "Transaction Summary",
     "amount": "Amount",
