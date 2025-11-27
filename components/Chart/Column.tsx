@@ -4,6 +4,9 @@ import formatCurency from '@/utils/format-curency'
 import { ApexOptions } from 'apexcharts'
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { enUS, id } from 'date-fns/locale'
+import { useLocale } from 'next-intl'
+import { getMonthNameFromIndex } from '@/lib/utils'
 
 const ReactApexChart = dynamic( () => import( 'react-apexcharts' ), { ssr : false } )
 
@@ -12,10 +15,8 @@ interface Props {
   categories: string[]
 }
 
-const ColumnChart = ( {
-  series,
-  categories,
-}: Props ) => {
+const ColumnChart = ( { series, categories }: Props ) => {
+  const locale = useLocale()
   const [chartSeries, setChartSeries] = useState<ApexAxisChartSeries>(
     series || []
   )
@@ -82,25 +83,28 @@ const ColumnChart = ( {
 
   // Update series & options reactively
   useEffect( () => {
+    const localeMap = {
+      en : enUS,
+      id : id,
+    }
+
+    type LocaleKey = keyof typeof localeMap
+    const localeKey: LocaleKey =
+      locale === 'en' || locale === 'id' ? locale : 'en'
+
     if ( categories?.length > 0 ) {
-      setChartSeries(
-        categories.length < 4
-          ? ( series?.map( ( item ) => ( {
-            name : item?.name,
-            data : [...item?.data, '', ''],
-          } ) ) as unknown as ApexAxisChartSeries )
-          : series
-      )
+      setChartSeries( series )
       setChartOptions( ( prev ) => ( {
         ...prev,
         xaxis : {
           ...prev.xaxis,
-          categories :
-            categories.length < 4 ? [...categories, '', ''] : categories,
+          categories : categories.map( ( item ) =>
+            getMonthNameFromIndex( Number( item ), localeMap[localeKey] )
+          ),
         },
       } ) )
     }
-  }, [series, categories] )
+  }, [series, categories, locale] )
 
   return (
     <div>
