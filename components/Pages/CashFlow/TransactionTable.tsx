@@ -113,9 +113,9 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
         ),
       },
       {
-        id     : 'date',
-        header : t( 'date' ),
-        cell   : ( { getValue } ) => {
+        accessorKey : 'date',
+        header      : t( 'date' ),
+        cell        : ( { getValue } ) => {
           const dateValue = getValue<string | undefined>()
           const formatted = dateValue
             ? new Date( dateValue ).toLocaleDateString( undefined, {

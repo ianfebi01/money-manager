@@ -26,6 +26,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faMinus, faPlus, faSliders } from '@fortawesome/free-solid-svg-icons';
 import { useTranslations } from 'next-intl'
 import { Menu, Transition } from '@headlessui/react'
+import TextField from './Inputs/TextField';
 
 type DataTableProps<TData> = {
   columns: ColumnDef<TData, any>[]
@@ -252,12 +253,11 @@ const DataTable = <TData, >( {
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3 py-3">
         <div className="relative w-full max-w-sm">
-          <input
-            type="text"
+          <TextField
             value={searchQuery}
             placeholder={searchPlaceholder || t( 'search' )}
-            onChange={( event ) => setSearchQuery( event.target.value )}
-            className="w-full rounded-md border border-white-overlay-2 bg-dark px-3 h-[42px] text-sm text-white placeholder:text-white-overlay focus:border-white focus:outline-none"
+            onChange={( value ) => setSearchQuery( value )}
+            type="text"
           />
         </div>
 
@@ -279,7 +279,7 @@ const DataTable = <TData, >( {
               <>
                 <Menu.Button
                   className={cn(
-                    'min-w-[100px]',
+                    'min-w-[120px]',
                     'flex justify-between items-center text-left',
                     'p-2 border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out',
                     'text-base',
