@@ -359,57 +359,6 @@ const DataTable = <TData, >( {
             )}
           </Menu>
         )}
-        {/* {enableColumnVisibility && (
-          <div className="relative"
-            ref={columnMenuRef}
-          >
-            <button
-              type="button"
-              className="button button-outline"
-              onClick={() => setShowColumnMenu( ( prev ) => !prev )}
-            >
-              {t( 'columns' )}
-            </button>
-            {showColumnMenu && (
-              <div className="absolute right-0 z-20 mt-2 min-w-[180px] rounded-lg border border-white-overlay-2 bg-dark-secondary p-3 shadow-xl">
-                <p className="mb-2 mt-0 text-xs uppercase tracking-wide text-white-overlay">
-                  {t( 'toggle_columns' )}
-                </p>
-                <div className="flex max-h-56 flex-col gap-2 overflow-auto pr-1">
-                  {table
-                    .getAllLeafColumns()
-                    .filter( ( column ) => column.getCanHide() )
-                    .map( ( column ) => (
-                      <label
-                        key={column.id}
-                        className="flex cursor-pointer items-center gap-2 text-sm text-white"
-                      >
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-white-overlay-2 bg-transparent accent-blue-400"
-                          checked={column.getIsVisible()}
-                          onChange={() => column.toggleVisibility()}
-                        />
-                        <span className="line-clamp-1">
-                          {column.columnDef.header &&
-                          typeof column.columnDef.header === 'string'
-                            ? column.columnDef.header
-                            : column.id}
-                        </span>
-                      </label>
-                    ) )}
-                  {!table
-                    .getAllLeafColumns()
-                    .some( ( column ) => column.getCanHide() ) && (
-                    <span className="text-xs text-white-overlay">
-                      {t( 'no_hideable_columns' )}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )} */}
       </div>
       {/* End Toolbar */}
 
