@@ -18,6 +18,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useTranslations } from 'next-intl'
 
 type DataTableProps<TData> = {
   columns: ColumnDef<TData, any>[]
@@ -52,10 +53,10 @@ const DataTable = <TData, >( {
   columns,
   data,
   searchKeys,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
   initialPageSize = 10,
-  emptyMessage = 'No data available',
+  emptyMessage,
   isLoading = false,
   loadingRows = 6,
   onRowClick,
@@ -65,6 +66,7 @@ const DataTable = <TData, >( {
   enableColumnVisibility = true,
   initialGrouping = [],
 }: DataTableProps<TData> ) => {
+  const t = useTranslations();
   const [sorting, setSorting] = useState<SortingState>( [] )
   const [rowSelection, setRowSelection] = useState<RowSelectionState>( {} )
   const [searchQuery, setSearchQuery] = useState( '' )
@@ -242,7 +244,7 @@ const DataTable = <TData, >( {
           <input
             type="text"
             value={searchQuery}
-            placeholder={searchPlaceholder}
+            placeholder={searchPlaceholder || t( 'search' )}
             onChange={( event ) => setSearchQuery( event.target.value )}
             className="w-full rounded-md border border-white-overlay-2 bg-dark px-3 py-2 text-sm text-white placeholder:text-white-overlay focus:border-white focus:outline-none"
           />
@@ -250,7 +252,7 @@ const DataTable = <TData, >( {
 
         {enableSelection && (
           <span className="text-sm text-white-overlay">
-            {selectedCount} selected
+            {selectedCount} {t( 'selected' )}
           </span>
         )}
 
@@ -263,12 +265,12 @@ const DataTable = <TData, >( {
               className="rounded-md border border-white-overlay-2 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-white hover:bg-dark"
               onClick={() => setShowColumnMenu( ( prev ) => !prev )}
             >
-              Columns
+              {t( 'columns' )}
             </button>
             {showColumnMenu && (
               <div className="absolute right-0 z-20 mt-2 min-w-[180px] rounded-lg border border-white-overlay-2 bg-dark-secondary p-3 shadow-xl">
                 <p className="mb-2 mt-0 text-xs uppercase tracking-wide text-white-overlay">
-                  Toggle columns
+                  {t( 'toggle_columns' )}
                 </p>
                 <div className="flex max-h-56 flex-col gap-2 overflow-auto pr-1">
                   {table
@@ -297,7 +299,7 @@ const DataTable = <TData, >( {
                     .getAllLeafColumns()
                     .some( ( column ) => column.getCanHide() ) && (
                     <span className="text-xs text-white-overlay">
-                      No hideable columns
+                      {t( 'no_hideable_columns' )}
                     </span>
                   )}
                 </div>
@@ -461,14 +463,14 @@ const DataTable = <TData, >( {
 
         {!isLoading && table.getRowModel().rows.length === 0 && (
           <div className="border-t border-white-overlay-2 px-4 py-6 text-center text-white-overlay">
-            {emptyMessage}
+            {emptyMessage || t( 'no-data-found' )}
           </div>
         )}
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-white-overlay-2 py-3 text-sm text-white-overlay">
         <div className="flex items-center gap-2">
-          <span>Rows per page</span>
+          <span>{t( 'rows_per_page' )}</span>
           <select
             value={pageSize}
             onChange={( event ) => table.setPageSize( Number( event.target.value ) )}
@@ -486,7 +488,7 @@ const DataTable = <TData, >( {
         </div>
 
         <span className="text-sm">
-          {pageStart}-{pageEnd} of {filteredData.length}
+          {pageStart}-{pageEnd} {t( 'of' )} {filteredData.length}
         </span>
 
         <div className="flex-1" />
@@ -503,10 +505,10 @@ const DataTable = <TData, >( {
                 : 'hover:border-white hover:bg-dark'
             )}
           >
-            Prev
+            {t( 'prev' )}
           </button>
           <span className="min-w-[90px] text-center">
-            Page {currentPage} of {Math.max( totalPages, 1 )}
+            {t( 'page' )} {currentPage} {t( 'of' )} {Math.max( totalPages, 1 )}
           </span>
           <button
             type="button"
@@ -519,7 +521,7 @@ const DataTable = <TData, >( {
                 : 'hover:border-white hover:bg-dark'
             )}
           >
-            Next
+            {t( 'next' )}
           </button>
         </div>
       </div>

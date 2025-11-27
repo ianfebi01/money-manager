@@ -9,6 +9,7 @@ import { faSquareMinus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   filter: IFilter
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
+  const t = useTranslations();
   const { data: allData, isFetching } = useGetDatas( 100, 1, filter, true )
   const tableData = allData?.data || []
 
@@ -46,7 +48,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'description',
-        header      : 'Description',
+        header      : t( 'description' ),
         cell        : ( { row } ) => (
           <span className="line-clamp-1">{row.original.description}</span>
         ),
@@ -60,7 +62,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'category_name',
-        header      : 'Category',
+        header      : t( 'category' ),
         cell        : ( { row } ) => (
           <div className="min-w-[120px] text-white-overlay">
             {row.original.category_name ? (
@@ -74,7 +76,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'type',
-        header      : 'Type',
+        header      : t( 'type' ),
         cell        : ( { row } ) => (
           <span
             className={cn( 'px-2 py-1 rounded text-xs uppercase', {
@@ -92,7 +94,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
       },
       {
         accessorKey : 'amount',
-        header      : 'Amount',
+        header      : t( 'amount' ),
         cell        : ( { row } ) => (
           <p
             className={cn( 'm-0 font-semibold text-right', {
@@ -111,10 +113,9 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
         ),
       },
       {
-        id         : 'date',
-        accessorFn : ( row ) => row.date?.split( 'T' )[0] || row.date,
-        header     : 'Date',
-        cell       : ( { getValue } ) => {
+        id     : 'date',
+        header : t( 'date' ),
+        cell   : ( { getValue } ) => {
           const dateValue = getValue<string | undefined>()
           const formatted = dateValue
             ? new Date( dateValue ).toLocaleDateString( undefined, {
@@ -152,18 +153,18 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
         ),
       },
     ],
-    [handleDelete]
+    [ handleDelete, t ]
   )
 
   return (
     <DataTable
       data={tableData}
       columns={columns}
-      searchKeys={['description', 'category_name', 'type', 'date']}
-      onRowClick={( row ) => handleEdit( row )}
+      searchKeys={[ 'description', 'category_name', 'type', 'date' ]}
+      onRowClick={ ( row ) => handleEdit( row ) }
       isLoading={isFetching}
-      emptyMessage="No recent transactions"
-      initialGrouping={['date']}
+      emptyMessage={ t( 'recent_transactions' ) }
+      initialGrouping={[ 'date' ]}
       initialPageSize={20}
     />
   )

@@ -144,5 +144,14 @@
         "error_transaction_category": "One of the transactions has no category.",
         "error_no_transactions": "No valid transactions to save.",
         "error_date_required": "Please select a date first."
-    }
+    },
+    "columns": "Columns",
+    "toggle_columns": "Toggle columns",
+    "no_hideable_columns": "No hideable columns",
+    "selected": "selected",
+    "rows_per_page": "Rows per page",
+    "of": "of",
+    "prev": "Prev",
+    "next": "Next",
+    "page": "Page"
 }

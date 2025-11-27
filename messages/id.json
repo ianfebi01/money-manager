@@ -144,5 +144,14 @@
         "error_transaction_category": "Salah satu transaksi tidak memiliki kategori.",
         "error_no_transactions": "Tidak ada transaksi yang valid untuk disimpan.",
         "error_date_required": "Silakan pilih tanggal terlebih dahulu."
-    }
+    },
+    "columns": "Kolom",
+    "toggle_columns": "Tampilkan kolom",
+    "no_hideable_columns": "Tidak ada kolom yang bisa disembunyikan",
+    "selected": "terpilih",
+    "rows_per_page": "Baris per halaman",
+    "of": "dari",
+    "prev": "Sebelumnya",
+    "next": "Berikutnya",
+    "page": "Halaman"
 }
