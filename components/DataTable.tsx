@@ -510,7 +510,7 @@ const DataTable = <TData, >( {
 
         {!isLoading && table.getRowModel().rows.length === 0 && (
           <div className=" px-4 py-6 text-center text-white-overlay">
-            {emptyMessage || t( 'no-data-found' )}
+            {emptyMessage || t( 'no_data_found' )}
           </div>
         )}
       </div>

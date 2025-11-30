@@ -21,8 +21,9 @@ interface IMonthlyTransactions {
 }
 
 export interface IFilter {
-  month: string
-  year: string
+  month?: string
+  year?: string
+  search?: string
 }
 
 /**

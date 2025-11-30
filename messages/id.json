@@ -3,7 +3,7 @@
     "contact": "Kontak",
     "search": "Cari",
     "read_more": "Baca Selengkapnya",
-    "no-data-found": "Data tidak ditemukan",
+    "no_data_found": "Data tidak ditemukan",
     "article": {
         "title": "Artikel",
         "desc": "Daftar artikel by Ian Febi Sastrataruna"
@@ -60,6 +60,7 @@
     "date": "Tanggal",
     "month": "Bulan",
     "group_by": "Kelompokkan",
+    "search_transactions": "Cari transaksi",
     "last_14_days": "14 hari lalu",
     "last_30_days": "30 hari lalu",
     "select_type": "Pilih Tipe",

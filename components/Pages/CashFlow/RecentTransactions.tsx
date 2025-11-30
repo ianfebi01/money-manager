@@ -1,10 +1,12 @@
-'use client'
-
-import { useGetRecentTransactions } from '@/lib/hooks/api/cashFlow'
+'use client';
+import TextField from '@/components/Inputs/TextField'
+import { IFilter, useGetDatas } from '@/lib/hooks/api/cashFlow'
+import useDebounce from '@/lib/hooks/useDebounce'
 import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 
 interface Props {
   enabled: boolean
@@ -13,7 +15,13 @@ interface Props {
 
 const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
   const t = useTranslations()
-  const { data, isFetching } = useGetRecentTransactions( 100, enabled )
+
+  const [filter, setFilter] = useState<IFilter>( {
+    search : '',
+  } )
+
+  const debouncedSearch = useDebounce( filter.search, 500 )
+  const { data, isFetching } = useGetDatas( 10, 1, { ...filter, search : debouncedSearch }, enabled )
 
   /**
    * fake array
@@ -25,6 +33,16 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
       <p className="mt-0 mb-1 text-left text-white-overlay text-sm">
         {t( 'recent_transactions' )}:
       </p>
+      <div className='h-10 mb-2 w-fit'>
+        <TextField
+          value={filter.search as string}
+          onChange={( e ) => setFilter( { ...filter, search : e } )}
+          placeholder={t( 'search_transactions' )}
+          type='text'
+          className='h-4'
+          small
+        />
+      </div>
       <div className="flex overflow-auto gap-2 items-center pb-4">
         {!isFetching &&
           !!data &&
@@ -56,6 +74,12 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
               className="bg-dark-secondary animate-pulse h-[60px] w-40 rounded-md shrink-0"
             ></div>
           ) )}
+
+        {!isFetching && !data?.data?.length && (
+          <div className="text-white-overlay">
+            {t( 'no_data_found' )}
+          </div>
+        )}
       </div>
     </div>
   )

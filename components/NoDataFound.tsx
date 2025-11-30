@@ -37,7 +37,7 @@ const NoDataFound = ( { size = 'lg' }: Props ) => {
           size === 'lg' && 'text-lg',
         ] )}
       >
-        {t( 'no-data-found' )}
+        {t( 'no_data_found' )}
       </h2>
     </div>
   )

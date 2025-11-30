@@ -22,6 +22,7 @@ interface TextFieldProps
   error?: string
   touched?: boolean
   autoFocus?: boolean
+  small?: boolean
   capitalizeFirstChar?: boolean
 }
 
@@ -31,11 +32,12 @@ const TextField = ( {
   loading,
   placeholder,
   disabled,
-  type,
+  type = 'text',
   name,
   error,
   touched,
   capitalizeFirstChar,
+  small = false,
   ...props
 }: TextFieldProps ) => {
   const [showPassword, setShowPassword] = useState<boolean>( false )
@@ -93,9 +95,8 @@ const TextField = ( {
             {...props}
             className={cn(
               'w-full',
-              'py-2 px-8',
-              'text-white border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
-              'text-base',
+              [ small ? 'py-1 px-4 text-xs rounded-md' : 'py-2 px-8 text-base rounded-lg'],
+              'text-white border bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
               [
                 'focus:border-white/50 border-white/25',
                 touched && error && 'focus:border-red-500 border-red-500',
@@ -119,8 +120,8 @@ const TextField = ( {
           {...props}
           className={cn(
             'w-full',
-            'text-white p-2 border rounded-lg bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
-            'text-base',
+            [ small ? 'py-1 px-2 text-xs rounded-md' : 'py-2 px-2 text-base rounded-lg'],
+            'text-white border bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
             [
               'focus:border-white/50 border-white/25',
               touched && error && 'focus:border-red-500 border-red-500',
