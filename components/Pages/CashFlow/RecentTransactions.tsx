@@ -68,7 +68,6 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
       </div>
       <Transition
         show={showSearchInput}
-        unmount={false}
         enter="transition-all duration-500 ease-in-out"
         enterFrom="max-h-0 opacity-0"
         enterTo="max-h-[500px] opacity-100"
