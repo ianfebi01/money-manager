@@ -1,12 +1,16 @@
-'use client';
+'use client'
+import Button from '@/components/Buttons/Button'
 import TextField from '@/components/Inputs/TextField'
 import { IFilter, useGetDatas } from '@/lib/hooks/api/cashFlow'
 import useDebounce from '@/lib/hooks/useDebounce'
 import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Transition } from '@headlessui/react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 
 interface Props {
   enabled: boolean
@@ -21,7 +25,22 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
   } )
 
   const debouncedSearch = useDebounce( filter.search, 500 )
-  const { data, isFetching } = useGetDatas( 10, 1, { ...filter, search : debouncedSearch }, enabled )
+  const { data, isFetching } = useGetDatas(
+    10,
+    1,
+    { ...filter, search : debouncedSearch },
+    enabled
+  )
+
+  /**
+   * Show transaction search input
+   */
+  const [showSearchInput, setShowSearchInput] = useState<boolean>( false )
+  const searchInputRef = useRef<HTMLInputElement>( null )
+
+  const handleAfterEnter = () => {
+    searchInputRef.current?.focus()
+  }
 
   /**
    * fake array
@@ -30,19 +49,41 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
 
   return (
     <div>
-      <p className="mt-0 mb-1 text-left text-white-overlay text-sm">
-        {t( 'recent_transactions' )}:
-      </p>
-      <div className='h-10 mb-2 w-fit'>
+      <div className="flex items-center gap-2">
+        <p className="mt-0 mb-1 text-left text-white-overlay text-sm">
+          {t( 'recent_transactions' )}:
+        </p>
+        <Button
+          variant="iconOnly"
+          className={cn(
+            'text-white/80 ml-auto',
+            showSearchInput ? 'hidden' : 'block'
+          )}
+          onClick={() => setShowSearchInput( !showSearchInput )}
+        >
+          <FontAwesomeIcon icon={faSearch} />
+        </Button>
+      </div>
+      <Transition
+        show={showSearchInput}
+        enter="transition-all duration-500 ease-in-out"
+        enterFrom="max-h-0 opacity-0"
+        enterTo="max-h-[500px] opacity-100"
+        leave="transition-all duration-500 ease-in-out"
+        leaveFrom="max-h-[500px] opacity-100"
+        leaveTo="max-h-0 opacity-0"
+        afterEnter={handleAfterEnter}
+      >
         <TextField
+          ref={searchInputRef}
           value={filter.search as string}
           onChange={( e ) => setFilter( { ...filter, search : e } )}
           placeholder={t( 'search_transactions' )}
-          type='text'
-          className='h-4'
-          small
+          type="text"
+          className={cn( 'mb-2' )}
+          onBlur={() => setShowSearchInput( false )}
         />
-      </div>
+      </Transition>
       <div className="flex overflow-auto gap-2 items-center pb-4">
         {!isFetching &&
           !!data &&
@@ -76,9 +117,7 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
           ) )}
 
         {!isFetching && !data?.data?.length && (
-          <div className="text-white-overlay">
-            {t( 'no_data_found' )}
-          </div>
+          <div className="text-white-overlay">{t( 'no_data_found' )}</div>
         )}
       </div>
     </div>

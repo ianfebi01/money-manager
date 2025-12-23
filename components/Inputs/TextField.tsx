@@ -6,6 +6,8 @@ import {
   FormEvent,
   useRef,
   useEffect,
+  forwardRef,
+  useImperativeHandle,
 } from 'react'
 import { cn } from '@/lib/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -26,7 +28,7 @@ interface TextFieldProps
   capitalizeFirstChar?: boolean
 }
 
-const TextField = ( {
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>( ( {
   value,
   onChange,
   loading,
@@ -39,7 +41,7 @@ const TextField = ( {
   capitalizeFirstChar,
   small = false,
   ...props
-}: TextFieldProps ) => {
+}, forwardedRef ) => {
   const [showPassword, setShowPassword] = useState<boolean>( false )
 
   const formatRupiah = ( number: string ) => {
@@ -62,12 +64,15 @@ const TextField = ( {
     }
   }
 
-  const ref = useRef<HTMLInputElement>( null )
+  const internalRef = useRef<HTMLInputElement>( null )
+
+  // Merge forwarded ref with internal ref
+  useImperativeHandle( forwardedRef, () => internalRef.current as HTMLInputElement )
 
   // AutoFocus
   useEffect( () => {
-    if ( props.autoFocus && ref.current ) {
-      ref.current?.focus()
+    if ( props.autoFocus && internalRef.current ) {
+      internalRef.current?.focus()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] )
@@ -84,7 +89,7 @@ const TextField = ( {
             Rp.
           </span>
           <input
-            ref={ref}
+            ref={internalRef}
             id={name}
             placeholder={placeholder}
             type="text"
@@ -100,7 +105,8 @@ const TextField = ( {
               [
                 'focus:border-white/50 border-white/25',
                 touched && error && 'focus:border-red-500 border-red-500',
-              ]
+              ],
+              props.className
             )}
           />
         </>
@@ -108,6 +114,7 @@ const TextField = ( {
 
       {['text', 'password', 'number', 'email'].includes( String( type ) ) && (
         <input
+          ref={internalRef}
           id={name}
           name={name}
           placeholder={placeholder}
@@ -126,7 +133,8 @@ const TextField = ( {
               'focus:border-white/50 border-white/25',
               touched && error && 'focus:border-red-500 border-red-500',
             ],
-            [type === 'password' && 'pr-4']
+            [type === 'password' && 'pr-4'],
+            props.className
           )}
         />
       )}
@@ -142,6 +150,8 @@ const TextField = ( {
       )}
     </div>
   )
-}
+} )
+
+TextField.displayName = 'TextField'
 
 export default TextField
