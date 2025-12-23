@@ -10,7 +10,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Transition } from '@headlessui/react'
 import { useTranslations } from 'next-intl'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 interface Props {
   enabled: boolean
@@ -36,11 +36,6 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
    * Show transaction search input
    */
   const [showSearchInput, setShowSearchInput] = useState<boolean>( false )
-  const searchInputRef = useRef<HTMLInputElement>( null )
-
-  const handleAfterEnter = () => {
-    searchInputRef.current?.focus()
-  }
 
   /**
    * fake array
@@ -56,12 +51,14 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
         <Button
           variant="iconOnly"
           className={cn(
-            'text-white/80 ml-auto',
+            'text-white/80 ml-auto mb-1',
             showSearchInput ? 'hidden' : 'block'
           )}
           onClick={() => setShowSearchInput( !showSearchInput )}
         >
-          <FontAwesomeIcon icon={faSearch} />
+          <FontAwesomeIcon icon={faSearch}
+            size='xs'
+          />
         </Button>
       </div>
       <Transition
@@ -72,19 +69,18 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
         leave="transition-all duration-500 ease-in-out"
         leaveFrom="max-h-[500px] opacity-100"
         leaveTo="max-h-0 opacity-0"
-        afterEnter={handleAfterEnter}
       >
         <TextField
-          ref={searchInputRef}
           value={filter.search as string}
           onChange={( e ) => setFilter( { ...filter, search : e } )}
           placeholder={t( 'search_transactions' )}
           type="text"
           className={cn( 'mb-2' )}
           onBlur={() => setShowSearchInput( false )}
+          autoFocus
         />
       </Transition>
-      <div className="flex overflow-auto gap-2 items-center pb-4">
+      <div className="flex overflow-auto gap-2 items-center pb-4 border">
         {!isFetching &&
           !!data &&
           data?.data?.length > 0 &&
