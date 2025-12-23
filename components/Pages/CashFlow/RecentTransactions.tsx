@@ -10,7 +10,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Transition } from '@headlessui/react'
 import { useTranslations } from 'next-intl'
-import { Fragment, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 interface Props {
   enabled: boolean
