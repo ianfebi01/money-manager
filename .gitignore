@@ -41,3 +41,6 @@ next-env.d.ts
 
 # Build script
 /build-script/node_modules
+
+# DB
+/database.sql
