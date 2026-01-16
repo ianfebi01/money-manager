@@ -146,8 +146,12 @@
         "error_category_required": "Silakan pilih kategori terlebih dahulu.",
         "error_transaction_category": "Salah satu transaksi tidak memiliki kategori.",
         "error_no_transactions": "Tidak ada transaksi yang valid untuk disimpan.",
-        "error_date_required": "Silakan pilih tanggal terlebih dahulu."
+        "error_date_required": "Silakan pilih tanggal terlebih dahulu.",
+        "export_success": "Ekspor berhasil!",
+        "error_export": "Gagal mengekspor transaksi"
     },
+    "export_excel": "Ekspor Excel",
+    "exporting": "Mengekspor...",
     "columns": "Kolom",
     "toggle_columns": "Tampilkan kolom",
     "no_hideable_columns": "Tidak ada kolom yang bisa disembunyikan",

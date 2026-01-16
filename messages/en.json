@@ -146,8 +146,12 @@
         "error_category_required": "Please select a category before saving.",
         "error_transaction_category": "One of the transactions has no category.",
         "error_no_transactions": "No valid transactions to save.",
-        "error_date_required": "Please select a date first."
+        "error_date_required": "Please select a date first.",
+        "export_success": "Export successful!",
+        "error_export": "Error exporting transactions"
     },
+    "export_excel": "Export Excel",
+    "exporting": "Exporting...",
     "columns": "Columns",
     "toggle_columns": "Toggle columns",
     "no_hideable_columns": "No hideable columns",

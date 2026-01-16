@@ -1,14 +1,14 @@
 import Button from '@/components/Buttons/Button'
 import DataTable from '@/components/DataTable'
 import DefaultCategories from '@/components/DefaultCategories'
-import { IFilter, useGetDatas } from '@/lib/hooks/api/cashFlow'
+import { IFilter, useExportExcel, useGetDatas } from '@/lib/hooks/api/cashFlow'
 import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
-import { faSquareMinus } from '@fortawesome/free-solid-svg-icons'
+import { faFileExcel, faSquareMinus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ColumnDef } from '@tanstack/react-table'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { format, Locale } from 'date-fns'
 import { enUS, id as idLocale } from 'date-fns/locale'
@@ -25,6 +25,17 @@ interface Props {
 const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
   const t = useTranslations()
   const currentLocale = useLocale()
+  const [isExporting, setIsExporting] = useState( false )
+  const { exportExcel } = useExportExcel()
+
+  const handleExport = useCallback( async () => {
+    setIsExporting( true )
+    try {
+      await exportExcel( filter )
+    } finally {
+      setIsExporting( false )
+    }
+  }, [exportExcel, filter] )
   
   // Get the date-fns locale based on next-intl locale
   const dateFnsLocale: Locale = useMemo( () => {
@@ -180,16 +191,32 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
   )
 
   return (
-    <DataTable
-      data={tableData}
-      columns={columns}
-      searchKeys={[ 'description', 'category_name', 'type', 'date' ]}
-      onRowClick={ ( row ) => handleEdit( row ) }
-      isLoading={isFetching}
-      emptyMessage={ t( 'recent_transactions' ) }
-      initialGrouping={[ 'date' ]}
-      initialPageSize={20}
-    />
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end">
+        <Button
+          variant="secondary"
+          onClick={handleExport}
+          disabled={isExporting || isFetching}
+          ariaLabel={t( 'export_excel' )}
+        >
+          <FontAwesomeIcon
+            icon={faFileExcel}
+            className="mr-2"
+          />
+          {isExporting ? t( 'exporting' ) : t( 'export_excel' )}
+        </Button>
+      </div>
+      <DataTable
+        data={tableData}
+        columns={columns}
+        searchKeys={[ 'description', 'category_name', 'type', 'date' ]}
+        onRowClick={ ( row ) => handleEdit( row ) }
+        isLoading={isFetching}
+        emptyMessage={ t( 'recent_transactions' ) }
+        initialGrouping={[ 'date' ]}
+        initialPageSize={20}
+      />
+    </div>
   )
 }
 

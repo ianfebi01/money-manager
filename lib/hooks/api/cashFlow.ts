@@ -317,3 +317,59 @@ export const useCategories = (
 
   return data
 }
+
+/**
+ *  Export transactions to Excel
+ */
+export const useExportExcel = () => {
+  const axiosAuth = useAxiosAuth()
+  const t = useTranslations()
+
+  const exportExcel = async ( filter: IFilter ) => {
+    try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const query = {
+        ...filter,
+        timezone : timezone,
+      }
+      const queryString = qs.stringify( query, { addQueryPrefix : true } )
+
+      const res = await axiosAuth( `/transactions/export${queryString}`, {
+        responseType : 'blob',
+      } )
+
+      // Create download link
+      const blob = new Blob( [res.data], {
+        type : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      } )
+      const url = window.URL.createObjectURL( blob )
+      const link = document.createElement( 'a' )
+      link.href = url
+
+      // Get filename from response headers or generate one
+      const contentDisposition = res.headers['content-disposition']
+      let filename = 'transactions_export.xlsx'
+      if ( contentDisposition ) {
+        const match = contentDisposition.match( /filename="(.+)"/ )
+        if ( match ) {
+          filename = match[1]
+        }
+      } else if ( filter.month && filter.year ) {
+        filename = `transactions_${filter.year}_${filter.month.padStart( 2, '0' )}.xlsx`
+      }
+
+      link.download = filename
+      document.body.appendChild( link )
+      link.click()
+      document.body.removeChild( link )
+      window.URL.revokeObjectURL( url )
+
+      toast.success( t( 'toast.export_success' ) )
+    } catch ( error ) {
+      toast.error( t( 'toast.error_export' ) )
+      throw error
+    }
+  }
+
+  return { exportExcel }
+}
