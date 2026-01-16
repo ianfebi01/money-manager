@@ -13,6 +13,7 @@ export interface ITransaction {
   amount: number
   description: string
   date: string
+  local_date?: string
   type: 'expense' | 'income'
   created_at: string
 }

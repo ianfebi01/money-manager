@@ -4,8 +4,8 @@ import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import * as yup from 'yup'
 import authOptions from '@/lib/authOptions'
-import { addMonths } from 'date-fns'
-import { fromZonedTime } from 'date-fns-tz'
+import { addMonths, format } from 'date-fns'
+import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),
@@ -144,15 +144,23 @@ export async function GET( req: NextRequest ) {
     const txResult = await connectionPool.query( dataQuery, params )
     const transactions = txResult.rows
 
-    const result = transactions.map( ( t ) => ( {
-      id            : t.id,
-      amount        : Number( t.amount ),
-      description   : t.description,
-      date          : t.date,
-      type          : t.type,
-      category_id   : t.category_id,
-      category_name : t.category_name,
-    } ) )
+    const result = transactions.map( ( t ) => {
+      // Convert UTC date to user's timezone for local date representation
+      const localDate = timezone
+        ? format( toZonedTime( new Date( t.date ), timezone ), 'yyyy-MM-dd' )
+        : t.date?.split( 'T' )[0] || t.date
+
+      return {
+        id            : t.id,
+        amount        : Number( t.amount ),
+        description   : t.description,
+        date          : t.date,
+        local_date    : localDate,
+        type          : t.type,
+        category_id   : t.category_id,
+        category_name : t.category_name,
+      }
+    } )
 
     return NextResponse.json( {
       data : result,

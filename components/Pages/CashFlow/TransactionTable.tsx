@@ -8,8 +8,10 @@ import formatCurency from '@/utils/format-curency'
 import { faSquareMinus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ColumnDef } from '@tanstack/react-table'
-import { useMemo } from 'react'
-import { useTranslations } from 'next-intl'
+import { useCallback, useMemo } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { format, Locale } from 'date-fns'
+import { enUS, id as idLocale } from 'date-fns/locale'
 
 interface Props {
   filter: IFilter
@@ -21,9 +23,30 @@ interface Props {
 }
 
 const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
-  const t = useTranslations();
+  const t = useTranslations()
+  const currentLocale = useLocale()
+  
+  // Get the date-fns locale based on next-intl locale
+  const dateFnsLocale: Locale = useMemo( () => {
+    const localeMap: Record<string, Locale> = {
+      en : enUS,
+      id : idLocale,
+    }
+
+    return localeMap[currentLocale] || enUS
+  }, [currentLocale] )
+
   const { data: allData, isFetching } = useGetDatas( 100, 1, filter, true )
   const tableData = allData?.data || []
+
+  // Format date with locale
+  const formatDateWithLocale = useCallback( ( dateValue: string | undefined ) => {
+    if ( !dateValue ) return '-'
+    const [year, month, day] = dateValue.split( '-' ).map( Number )
+    const date = new Date( year, month - 1, day )
+
+    return format( date, 'EEE, d', { locale : dateFnsLocale } )
+  }, [dateFnsLocale] )
 
   const columns: ColumnDef<ITransaction>[] = useMemo(
     () => [
@@ -117,22 +140,16 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
         ),
       },
       {
-        accessorKey : 'date',
+        accessorKey : 'local_date',
         id          : 'date',
-        accessorFn  : ( row ) => row.date?.split( 'T' )[0] || row.date,
         header      : t( 'date' ),
         cell        : ( { getValue } ) => {
           const dateValue = getValue<string | undefined>()
-          const formatted = dateValue
-            ? new Date( dateValue ).toLocaleDateString( undefined, {
-              weekday : 'short',
-              day     : 'numeric',
-            } )
-            : '-'
-
+          if ( !dateValue ) return <span className="text-white/80 text-sm">-</span>
+          
           return (
             <span className="text-white/80 text-sm whitespace-nowrap">
-              {formatted}
+              {formatDateWithLocale( dateValue )}
             </span>
           )
         },
@@ -159,7 +176,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
         ),
       },
     ],
-    [ handleDelete, t ]
+    [ handleDelete, t, formatDateWithLocale ]
   )
 
   return (
