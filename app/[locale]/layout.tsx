@@ -41,7 +41,15 @@ export async function generateMetadata( {
     title        : t( 'title' ), // e.g. "Money Manager | by ianfebi01" / "oleh ianfebi01"
     description  : t( 'desc' ), // localized description
     metadataBase : new URL( baseUrl ),
-    alternates   : {
+    manifest     : '/manifest.json',
+    themeColor   : '#222222',
+    appleWebApp  : {
+      capable        : true,
+      statusBarStyle : 'black-translucent',
+      title          : 'Money Manager',
+      startupImage   : '/icon-512x512.png',
+    },
+    alternates : {
       canonical : `/${locale}`,
       languages : Object.fromEntries(
         routing.locales.map( ( loc ) => [loc, `/${loc}`] )
