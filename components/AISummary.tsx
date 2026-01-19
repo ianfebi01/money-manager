@@ -2,12 +2,16 @@
 
 import { useSummarize } from '@/lib/hooks/api/useSummarize'
 import { cn } from '@/lib/utils'
-import { faWandMagicSparkles, faRotateRight } from '@fortawesome/free-solid-svg-icons'
+import {
+  faWandMagicSparkles,
+  faRotateRight,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef } from 'react'
 import Spinner from '@/components/Icons/Spinner'
 import Markdown from '@/components/Parsers/Markdown'
+import Button from './Buttons/Button'
 
 interface AISummaryProps {
   month: string
@@ -38,50 +42,52 @@ const AISummary = ( { month, year, className }: AISummaryProps ) => {
   return (
     <div
       className={cn(
-        'bg-dark-secondary border border-white-overlay-2 rounded-xl p-4 sm:p-6',
+        'bg-dark-secondary border border-white-overlay-2 rounded-xl p-4 transition-all duration-300 ease-in-out',
         className
       )}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <FontAwesomeIcon
-            icon={faWandMagicSparkles}
-            className="text-orange w-4 h-4"
+      {!summary && !isLoading && !error ? (
+        <div className="text-center flex flex-col md:flex-row items-center gap-2">
+          <FontAwesomeIcon icon={faWandMagicSparkles}
+            size="xl"
           />
-          <h3 className="text-lg font-semibold text-white">
-            {t( 'ai_summary.title' )}
-          </h3>
-        </div>
-
-        {summary && !isLoading && (
-          <button
-            onClick={generateSummary}
-            className="text-sm text-white-overlay hover:text-white transition-default flex items-center gap-1"
-          >
-            <FontAwesomeIcon
-              icon={faRotateRight}
-              className="w-3 h-3"
-            />
-            {t( 'ai_summary.regenerate' )}
-          </button>
-        )}
-      </div>
-
-      {!summary && !isLoading && !error && (
-        <div className="text-center py-8">
-          <p className="text-white-overlay mb-4 text-sm">
+          <h2 className="text-white/80 m-0 h3 font-normal">
             {t( 'ai_summary.description' )}
-          </p>
-          <button
+          </h2>
+          <Button
             onClick={generateSummary}
-            className="bg-gradient-to-r from-orange to-orange-600 hover:from-orange-600 hover:to-orange text-white px-6 py-2.5 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 mx-auto shadow-lg hover:shadow-orange/25"
+            variant="outline"
+            className="md:ml-auto"
           >
-            <FontAwesomeIcon
-              icon={faWandMagicSparkles}
+            <FontAwesomeIcon icon={faWandMagicSparkles}
               className="w-4 h-4"
             />
             {t( 'ai_summary.generate' )}
-          </button>
+          </Button>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <FontAwesomeIcon
+              icon={faWandMagicSparkles}
+              className="text-orange w-4 h-4"
+            />
+            <h3 className="text-lg font-semibold text-white">
+              {t( 'ai_summary.title' )}
+            </h3>
+          </div>
+
+          {summary && !isLoading && (
+            <button
+              onClick={generateSummary}
+              className="text-sm text-white-overlay hover:text-white transition-default flex items-center gap-1"
+            >
+              <FontAwesomeIcon icon={faRotateRight}
+                className="w-3 h-3"
+              />
+              {t( 'ai_summary.regenerate' )}
+            </button>
+          )}
         </div>
       )}
 
@@ -116,7 +122,7 @@ const AISummary = ( { month, year, className }: AISummaryProps ) => {
         >
           <Markdown content={summary} />
           {isLoading && (
-            <span className="inline-block w-2 h-4 bg-orange animate-pulse ml-1" />
+            <span className="inline-block w-0.5 h-4 bg-white-overlay animate-pulse ml-1" />
           )}
         </div>
       )}
