@@ -12,6 +12,59 @@ const openai = createOpenAI( {
   apiKey : process.env.OPENAI_SECRET,
 } )
 
+// Category translations based on i18n
+const categoryTranslations: Record<string, Record<string, string>> = {
+  en : {
+    food              : 'Food',
+    social_life       : 'Social Life',
+    apparel           : 'Apparel',
+    culture           : 'Culture',
+    beauty            : 'Beauty',
+    health            : 'Health',
+    education         : 'Education',
+    gift              : 'Gift',
+    bill_subscription : 'Bills & Subscriptions',
+    house_hold        : 'Household',
+    transportation    : 'Transportation',
+    other             : 'Other',
+    work              : 'Salary',
+    freelance         : 'Freelance',
+    bonus             : 'Bonus',
+    gift_income       : 'Gift',
+    interest          : 'Interest',
+    investment        : 'Investment',
+  },
+  id : {
+    food              : 'Makanan',
+    social_life       : 'Sosial',
+    apparel           : 'Pakaian',
+    culture           : 'Budaya',
+    beauty            : 'Kecantikan',
+    health            : 'Kesehatan',
+    education         : 'Pendidikan',
+    gift              : 'Hadiah',
+    bill_subscription : 'Tagihan & Langganan',
+    house_hold        : 'Rumah Tangga',
+    transportation    : 'Transportasi',
+    other             : 'Lainnya',
+    work              : 'Gaji',
+    freelance         : 'Freelance',
+    bonus             : 'Bonus',
+    gift_income       : 'Hadiah',
+    interest          : 'Bunga',
+    investment        : 'Investasi',
+  },
+}
+
+// Function to translate category name
+const translateCategory = ( categoryName: string, locale: string ): string => {
+  const translations = categoryTranslations[locale] || categoryTranslations.en
+  // Convert category name to key format (lowercase, replace spaces with underscores)
+  const key = categoryName?.toLowerCase().replace( /\s+/g, '_' ).replace( /&/g, '' ).replace( /__/g, '_' )
+
+  return translations[key] || categoryName || ( locale === 'id' ? 'Lainnya' : 'Other' )
+}
+
 export async function POST( req: NextRequest ) {
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
@@ -31,6 +84,7 @@ export async function POST( req: NextRequest ) {
   }
 
   const tz = timezone || 'UTC'
+  const currentLocale = locale || 'en'
 
   try {
     // Calculate date range for the month
@@ -55,31 +109,31 @@ export async function POST( req: NextRequest ) {
 
     if ( transactions.length === 0 ) {
       return NextResponse.json( {
-        summary : locale === 'id'
+        summary : currentLocale === 'id'
           ? 'Tidak ada transaksi untuk bulan ini.'
           : 'No transactions found for this month.',
       } )
     }
 
-    // Calculate totals and group by category
+    // Calculate totals and group by category (using translated names)
     let totalIncome = 0
     let totalExpense = 0
     const categoryTotals: Record<string, { income: number; expense: number }> = {}
 
     for ( const t of transactions ) {
       const amount = Number( t.amount )
-      const category = t.category_name || 'Uncategorized'
+      const translatedCategory = translateCategory( t.category_name, currentLocale )
 
-      if ( !categoryTotals[category] ) {
-        categoryTotals[category] = { income : 0, expense : 0 }
+      if ( !categoryTotals[translatedCategory] ) {
+        categoryTotals[translatedCategory] = { income : 0, expense : 0 }
       }
 
       if ( t.type === 'income' ) {
         totalIncome += amount
-        categoryTotals[category].income += amount
+        categoryTotals[translatedCategory].income += amount
       } else {
         totalExpense += amount
-        categoryTotals[category].expense += amount
+        categoryTotals[translatedCategory].expense += amount
       }
     }
 
@@ -88,17 +142,17 @@ export async function POST( req: NextRequest ) {
     const categoryBreakdown = Object.entries( categoryTotals )
       .map( ( [name, totals] ) => {
         if ( totals.expense > 0 && totals.income > 0 ) {
-          return `- ${name}: Income ${totals.income.toLocaleString()}, Expense ${totals.expense.toLocaleString()}`
+          return `- ${name}: Income ${totals.income.toLocaleString( 'id-ID' )}, Expense ${totals.expense.toLocaleString( 'id-ID' )}`
         } else if ( totals.expense > 0 ) {
-          return `- ${name}: Expense ${totals.expense.toLocaleString()}`
+          return `- ${name}: Expense ${totals.expense.toLocaleString( 'id-ID' )}`
         } else {
-          return `- ${name}: Income ${totals.income.toLocaleString()}`
+          return `- ${name}: Income ${totals.income.toLocaleString( 'id-ID' )}`
         }
       } )
       .join( '\n' )
 
     // Build the system prompt based on locale
-    const systemPrompt = locale === 'id'
+    const systemPrompt = currentLocale === 'id'
       ? `Kamu adalah asisten keuangan pribadi. Berikan ringkasan dan insight dari data transaksi keuangan pengguna dalam Bahasa Indonesia.
 Ringkasanmu harus:
 - Singkat dan mudah dipahami (maksimal 3-4 paragraf)
@@ -116,7 +170,7 @@ Your summary should be:
 - Use emojis to make it engaging
 - Format with bullet points where appropriate`
 
-    const userPrompt = locale === 'id'
+    const userPrompt = currentLocale === 'id'
       ? `Berikut ringkasan transaksi keuangan saya untuk ${monthName}:
 
 Total Pemasukan: Rp ${totalIncome.toLocaleString( 'id-ID' )}

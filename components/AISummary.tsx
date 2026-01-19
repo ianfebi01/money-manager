@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef } from 'react'
 import Spinner from '@/components/Icons/Spinner'
+import Markdown from '@/components/Parsers/Markdown'
 
 interface AISummaryProps {
   month: string
@@ -109,50 +110,11 @@ const AISummary = ( { month, year, className }: AISummaryProps ) => {
         <div
           ref={contentRef}
           className={cn(
-            'prose prose-invert prose-sm max-w-none',
-            'prose-p:text-white-overlay prose-p:leading-relaxed prose-p:mb-3',
-            'prose-ul:text-white-overlay prose-li:mb-1',
-            'prose-strong:text-white prose-strong:font-semibold',
             'max-h-[400px] overflow-y-auto pr-2',
             isLoading && 'animate-pulse'
           )}
         >
-          {summary.split( '\n' ).map( ( line, index ) => {
-            if ( !line.trim() ) return <br key={index} />
-
-            // Handle bullet points
-            if ( line.trim().startsWith( '-' ) || line.trim().startsWith( '•' ) ) {
-              return (
-                <p
-                  key={index}
-                  className="ml-4 mb-1"
-                >
-                  {line}
-                </p>
-              )
-            }
-
-            // Handle headers (lines starting with ##)
-            if ( line.trim().startsWith( '##' ) ) {
-              return (
-                <h4
-                  key={index}
-                  className="text-white font-semibold mt-4 mb-2"
-                >
-                  {line.replace( /^#+\s*/, '' )}
-                </h4>
-              )
-            }
-
-            return (
-              <p
-                key={index}
-                className="mb-2"
-              >
-                {line}
-              </p>
-            )
-          } )}
+          <Markdown content={summary} />
           {isLoading && (
             <span className="inline-block w-2 h-4 bg-orange animate-pulse ml-1" />
           )}
