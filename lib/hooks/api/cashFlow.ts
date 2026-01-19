@@ -24,6 +24,8 @@ export interface IFilter {
   month?: string
   year?: string
   search?: string
+  sortBy?: string
+  sortDirection?: 'asc' | 'desc'
 }
 
 /**
@@ -93,12 +95,30 @@ export const useGetRecentTransactions = (
 /**
  *  Get Datas
  */
+export interface IPaginationMeta {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+export interface ITransactionResponse {
+  data: ITransaction[]
+  meta: {
+    pagination: IPaginationMeta
+    search?: string
+    month?: string
+    year?: string
+    timezone?: string
+  }
+}
+
 export const useGetDatas = (
   limit: number = 5,
   page: number = 1,
   filter: IFilter,
   enabled: boolean = true
-): UseQueryResult<{ data: ITransaction[] }> => {
+): UseQueryResult<ITransactionResponse> => {
   const axiosAuth = useAxiosAuth()
   // query
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -110,12 +130,10 @@ export const useGetDatas = (
   }
   const queryString = qs.stringify( query, { addQueryPrefix : true } )
 
-  const data: UseQueryResult<{ data: ITransaction[] }> = useQuery<{
-    data: ITransaction[]
-  }>( {
+  const data: UseQueryResult<ITransactionResponse> = useQuery<ITransactionResponse>( {
     queryKey : ['transactions', limit, page, { timezone : timezone, ...filter },],
     queryFn  : async () => {
-      const res: AxiosResponse<{ data: ITransaction[] }> = await axiosAuth(
+      const res: AxiosResponse<ITransactionResponse> = await axiosAuth(
         `/transactions${queryString}`
       )
 

@@ -2,6 +2,7 @@ import Button from '@/components/Buttons/Button'
 import DataTable from '@/components/DataTable'
 import DefaultCategories from '@/components/DefaultCategories'
 import { IFilter, useExportExcel, useGetDatas } from '@/lib/hooks/api/cashFlow'
+import useDebounce from '@/lib/hooks/useDebounce'
 import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
@@ -28,6 +29,14 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
   const [isExporting, setIsExporting] = useState( false )
   const { exportExcel } = useExportExcel()
 
+  // Server-side pagination state
+  const [page, setPage] = useState( 1 )
+  const [pageSize, setPageSize] = useState( 20 )
+  const [sortBy, setSortBy] = useState<string>( 'date' )
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>( 'desc' )
+  const [search, setSearch] = useState( '' )
+  const debouncedSearch = useDebounce( search, 300 )
+
   const handleExport = useCallback( async () => {
     setIsExporting( true )
     try {
@@ -47,8 +56,35 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
     return localeMap[currentLocale] || enUS
   }, [currentLocale] )
 
-  const { data: allData, isFetching } = useGetDatas( 100, 1, filter, true )
-  const tableData = allData?.data || []
+  // Handle grouping change - update sortBy and reset page
+  const handleGroupingChange = useCallback( ( groupBy: string | null ) => {
+    setSortBy( groupBy || 'date' )
+    setSortDirection( 'desc' )
+    setPage( 1 )
+  }, [] )
+
+  // Handle search change
+  const handleSearchChange = useCallback( ( value: string ) => {
+    setSearch( value )
+  }, [] )
+
+  // Handle sorting change from column headers
+  const handleSortingChange = useCallback( ( column: string, direction: 'asc' | 'desc' ) => {
+    setSortBy( column )
+    setSortDirection( direction )
+  }, [] )
+
+  // Combine filter with sortBy, sortDirection, and search for API call
+  const apiFilter = useMemo( () => ( {
+    ...filter,
+    sortBy,
+    sortDirection,
+    search : debouncedSearch || undefined,
+  } ), [filter, sortBy, sortDirection, debouncedSearch] )
+
+  const { data: response, isFetching } = useGetDatas( pageSize, page, apiFilter, true )
+  const tableData = response?.data || []
+  const pagination = response?.meta?.pagination
 
   // Format date with locale
   const formatDateWithLocale = useCallback( ( dateValue: string | undefined ) => {
@@ -214,7 +250,17 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
         isLoading={isFetching}
         emptyMessage={ t( 'recent_transactions' ) }
         initialGrouping={[ 'date' ]}
-        initialPageSize={20}
+        initialPageSize={pageSize}
+        // Server-side pagination props
+        manualPagination={true}
+        pageCount={pagination?.totalPages || 1}
+        totalRows={pagination?.total || 0}
+        currentPage={page}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+        onGroupingChange={handleGroupingChange}
+        onSearchChange={handleSearchChange}
+        onSortingChange={handleSortingChange}
       />
     </div>
   )
