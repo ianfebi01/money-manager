@@ -44,6 +44,15 @@ type DataTableProps<TData> = {
   className?: string
   enableColumnVisibility?: boolean
   initialGrouping?: string[]
+  // Server-side pagination props
+  manualPagination?: boolean
+  pageCount?: number
+  totalRows?: number
+  currentPage?: number
+  onPageChange?: ( page: number ) => void
+  onPageSizeChange?: ( size: number ) => void
+  onGroupingChange?: ( groupBy: string | null ) => void
+  onSearchChange?: ( search: string ) => void
 }
 
 const DEFAULT_PAGE_SIZES = [5, 10, 20, 50]
@@ -73,6 +82,15 @@ const DataTable = <TData, >( {
   className,
   enableColumnVisibility = true,
   initialGrouping = [],
+  // Server-side pagination props
+  manualPagination = false,
+  pageCount,
+  totalRows,
+  currentPage = 1,
+  onPageChange,
+  onPageSizeChange,
+  onGroupingChange,
+  onSearchChange,
 }: DataTableProps<TData> ) => {
   const t = useTranslations()
   const [sorting, setSorting] = useState<SortingState>( [] )
@@ -81,6 +99,19 @@ const DataTable = <TData, >( {
   const [grouping, setGrouping] = useState<GroupingState>( initialGrouping )
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>( {} )
   const [expanded, setExpanded] = useState( {} )
+  const [internalPageSize, setInternalPageSize] = useState( initialPageSize )
+
+  // Handle search change - call callback if in manual mode
+  const handleSearchChange = ( value: string ) => {
+    setSearchQuery( value )
+    if ( manualPagination && onSearchChange ) {
+      onSearchChange( value )
+      // Reset to page 1 when searching
+      if ( onPageChange ) {
+        onPageChange( 1 )
+      }
+    }
+  }
 
   const searchableKeys = useMemo( () => {
     if ( searchKeys && searchKeys.length > 0 ) {
@@ -98,6 +129,9 @@ const DataTable = <TData, >( {
   }, [columns, searchKeys] )
 
   const filteredData = useMemo( () => {
+    // Skip client-side filtering when using server-side search
+    if ( manualPagination ) return data
+
     const query = searchQuery.trim().toLowerCase()
     if ( !query ) return data
 
@@ -115,7 +149,7 @@ const DataTable = <TData, >( {
         return String( value ).toLowerCase().includes( query )
       } )
     )
-  }, [data, searchQuery, searchableKeys] )
+  }, [data, searchQuery, searchableKeys, manualPagination] )
 
   const selectionColumn: ColumnDef<TData, unknown> | null = useMemo( () => {
     if ( !enableSelection ) return null
@@ -158,6 +192,17 @@ const DataTable = <TData, >( {
     return [selectionColumn, ...columns]
   }, [columns, selectionColumn] )
 
+  // Handle grouping changes and notify parent
+  const handleGroupingChange = ( updaterOrValue: GroupingState | ( ( old: GroupingState ) => GroupingState ) ) => {
+    const newGrouping = typeof updaterOrValue === 'function' 
+      ? updaterOrValue( grouping ) 
+      : updaterOrValue
+    setGrouping( newGrouping )
+    if ( onGroupingChange ) {
+      onGroupingChange( newGrouping.length > 0 ? newGrouping[0] : null )
+    }
+  }
+
   const table = useReactTable( {
     data    : filteredData,
     columns : columnsWithSelection,
@@ -167,18 +212,26 @@ const DataTable = <TData, >( {
       columnVisibility,
       grouping,
       expanded,
+      ...( manualPagination && {
+        pagination : {
+          pageIndex : currentPage - 1,
+          pageSize  : internalPageSize,
+        },
+      } ),
     },
     onSortingChange          : setSorting,
     onRowSelectionChange     : setRowSelection,
     onColumnVisibilityChange : setColumnVisibility,
-    onGroupingChange         : setGrouping,
+    onGroupingChange         : handleGroupingChange,
     onExpandedChange         : setExpanded,
     enableRowSelection       : enableSelection,
     getCoreRowModel          : getCoreRowModel(),
     getSortedRowModel        : getSortedRowModel(),
     getGroupedRowModel       : getGroupedRowModel(),
     getExpandedRowModel      : getExpandedRowModel(),
-    getPaginationRowModel    : getPaginationRowModel(),
+    ...( !manualPagination && { getPaginationRowModel : getPaginationRowModel() } ),
+    manualPagination         : manualPagination,
+    pageCount                : manualPagination ? pageCount : undefined,
     initialState             : {
       pagination : {
         pageSize : initialPageSize,
@@ -219,12 +272,13 @@ const DataTable = <TData, >( {
   }, [grouping, filteredData, table] )
 
   const pageSize = table.getState().pagination.pageSize
-  const currentPage = table.getState().pagination.pageIndex + 1
-  const totalPages = table.getPageCount()
-  const pageStart = filteredData.length
-    ? table.getState().pagination.pageIndex * pageSize + 1
+  const displayPage = manualPagination ? currentPage : table.getState().pagination.pageIndex + 1
+  const totalPages = manualPagination && pageCount ? pageCount : table.getPageCount()
+  const displayTotalRows = manualPagination && totalRows !== undefined ? totalRows : filteredData.length
+  const pageStart = displayTotalRows
+    ? ( displayPage - 1 ) * pageSize + 1
     : 0
-  const pageEnd = Math.min( filteredData.length, currentPage * pageSize )
+  const pageEnd = Math.min( displayTotalRows, displayPage * pageSize )
   const selectedCount = table.getFilteredSelectedRowModel().rows.length
   const columnCount = table.getVisibleFlatColumns().length || 1
 
@@ -236,7 +290,7 @@ const DataTable = <TData, >( {
           <TextField
             value={searchQuery}
             placeholder={searchPlaceholder || t( 'search' )}
-            onChange={( value ) => setSearchQuery( value )}
+            onChange={handleSearchChange}
             type="text"
           />
         </div>
@@ -520,7 +574,15 @@ const DataTable = <TData, >( {
           <span>{t( 'rows_per_page' )}</span>
           <select
             value={pageSize}
-            onChange={( event ) => table.setPageSize( Number( event.target.value ) )}
+            onChange={( event ) => {
+              const newSize = Number( event.target.value )
+              if ( manualPagination && onPageSizeChange ) {
+                setInternalPageSize( newSize )
+                onPageSizeChange( newSize )
+              } else {
+                table.setPageSize( newSize )
+              }
+            }}
             className="rounded-md border border-white-overlay-2 bg-dark px-2 py-1 text-white focus:border-white focus:outline-none"
           >
             {pageSizeOptions.map( ( size ) => (
@@ -535,7 +597,7 @@ const DataTable = <TData, >( {
         </div>
 
         <span className="text-sm">
-          {pageStart}-{pageEnd} {t( 'of' )} {filteredData.length}
+          {pageStart}-{pageEnd} {t( 'of' )} {displayTotalRows}
         </span>
 
         <div className="flex-1" />
@@ -543,11 +605,17 @@ const DataTable = <TData, >( {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              if ( manualPagination && onPageChange ) {
+                onPageChange( displayPage - 1 )
+              } else {
+                table.previousPage()
+              }
+            }}
+            disabled={manualPagination ? displayPage <= 1 : !table.getCanPreviousPage()}
             className={cn(
               'button button-outline px-3 py-1 text-sm',
-              !table.getCanPreviousPage()
+              ( manualPagination ? displayPage <= 1 : !table.getCanPreviousPage() )
                 ? 'cursor-not-allowed opacity-50'
                 : 'hover:border-white hover:bg-dark'
             )}
@@ -555,15 +623,21 @@ const DataTable = <TData, >( {
             {t( 'prev' )}
           </button>
           <span className="min-w-[90px] text-center">
-            {t( 'page' )} {currentPage} {t( 'of' )} {Math.max( totalPages, 1 )}
+            {t( 'page' )} {displayPage} {t( 'of' )} {Math.max( totalPages, 1 )}
           </span>
           <button
             type="button"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => {
+              if ( manualPagination && onPageChange ) {
+                onPageChange( displayPage + 1 )
+              } else {
+                table.nextPage()
+              }
+            }}
+            disabled={manualPagination ? displayPage >= totalPages : !table.getCanNextPage()}
             className={cn(
               'button button-outline px-3 py-1 text-sm',
-              !table.getCanNextPage()
+              ( manualPagination ? displayPage >= totalPages : !table.getCanNextPage() )
                 ? 'cursor-not-allowed opacity-50'
                 : 'hover:border-white hover:bg-dark'
             )}

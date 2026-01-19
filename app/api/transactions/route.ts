@@ -91,6 +91,15 @@ export async function GET( req: NextRequest ) {
   const month = searchParams.get( 'month' )
   const year = searchParams.get( 'year' )
   const timezone = searchParams.get( 'timezone' )
+  const sortBy = searchParams.get( 'sortBy' ) || 'date'
+
+  // Build ORDER BY clause based on sortBy parameter
+  const validSortFields: Record<string, string> = {
+    date          : 't.date DESC, t.created_at DESC',
+    category_name : 'c.name ASC, t.date DESC',
+    type          : 't.type ASC, t.date DESC',
+  }
+  const orderBy = validSortFields[sortBy] || validSortFields.date
 
   try {
     // Dynamic query building
@@ -138,7 +147,7 @@ export async function GET( req: NextRequest ) {
                       FROM transactions t
                       LEFT JOIN categories c ON t.category_id = c.id
                       ${whereClause}
-                      ORDER BY t.date DESC, t.created_at DESC
+                      ORDER BY ${orderBy}
                       LIMIT $${paramIdx} OFFSET $${paramIdx + 1}`
     params.push( String( limit ), String( ( page - 1 ) * limit ) )
     const txResult = await connectionPool.query( dataQuery, params )
