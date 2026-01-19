@@ -12,6 +12,7 @@
     "init:db": "tsx scripts/init-db.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.12",
     "@emotion/react": "^11.13.3",
     "@formkit/auto-animate": "^0.8.2",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -31,6 +32,7 @@
     "@types/react-dom": "18.2.7",
     "@types/sanitize-html": "^2.13.0",
     "add": "^2.0.6",
+    "ai": "^6.0.39",
     "apexcharts": "^4.7.0",
     "autoprefixer": "10.4.16",
     "axios": "^1.6.2",

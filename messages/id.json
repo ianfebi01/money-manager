@@ -160,5 +160,13 @@
     "of": "dari",
     "prev": "Sebelumnya",
     "next": "Berikutnya",
-    "page": "Halaman"
+    "page": "Halaman",
+    "ai_summary": {
+        "title": "Analisis AI",
+        "description": "Dapatkan insight dan analisis transaksi bulan ini dengan bantuan AI.",
+        "generate": "Buat Ringkasan",
+        "regenerate": "Buat Ulang",
+        "generating": "Menganalisis transaksi...",
+        "try_again": "Coba lagi"
+    }
 }

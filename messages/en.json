@@ -160,5 +160,13 @@
     "of": "of",
     "prev": "Prev",
     "next": "Next",
-    "page": "Page"
+    "page": "Page",
+    "ai_summary": {
+        "title": "AI Insights",
+        "description": "Get AI-powered insights and analysis of your transactions for this month.",
+        "generate": "Generate Summary",
+        "regenerate": "Regenerate",
+        "generating": "Analyzing your transactions...",
+        "try_again": "Try again"
+    }
 }

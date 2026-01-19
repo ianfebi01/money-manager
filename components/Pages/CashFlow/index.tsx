@@ -18,6 +18,7 @@ import TransactionCards from './TransactionCards'
 import { Switch } from '@headlessui/react'
 import { cn } from '@/lib/utils'
 import Spinner from '@/components/Icons/Spinner'
+import AISummary from '@/components/AISummary'
 
 const VIEW_KEY = 'cashflow_view_mode'
 
@@ -163,6 +164,13 @@ const CashFlow = () => {
         </div>
       ) : (
         <>
+          {/* AI Summary */}
+          <div className="mt-6">
+            <AISummary
+              month={filter.month || ''}
+              year={filter.year || ''}
+            />
+          </div>
           {/* Display Switcher */}
           <div className="flex items-center sm:justify-end gap-2 mt-6">
             <span className="text-xs text-white-overlay mr-2">Table</span>
