@@ -25,6 +25,7 @@ export interface IFilter {
   year?: string
   search?: string
   sortBy?: string
+  sortDirection?: 'asc' | 'desc'
 }
 
 /**

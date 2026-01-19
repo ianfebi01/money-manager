@@ -33,6 +33,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
   const [page, setPage] = useState( 1 )
   const [pageSize, setPageSize] = useState( 20 )
   const [sortBy, setSortBy] = useState<string>( 'date' )
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>( 'desc' )
   const [search, setSearch] = useState( '' )
   const debouncedSearch = useDebounce( search, 300 )
 
@@ -58,6 +59,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
   // Handle grouping change - update sortBy and reset page
   const handleGroupingChange = useCallback( ( groupBy: string | null ) => {
     setSortBy( groupBy || 'date' )
+    setSortDirection( 'desc' )
     setPage( 1 )
   }, [] )
 
@@ -66,12 +68,19 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
     setSearch( value )
   }, [] )
 
-  // Combine filter with sortBy and search for API call
+  // Handle sorting change from column headers
+  const handleSortingChange = useCallback( ( column: string, direction: 'asc' | 'desc' ) => {
+    setSortBy( column )
+    setSortDirection( direction )
+  }, [] )
+
+  // Combine filter with sortBy, sortDirection, and search for API call
   const apiFilter = useMemo( () => ( {
     ...filter,
     sortBy,
+    sortDirection,
     search : debouncedSearch || undefined,
-  } ), [filter, sortBy, debouncedSearch] )
+  } ), [filter, sortBy, sortDirection, debouncedSearch] )
 
   const { data: response, isFetching } = useGetDatas( pageSize, page, apiFilter, true )
   const tableData = response?.data || []
@@ -251,6 +260,7 @@ const TransactionTable = ( { filter, handleDelete, handleEdit }: Props ) => {
         onPageSizeChange={setPageSize}
         onGroupingChange={handleGroupingChange}
         onSearchChange={handleSearchChange}
+        onSortingChange={handleSortingChange}
       />
     </div>
   )

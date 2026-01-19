@@ -53,6 +53,7 @@ type DataTableProps<TData> = {
   onPageSizeChange?: ( size: number ) => void
   onGroupingChange?: ( groupBy: string | null ) => void
   onSearchChange?: ( search: string ) => void
+  onSortingChange?: ( sortBy: string, sortDirection: 'asc' | 'desc' ) => void
 }
 
 const DEFAULT_PAGE_SIZES = [5, 10, 20, 50]
@@ -91,6 +92,7 @@ const DataTable = <TData, >( {
   onPageSizeChange,
   onGroupingChange,
   onSearchChange,
+  onSortingChange,
 }: DataTableProps<TData> ) => {
   const t = useTranslations()
   const [sorting, setSorting] = useState<SortingState>( [] )
@@ -100,6 +102,21 @@ const DataTable = <TData, >( {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>( {} )
   const [expanded, setExpanded] = useState( {} )
   const [internalPageSize, setInternalPageSize] = useState( initialPageSize )
+
+  // Handle sorting change - call callback if in manual mode
+  const handleSortingChange = ( updaterOrValue: SortingState | ( ( old: SortingState ) => SortingState ) ) => {
+    const newSorting = typeof updaterOrValue === 'function' 
+      ? updaterOrValue( sorting ) 
+      : updaterOrValue
+    setSorting( newSorting )
+    if ( manualPagination && onSortingChange && newSorting.length > 0 ) {
+      onSortingChange( newSorting[0].id, newSorting[0].desc ? 'desc' : 'asc' )
+      // Reset to page 1 when sorting
+      if ( onPageChange ) {
+        onPageChange( 1 )
+      }
+    }
+  }
 
   // Handle search change - call callback if in manual mode
   const handleSearchChange = ( value: string ) => {
@@ -219,7 +236,7 @@ const DataTable = <TData, >( {
         },
       } ),
     },
-    onSortingChange          : setSorting,
+    onSortingChange          : handleSortingChange,
     onRowSelectionChange     : setRowSelection,
     onColumnVisibilityChange : setColumnVisibility,
     onGroupingChange         : handleGroupingChange,

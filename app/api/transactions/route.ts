@@ -92,14 +92,18 @@ export async function GET( req: NextRequest ) {
   const year = searchParams.get( 'year' )
   const timezone = searchParams.get( 'timezone' )
   const sortBy = searchParams.get( 'sortBy' ) || 'date'
+  const sortDirection = searchParams.get( 'sortDirection' ) === 'asc' ? 'ASC' : 'DESC'
 
-  // Build ORDER BY clause based on sortBy parameter
-  const validSortFields: Record<string, string> = {
-    date          : 't.date DESC, t.created_at DESC',
-    category_name : 'c.name ASC, t.date DESC',
-    type          : 't.type ASC, t.date DESC',
+  // Build ORDER BY clause based on sortBy and sortDirection parameters
+  const sortFieldMap: Record<string, string> = {
+    date          : 't.date',
+    category_name : 'c.name',
+    type          : 't.type',
+    amount        : 't.amount',
+    description   : 't.description',
   }
-  const orderBy = validSortFields[sortBy] || validSortFields.date
+  const sortField = sortFieldMap[sortBy] || sortFieldMap.date
+  const orderBy = `${sortField} ${sortDirection}, t.created_at DESC`
 
   try {
     // Dynamic query building
