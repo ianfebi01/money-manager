@@ -36,21 +36,21 @@
     "login_failed": "Login tidak berhasil. Pastikan informasi yang Anda masukkan sudah benar.",
     "mm_categories": {
         "food": "Makanan",
-        "social_life": "Sosial",
+        "social-life": "Sosial",
         "apparel": "Pakaian",
         "culture": "Budaya",
         "beauty": "Kecantikan",
         "health": "Kesehatan",
         "education": "Pendidikan",
         "gift": "Hadiah",
-        "bill_subscription": "Tagihan & Langganan",
-        "house_hold": "Rumah Tangga",
+        "bill-subscription": "Tagihan & Langganan",
+        "house-hold": "Rumah Tangga",
         "transportation": "Transportasi",
         "other": "Lainnya",
         "work": "Gaji",
         "freelance": "Freelance",
         "bonus": "Bonus",
-        "gift_income": "Hadiah",
+        "gift-income": "Hadiah",
         "interest": "Bunga",
         "investment": "Investasi"
     },
@@ -160,5 +160,13 @@
     "of": "dari",
     "prev": "Sebelumnya",
     "next": "Berikutnya",
-    "page": "Halaman"
+    "page": "Halaman",
+    "ai_summary": {
+        "title": "Analisis AI",
+        "description": "Dapatkan insight dan analisis transaksi bulan ini dengan bantuan AI.",
+        "generate": "Buat Ringkasan",
+        "regenerate": "Buat Ulang",
+        "generating": "Menganalisis transaksi...",
+        "try_again": "Coba lagi"
+    }
 }
