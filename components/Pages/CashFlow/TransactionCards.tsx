@@ -2,14 +2,15 @@ import Button from '@/components/Buttons/Button'
 import DefaultCategories from '@/components/DefaultCategories'
 import ErrorLoadingData from '@/components/Layouts/ErrorLoadingData'
 import NoDataFound from '@/components/NoDataFound'
-import { IFilter, useGetMonthlyDatas } from '@/lib/hooks/api/cashFlow'
+import { IFilter, useExportExcel, useGetMonthlyDatas } from '@/lib/hooks/api/cashFlow'
 import { cn } from '@/lib/utils'
 import { ITransaction } from '@/types/api/transaction'
 import formatCurency from '@/utils/format-curency'
-import { faSquareMinus } from '@fortawesome/free-solid-svg-icons'
+import { faFileExcel, faSquareMinus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useAnimation, motion, easeInOut } from 'framer-motion'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   filter: IFilter
@@ -21,7 +22,19 @@ interface Props {
 }
 
 const TransactionCards = ( { filter, handleDelete, handleEdit }: Props ) => {
+  const t = useTranslations()
   const { data, isLoading, isError } = useGetMonthlyDatas( filter )
+  const [isExporting, setIsExporting] = useState( false )
+  const { exportExcel } = useExportExcel()
+
+  const handleExport = useCallback( async () => {
+    setIsExporting( true )
+    try {
+      await exportExcel( filter )
+    } finally {
+      setIsExporting( false )
+    }
+  }, [exportExcel, filter] )
 
   const mockLoop = new Array( 6 ).fill( 0 )
 
@@ -43,7 +56,21 @@ const TransactionCards = ( { filter, handleDelete, handleEdit }: Props ) => {
 
   return (
     <>
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 mt-8">
+      <div className="flex justify-end mt-4">
+        <Button
+          variant="secondary"
+          onClick={handleExport}
+          disabled={isExporting || isLoading}
+          ariaLabel={t( 'export_excel' )}
+        >
+          <FontAwesomeIcon
+            icon={faFileExcel}
+            className="mr-2"
+          />
+          {isExporting ? t( 'exporting' ) : t( 'export_excel' )}
+        </Button>
+      </div>
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 mt-4">
         {isLoading &&
           mockLoop.map( ( _item, i ) => (
             <div
