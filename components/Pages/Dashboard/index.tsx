@@ -11,15 +11,15 @@ const Dashboard = () => {
 
   return (
     <div className="mt-8">
-      <div className={cn( 'grid grid-cols-1 lg:grid-cols-2 gap-4' )}>
-        <BarLineChart />
-        <ExpenseDoughnutChart />
-      </div>
-      <div className="mt-6">
+      <div className="mb-6">
         <AISummary
           month={month( date )}
           year={year( date )}
         />
+      </div>
+      <div className={cn( 'grid grid-cols-1 lg:grid-cols-2 gap-4' )}>
+        <BarLineChart />
+        <ExpenseDoughnutChart />
       </div>
     </div>
   )
