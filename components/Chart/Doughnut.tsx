@@ -55,7 +55,7 @@ const Doughnut = ( { series, categories }: Props ) => {
       y : {
         title : {
           formatter : function ( val, opts ) {
-            return `${t( categories?.[opts.seriesIndex]?.replace( /-/g, '_' ) )}: `
+            return `${t( categories?.[opts.seriesIndex] )}: `
           },
         },
         formatter : function ( value: number ) {
@@ -168,7 +168,7 @@ const Doughnut = ( { series, categories }: Props ) => {
               />
               {!!value && (
                 <p className="m-0">
-                  {`${t( value.replace( /-/g, '_' ) )}: `}
+                  {`${t( value )}: `}
                   <span className="text-white">
                     {formatCurency( chartSeries[i], 'IDRK' )}
                   </span>

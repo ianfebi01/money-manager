@@ -145,7 +145,7 @@ const DefaultCategories: FunctionComponent<Props> = ( {
 
   case 'social-life':
     return (
-      <Wrapper text={t( 'social_life' )}
+      <Wrapper text={t( 'social-life' )}
         icon={faPeopleGroup}
         center={center}
       />
@@ -198,14 +198,14 @@ const DefaultCategories: FunctionComponent<Props> = ( {
   case 'bill-subscription':
     return (
       <Wrapper
-        text={t( 'bill_subscription' )}
+        text={t( 'bill-subscription' )}
         icon={faFileInvoice}
         center={center}
       />
     )
 
   case 'house-hold':
-    return <Wrapper text={t( 'house_hold' )}
+    return <Wrapper text={t( 'house-hold' )}
       icon={faHouse}
       center={center}
     />
@@ -240,7 +240,7 @@ const DefaultCategories: FunctionComponent<Props> = ( {
   case 'gift-income':
     return (
       <Wrapper
-        text={t( 'gift_income' )}
+        text={t( 'gift-income' )}
         icon={faHandHoldingDollar}
         center={center}
       />

@@ -7,62 +7,35 @@ import authOptions from '@/lib/authOptions'
 import { fromZonedTime } from 'date-fns-tz'
 import { addMonths, format } from 'date-fns'
 
+import enMessages from '@/messages/en.json'
+import idMessages from '@/messages/id.json'
+
 // Create OpenAI provider instance
 const openai = createOpenAI( {
   apiKey : process.env.OPENAI_SECRET,
 } )
 
-// Category translations based on i18n
-const categoryTranslations: Record<string, Record<string, string>> = {
-  en : {
-    food              : 'Food',
-    social_life       : 'Social Life',
-    apparel           : 'Apparel',
-    culture           : 'Culture',
-    beauty            : 'Beauty',
-    health            : 'Health',
-    education         : 'Education',
-    gift              : 'Gift',
-    bill_subscription : 'Bills & Subscriptions',
-    house_hold        : 'Household',
-    transportation    : 'Transportation',
-    other             : 'Other',
-    work              : 'Salary',
-    freelance         : 'Freelance',
-    bonus             : 'Bonus',
-    gift_income       : 'Gift',
-    interest          : 'Interest',
-    investment        : 'Investment',
-  },
-  id : {
-    food              : 'Makanan',
-    social_life       : 'Sosial',
-    apparel           : 'Pakaian',
-    culture           : 'Budaya',
-    beauty            : 'Kecantikan',
-    health            : 'Kesehatan',
-    education         : 'Pendidikan',
-    gift              : 'Hadiah',
-    bill_subscription : 'Tagihan & Langganan',
-    house_hold        : 'Rumah Tangga',
-    transportation    : 'Transportasi',
-    other             : 'Lainnya',
-    work              : 'Gaji',
-    freelance         : 'Freelance',
-    bonus             : 'Bonus',
-    gift_income       : 'Hadiah',
-    interest          : 'Bunga',
-    investment        : 'Investasi',
-  },
+// Categories translation map
+const messages: Record<string, any> = {
+  en : enMessages,
+  id : idMessages,
 }
 
 // Function to translate category name
 const translateCategory = ( categoryName: string, locale: string ): string => {
-  const translations = categoryTranslations[locale] || categoryTranslations.en
-  // Convert category name to key format (lowercase, replace spaces with underscores)
-  const key = categoryName?.toLowerCase().replace( /\s+/g, '_' ).replace( /&/g, '' ).replace( /__/g, '_' )
+  const localeMessages = messages[locale] || messages.en
+  const categoryTranslations = localeMessages.mm_categories || {}
 
-  return translations[key] || categoryName || ( locale === 'id' ? 'Lainnya' : 'Other' )
+  // Convert category name to key format (lowercase, replace spaces/underscores with hyphens)
+  const key = categoryName
+    ?.toLowerCase()
+    .replace( /\s+/g, '-' )
+    .replace( /_/g, '-' )
+    .replace( /&/g, '' )
+    .replace( /--+/g, '-' )
+    .trim()
+
+  return categoryTranslations[key] || categoryName || ( locale === 'id' ? 'Lainnya' : 'Other' )
 }
 
 export async function POST( req: NextRequest ) {
