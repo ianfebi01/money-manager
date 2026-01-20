@@ -43,6 +43,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>( ( {
   ...props
 }, forwardedRef ) => {
   const [showPassword, setShowPassword] = useState<boolean>( false )
+  const [cursorPosition, setCursorPosition] = useState<number | null>( null )
 
   const formatRupiah = ( number: string ) => {
     if ( !number ) return '0'
@@ -54,8 +55,37 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>( ( {
 
   const handleChange = ( e: FormEvent<HTMLInputElement> ) => {
     const input = ( e.target as HTMLInputElement ).value
+    const inputEl = e.target as HTMLInputElement
+
     if ( type === 'currency-id' ) {
       const numericValue = input.replace( /\D/g, '' )
+
+      // Calculate cursor position based on numeric characters
+      const cursorPos = inputEl.selectionStart || 0
+      // Count how many numeric chars are before cursor in the raw input
+      const beforeCursor = input.slice( 0, cursorPos )
+      const numericBeforeCursor = beforeCursor.replace( /\D/g, '' ).length
+
+      // After formatting, find where the cursor should be
+      const formatted = formatRupiah( numericValue )
+      let newCursorPos = 0
+      let numericCount = 0
+      for ( let i = 0; i < formatted.length; i++ ) {
+        if ( /\d/.test( formatted[i] ) ) {
+          numericCount++
+        }
+        if ( numericCount === numericBeforeCursor ) {
+          newCursorPos = i + 1
+          break
+        }
+      }
+
+      // If we didn't find enough digits, put cursor at end
+      if ( numericCount < numericBeforeCursor ) {
+        newCursorPos = formatted.length
+      }
+
+      setCursorPosition( newCursorPos )
       onChange( numericValue )
     } else if ( type === 'text' && capitalizeFirstChar ) {
       onChange( capitalizeFirst( input ) )
@@ -68,6 +98,14 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>( ( {
 
   // Merge forwarded ref with internal ref
   useImperativeHandle( forwardedRef, () => internalRef.current as HTMLInputElement )
+
+  // Restore cursor position after re-render for currency-id
+  useEffect( () => {
+    if ( type === 'currency-id' && cursorPosition !== null && internalRef.current ) {
+      internalRef.current.setSelectionRange( cursorPosition, cursorPosition )
+      setCursorPosition( null )
+    }
+  }, [cursorPosition, type] )
 
   // AutoFocus
   useEffect( () => {
