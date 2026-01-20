@@ -68,9 +68,18 @@ const EditTransaction = ( { isOpen, setIsOpen, initialValue }: Props ) => {
   }
 
   const handleSubmit = async () => {
+    if ( !form.amount ) {
+      return toast.error( t( 'toast.error_amount_required' ) )
+    }
+
     if ( !sharedDate ) {
       return toast.error( t( 'toast.error_date_required' ) )
     }
+
+    if ( !form.category ) {
+      return toast.error( t( 'toast.error_category_required' ) )
+    }
+
     if ( initialValue?.id ) {
       try {
         setLoading( true )

@@ -51,6 +51,11 @@ const AddTransaction = () => {
 
   const handleAddTransaction = ( e: FormEvent ) => {
     e.preventDefault()
+
+    if ( !form.amount ) {
+      return toast.error( t( 'toast.error_amount_required' ) )
+    }
+
     if ( !sharedDate ) {
       return toast.error( t( 'toast.error_date_required' ) )
     }
