@@ -63,7 +63,7 @@ const FeaturedFeature = () => {
           </div>
           <div className="relative h-64 w-full ml-6">
             <Image
-              src="/images/transaction-summary.png"
+              src="/images/transaction-summary.webp"
               alt="Transaction Summary"
               fill
               className="object-cover object-left-top rounded-tl-lg"
@@ -81,7 +81,7 @@ const FeaturedFeature = () => {
           </div>
           <div className="relative h-64 w-full mr-6 -translate-x-6">
             <Image
-              src="/images/add-transaction.png"
+              src="/images/add-transaction.webp"
               alt="Add Transaction"
               fill
               className="object-cover object-right-bottom rounded-tr-lg"

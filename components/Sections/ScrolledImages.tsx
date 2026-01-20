@@ -11,11 +11,11 @@ gsap.registerPlugin( ScrollTrigger )
 
 const ScrolledImages = () => {
   const images = [
-    '/images/cashflow.png',
-    '/images/transaction-summary-mobile.png',
-    '/images/transaction-summary.png',
-    '/images/add-transaction-mobile.png',
-    '/images/add-transaction.png',
+    '/images/cashflow.webp',
+    '/images/transaction-summary-mobile.webp',
+    '/images/transaction-summary.webp',
+    '/images/add-transaction-mobile.webp',
+    '/images/add-transaction.webp',
   ]
 
   const scrollContainerRef = useRef<HTMLDivElement>( null )
@@ -181,7 +181,7 @@ const ScrolledImages = () => {
         >
           <Image
             className="h-full object-contain object-center w-full"
-            src={'/images/cashflow-mobile.png'}
+            src={'/images/cashflow-mobile.webp'}
             fill
             alt={`Image Cashflow Mobile`}
             loading="lazy"

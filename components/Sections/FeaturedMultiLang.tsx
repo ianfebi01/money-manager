@@ -129,7 +129,7 @@ const FeaturedMultiLang = () => {
         >
           <div className="w-[1024px] h-[576px] overflow-hidden relative flex items-center justify-center rounded-lg border border-dark-secondary">
             <Image
-              src="/images/add-transaction-mba.png"
+              src="/images/add-transaction.webp"
               alt="Panel 2 Image"
               fill
               className="object-cover object-center"
@@ -147,7 +147,7 @@ const FeaturedMultiLang = () => {
           <div className="w-[1024px] h-[576px] overflow-hidden relative flex items-center justify-center rounded-lg border border-dark-secondary">
             <div className="relative w-[1280px] h-[720px]">
               <Image
-                src="/images/scrolled-section/transaction-summary-en.png"
+                src="/images/scrolled-section/transaction-summary-en.webp"
                 alt="Panel 2 Image"
                 fill
                 className="object-cover object-center"
@@ -168,7 +168,7 @@ const FeaturedMultiLang = () => {
             className="w-[1024px] h-[576px] overflow-hidden relative flex items-center justify-center rounded-lg border border-dark-secondary"
           >
             <Image
-              src="/images/scrolled-section/transaction-summary-id.png"
+              src="/images/scrolled-section/transaction-summary-id.webp"
               alt="Panel 1 Image"
               fill
               className="object-cover object-center w-full h-full"
