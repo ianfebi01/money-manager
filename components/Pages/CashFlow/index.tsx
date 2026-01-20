@@ -212,7 +212,7 @@ const CashFlow = () => {
         desciption={t( 'delete_warning.description' )}
         confirmText={t( 'delete_warning.confirm' )}
         loading={deleteIsLoading}
-        variant='warning'
+        variant="warning"
       />
       <EditTransaction
         isOpen={isEditModalOpen}
