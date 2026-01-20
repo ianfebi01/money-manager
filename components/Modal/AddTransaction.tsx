@@ -6,9 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faSquareMinus } from '@fortawesome/free-solid-svg-icons'
 import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
 import SingleDatePicker from '../Inputs/SingleDatePicker'
-import TextField from '../Inputs/TextField'
-import DropdownSelect from '../Inputs/DropdownSelect'
-import DropdownCategories from '../Inputs/DropdownCategories'
 import DefaultCategories from '../DefaultCategories'
 import { cn } from '@/lib/utils'
 import formatCurency from '@/utils/format-curency'
@@ -17,6 +14,7 @@ import { useCreate } from '@/lib/hooks/api/cashFlow'
 import { useTranslations } from 'next-intl'
 import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
 import toast from 'react-hot-toast'
+import TransactionForm from '../Form/TransactionForm'
 
 interface ITransactionFormInput
   extends Omit<IBodyTransaction, 'date' | 'category'> {
@@ -213,94 +211,21 @@ const AddTransaction = () => {
             onClick={handleClickRecentTransaction}
           />
           <form onSubmit={( e ) => handleAddTransaction( e )}>
-            <div
-              className={cn(
-                'flex flex-col gap-2 w-full p-4 border  rounded-lg',
-                'border-white-overlay',
-                [form.type === 'expense' ? 'border-orange' : 'border-blue-400']
-              )}
+            <TransactionForm
+              form={form}
+              onChange={handleChange}
+              isOpen={isOpen}
             >
-              <div className="flex flex-col gap-2 relative">
-                <label
-                  htmlFor={'amount'}
-                  className="w-fit text-sm lg:text-base"
-                >
-                  <span>{t( 'amount' )}</span>
-                </label>
-                <TextField
-                  type="currency-id"
-                  value={String( form.amount )}
-                  name="amount"
-                  placeholder="eg. 1000"
-                  onChange={( val: string ) => handleChange( val, 'amount' )}
-                  autoFocus
+              <button
+                type="submit"
+                className="mt-4 button button-secondary w-full h-20 text-center flex justify-center gap-2 items-center"
+              >
+                <FontAwesomeIcon icon={faPlus}
+                  className="text-orange"
                 />
-              </div>
-              <div className="flex flex-col gap-2 relative">
-                <label htmlFor={'type'}
-                  className="w-fit text-sm lg:text-base"
-                >
-                  <span>{t( 'type' )}</span>
-                </label>
-                <DropdownSelect
-                  value={form.type as string | number}
-                  options={[
-                    {
-                      label : 'Income',
-                      value : 'income',
-                    },
-                    {
-                      label : 'Expense',
-                      value : 'expense',
-                    },
-                  ]}
-                  onChange={( value: string | number ) =>
-                    handleChange( value, 'type' )
-                  }
-                />
-              </div>
-              <div className="flex flex-col gap-2 relative">
-                <label
-                  htmlFor={'category'}
-                  className="w-fit text-sm lg:text-base"
-                >
-                  <span>{t( 'category' )}</span>
-                </label>
-                <DropdownCategories
-                  value={form.category.value}
-                  enabled={isOpen}
-                  onChange={( value: IOptions ) =>
-                    handleChange( value, 'category' )
-                  }
-                  type={form.type || 'all'}
-                />
-              </div>
-              <div className="flex flex-col gap-2 relative">
-                <label
-                  htmlFor={'description'}
-                  className="w-fit text-sm lg:text-base"
-                >
-                  <span>{t( 'description' )}</span>
-                </label>
-                <TextField
-                  type="text"
-                  value={form.description}
-                  name="description"
-                  placeholder="eg. Burger"
-                  onChange={( val: string ) => handleChange( val, 'description' )}
-                  capitalizeFirstChar
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="mt-4 button button-secondary w-full h-20 text-center flex justify-center gap-2 items-center"
-            >
-              <FontAwesomeIcon icon={faPlus}
-                className="text-orange"
-              />
-              {t( 'add_other' )}
-            </button>
+                {t( 'add_other' )}
+              </button>
+            </TransactionForm>
           </form>
           <div className="flex flex-col gap-2 mt-4">
             <table border={0}
