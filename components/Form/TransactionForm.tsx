@@ -42,6 +42,23 @@ const TransactionForm = ( {
     return form.category?.value ?? ''
   }
 
+  // Handle type change and reset category since categories are type-specific
+  const handleTypeChange = ( value: string | number ) => {
+    // Reset category when type changes
+    const currentCategory = getCategoryValue()
+    if ( currentCategory ) {
+      // Check if it's IOptions type (from AddTransaction)
+      if ( typeof form.category === 'object' ) {
+        onChange( { label : '', value : '' }, 'category' )
+      } else {
+        // It's number type (from EditTransaction)
+        onChange( 0, 'category' )
+      }
+    }
+    // Update the type
+    onChange( value, 'type' )
+  }
+
   return (
     <div
       ref={containerRef}
@@ -87,7 +104,7 @@ const TransactionForm = ( {
               value : 'expense',
             },
           ]}
-          onChange={( value: string | number ) => onChange( value, 'type' )}
+          onChange={handleTypeChange}
         />
       </div>
 
