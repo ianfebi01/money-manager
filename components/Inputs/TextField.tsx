@@ -120,73 +120,108 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>( ( {
       <div className="h-full max-w-sm bg-dark-secondary animate-pulse" />
     </div>
   ) : (
-    <div className="relative">
-      {type === 'currency-id' && (
-        <>
-          <span className="absolute left-2 inset-y-0 my-auto pointer-events-none h-fit text-base">
+    <>
+
+      <div className="relative">
+        {type === 'currency-id' && (
+          <>
+            <span className="absolute left-2 inset-y-0 my-auto pointer-events-none h-fit text-base">
             Rp.
-          </span>
+            </span>
+            <input
+              ref={internalRef}
+              id={name}
+              placeholder={placeholder}
+              type="tel"
+              name={name}
+              value={formatRupiah( value )}
+              onChange={handleChange}
+              disabled={disabled}
+              {...props}
+              className={cn(
+                'w-full',
+                [ small ? 'py-1 px-4 text-xs rounded-md' : 'py-2 px-8 text-base rounded-lg'],
+                'text-white border bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
+                [
+                  'focus:border-white/50 border-white/25',
+                  touched && error && 'focus:border-red-500 border-red-500',
+                ],
+                props.className
+              )}
+            />
+          </>
+        )}
+
+        {['text', 'password', 'number', 'email'].includes( String( type ) ) && (
           <input
             ref={internalRef}
             id={name}
-            placeholder={placeholder}
-            type="tel"
             name={name}
-            value={formatRupiah( value )}
+            placeholder={placeholder}
+            type={
+              type === 'password' ? ( showPassword ? 'text' : 'password' ) : type
+            }
+            value={value}
             onChange={handleChange}
             disabled={disabled}
             {...props}
             className={cn(
               'w-full',
-              [ small ? 'py-1 px-4 text-xs rounded-md' : 'py-2 px-8 text-base rounded-lg'],
+              [ small ? 'py-1 px-2 text-xs rounded-md' : 'py-2 px-2 text-base rounded-lg'],
               'text-white border bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
               [
                 'focus:border-white/50 border-white/25',
                 touched && error && 'focus:border-red-500 border-red-500',
               ],
+              [type === 'password' && 'pr-4'],
               props.className
             )}
           />
-        </>
-      )}
+        )}
 
-      {['text', 'password', 'number', 'email'].includes( String( type ) ) && (
-        <input
-          ref={internalRef}
-          id={name}
-          name={name}
-          placeholder={placeholder}
-          type={
-            type === 'password' ? ( showPassword ? 'text' : 'password' ) : type
-          }
-          value={value}
-          onChange={handleChange}
-          disabled={disabled}
-          {...props}
-          className={cn(
-            'w-full',
-            [ small ? 'py-1 px-2 text-xs rounded-md' : 'py-2 px-2 text-base rounded-lg'],
-            'text-white border bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
-            [
-              'focus:border-white/50 border-white/25',
-              touched && error && 'focus:border-red-500 border-red-500',
-            ],
-            [type === 'password' && 'pr-4'],
-            props.className
-          )}
-        />
-      )}
+        {type === 'password' && (
+          <button
+            className="absolute right-2 inset-y-0 my-auto"
+            type="button"
+            onClick={() => setShowPassword( !showPassword )}
+          >
+            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+          </button>
+        )}
+      </div>
 
-      {type === 'password' && (
-        <button
-          className="absolute right-2 inset-y-0 my-auto"
-          type="button"
-          onClick={() => setShowPassword( !showPassword )}
-        >
-          <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-        </button>
-      )}
-    </div>
+      { type === 'currency-id' && (
+        <div className="flex gap-2 overflow-x-auto pb-2 -mb-2">
+          {[
+            { label : '-1rb', value : -1000 },
+            { label : '-5rb', value : -5000 },
+            { label : '-10rb', value : -10000 },
+            { label : '+1rb', value : 1000 },
+            { label : '+5rb', value : 5000 },
+            { label : '+10rb', value : 10000 },
+          ].map( ( chip ) => (
+            <button
+              key={chip.value}
+              type="button"
+              onClick={() => {
+                const currentValue = parseInt( value || '0', 10 )
+                const newValue = Math.max( 0, currentValue + chip.value )
+                onChange( String( newValue ) )
+              }}
+              disabled={disabled}
+              className={cn(
+                'px-3 py-1 text-xs rounded-md border transition-colors',
+                'border-white/25 hover:border-white/50 hover:bg-white/10',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                chip.value < 0 ? 'text-orange' : 'text-blue-400'
+              )}
+            >
+              {chip.label}
+            </button>
+          ) )}
+        </div>
+      ) }
+    </>
   )
 } )
 
