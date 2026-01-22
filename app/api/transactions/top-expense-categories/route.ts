@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { fromZonedTime } from 'date-fns-tz'
+import { addMonths } from 'date-fns'
 
 export async function GET( req: NextRequest ) {
   const session = await getServerSession( authOptions )
@@ -30,14 +31,10 @@ export async function GET( req: NextRequest ) {
     )
   }
 
-  const startDate = fromZonedTime(
-    new Date( `${year}-${month}-01` ),
-    timezone
-  ).toISOString()
-  const endDate = fromZonedTime(
-    new Date( `${year}-${String( Number( month ) + 1 ).padStart( 2, '0' )}-01` ),
-    timezone
-  ).toISOString()
+  const start = new Date( `${year}-${String( month ).padStart( 2, '0' )}-01` )
+  const end = addMonths( start, 1 )
+  const startDate = fromZonedTime( start, timezone ).toISOString()
+  const endDate = fromZonedTime( end, timezone ).toISOString()
 
   // Query expenses joined with categories
   const { rows } = await connectionPool.query(
