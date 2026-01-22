@@ -60,6 +60,7 @@ export async function generateMetadata( {
       title       : t( 'title' ),
       description : t( 'desc' ),
       url         : `/${locale}`,
+      siteName    : 'Money Manager',
       images      : [
         {
           url    : '/logo.svg',
