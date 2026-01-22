@@ -4,7 +4,7 @@ import { MetadataRoute } from 'next'
 export default function robots(): MetadataRoute.Robots {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
-    'https://money-manager.ianfebisastrataruna.my.id'
+    'https://moneymanager.id'
 
   // Disallow dashboard for all locales
   const disallows = ['/dashboard', ...locales.map( ( loc ) => `/${loc}/dashboard` )]

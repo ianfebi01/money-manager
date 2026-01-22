@@ -4,7 +4,7 @@ import { locales } from '@/i18n/config' // ['en','id']
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL ||
-  'https://money-manager.ianfebisastrataruna.my.id'
+  'https://moneymanager.id'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Add your main routes here (without locale prefix)

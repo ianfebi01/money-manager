@@ -35,7 +35,7 @@ export async function generateMetadata( {
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
-    'https://money-manager.ianfebisastrataruna.my.id'
+    'https://moneymanager.id'
 
   return {
     title        : t( 'title' ), // e.g. "Money Manager | by ianfebi01" / "oleh ianfebi01"
