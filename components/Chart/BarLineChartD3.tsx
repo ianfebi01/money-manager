@@ -12,7 +12,7 @@ const BarLineChartD3 = ( { datas }: Props ) => {
 
   const [chart, setChart] = useState<BarLine | null>( null )
 
-  const palette = ['#f26b50', '#60a5fa']
+  const palette = ['#60a5fa', '#f26b50']
 
   useEffect( () => {
     const chartData = datas

@@ -67,12 +67,12 @@ export async function GET( req: NextRequest ) {
     data : {
       series : [
         {
-          name : 'Expense',
-          data : monthlyStats.map( ( r ) => r.expense ),
-        },
-        {
           name : 'Income',
           data : monthlyStats.map( ( r ) => r.income ),
+        },
+        {
+          name : 'Expense',
+          data : monthlyStats.map( ( r ) => r.expense ),
         },
       ],
       categories : monthlyStats.map( ( r ) => r.monthIndex ),
