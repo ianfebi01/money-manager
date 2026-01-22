@@ -32,7 +32,7 @@ const authOptions: AuthOptions = {
           sameSite : 'lax',
           path     : '/',
           secure   : true,
-          domain   : '.ianfebisastrataruna.my.id', // <- titik di depan wajib
+          domain   : '.moneymanager.id', // <- titik di depan wajib
         },
       },
     },
