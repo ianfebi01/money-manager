@@ -22,9 +22,10 @@ const Doughnut = ( { series, categories }: Props ) => {
       let [r, g, b] = col.match( /\w\w/g )?.map( ( c ) => parseInt( c, 16 ) ) || [
         0, 0, 0,
       ]
+      // Cap RGB values to maintain orange hue (max ~#ffc896)
       r = Math.min( 255, r + amt )
-      g = Math.min( 255, g + amt )
-      b = Math.min( 255, b + amt )
+      g = Math.min( 200, g + amt )
+      b = Math.min( 150, b + amt )
 
       return `#${[r, g, b]
         .map( ( c ) => c.toString( 16 ).padStart( 2, '0' ) )
