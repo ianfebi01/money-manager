@@ -1,5 +1,6 @@
 import CallToAction from '@/components/Heroes/CallToAction'
 import FeaturedFeature from '@/components/Sections/FeaturedFeature'
+import FeaturedAI from '@/components/Sections/FeaturedAI'
 import ScrolledImages from '@/components/Sections/ScrolledImages'
 import FeaturedMultiLang from '@/components/Sections/FeaturedMultiLang'
 import TextLeftImageRight from '@/components/TextLeftImageRight'
@@ -30,8 +31,11 @@ export default async function HomePage( props: Omit<Props, 'children'> ) {
       <section className="hidden md:block grow max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
         <FeaturedMultiLang />
       </section>
-      <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full max-lg:pt-16">
+      <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full max-lg:pt-16 lg:pb-16">
         <FeaturedFeature />
+      </section>
+      <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
+        <FeaturedAI />
       </section>
       <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full py-16">
         <TextLeftImageRight

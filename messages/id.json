@@ -162,6 +162,41 @@
     "prev": "Sebelumnya",
     "next": "Berikutnya",
     "page": "Halaman",
+    "featured_ai": {
+        "line1": "Rasakan Kekuatan",
+        "line2": {
+            "prefix": "",
+            "highlight": "Analisis AI",
+            "suffix": "untuk keuanganmu"
+        },
+        "title": "Analisis Keuangan Berbasis AI",
+        "description": "Dapatkan insight cerdas dan rekomendasi personal berdasarkan pola pengeluaran dan perilaku keuanganmu.",
+        "feature1": {
+            "label": "Analisis Cerdas",
+            "description": "AI canggih menganalisis transaksimu untuk mengidentifikasi pola dan tren pengeluaran secara otomatis."
+        },
+        "feature2": {
+            "label": "Tips Personal",
+            "description": "Terima saran keuangan yang disesuaikan dengan kebiasaan belanja dan tujuanmu."
+        },
+        "feature3": {
+            "label": "Laporan Bulanan",
+            "description": "Dapatkan ringkasan komprehensif kesehatan keuangan bulananmu yang dibuat AI."
+        },
+        "preview": {
+            "title": "Analisis AI",
+            "regenerate": "Buat Ulang",
+            "summary_title": "Ringkasan Transaksi Keuangan November 2025",
+            "summary_text_1": "Di November 2025, kesehatan keuanganmu terlihat kuat, dengan total pemasukan",
+            "summary_text_2": "dan pengeluaran",
+            "summary_text_3": "Ini menghasilkan saldo bersih",
+            "spending_title": "Pola Pengeluaran Utama:",
+            "category_household": "Rumah Tangga",
+            "category_health": "Kesehatan",
+            "category_beauty": "Kecantikan",
+            "category_social": "Sosial"
+        }
+    },
     "ai_summary": {
         "title": "Analisis AI",
         "description": "Dapatkan insight dan analisis transaksi bulan ini dengan bantuan AI.",

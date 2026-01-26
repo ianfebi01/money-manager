@@ -162,6 +162,41 @@
     "prev": "Prev",
     "next": "Next",
     "page": "Page",
+    "featured_ai": {
+        "line1": "Unlock the Power of",
+        "line2": {
+            "prefix": "",
+            "highlight": "AI Insights",
+            "suffix": "for your finances"
+        },
+        "title": "AI-Powered Financial Analysis",
+        "description": "Get intelligent insights and personalized recommendations based on your spending patterns and financial behavior.",
+        "feature1": {
+            "label": "Smart Analysis",
+            "description": "Advanced AI analyzes your transactions to identify spending patterns and trends automatically."
+        },
+        "feature2": {
+            "label": "Personalized Tips",
+            "description": "Receive tailored financial advice based on your unique spending habits and goals."
+        },
+        "feature3": {
+            "label": "Monthly Reports",
+            "description": "Get comprehensive AI-generated summaries of your monthly financial health."
+        },
+        "preview": {
+            "title": "AI Insights",
+            "regenerate": "Regenerate",
+            "summary_title": "Financial Transaction Summary for November 2025",
+            "summary_text_1": "In November 2025, your financial health looks strong, with a total income of",
+            "summary_text_2": "and expenses of",
+            "summary_text_3": "This results in a net balance of",
+            "spending_title": "Key Spending Patterns:",
+            "category_household": "Household",
+            "category_health": "Health",
+            "category_beauty": "Beauty",
+            "category_social": "Social Life"
+        }
+    },
     "ai_summary": {
         "title": "AI Insights",
         "description": "Get AI-powered insights and analysis of your transactions for this month.",
