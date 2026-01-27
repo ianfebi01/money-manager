@@ -163,13 +163,27 @@ const ScrolledImages = () => {
               zIndex : 5 - index,
             }}
           >
+            {/* Mobile */}
             <Image
-              className="h-full object-contain object-center w-full"
+              className="h-full object-contain object-center w-full md:hidden"
               src={item}
               fill
               alt={`Image ${index}`}
-              loading="lazy"
+              loading={[1, 3, 5].includes( index ) ? 'eager' : 'lazy'}
               placeholder={imageLoader}
+              quality={50}
+              sizes="(max-width: 768px) 80vw, (max-width: 1200px) 50vw, 33vw"
+            />
+            {/* MD up */}
+            <Image
+              className="h-full object-contain object-center w-full hidden md:block"
+              src={item}
+              fill
+              alt={`Image ${index}`}
+              loading={[0, 2, 3].includes( index ) ? 'eager' : 'lazy'}
+              placeholder={imageLoader}
+              quality={80}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         ) )}
@@ -186,6 +200,8 @@ const ScrolledImages = () => {
             alt={`Image Cashflow Mobile`}
             loading="lazy"
             placeholder={imageLoader}
+            quality={50}
+            sizes="80vw"
           />
         </div>
       </div>
