@@ -10,45 +10,80 @@ import { useTranslations } from 'next-intl'
 
 gsap.registerPlugin( ScrollTrigger )
 
-const FeaturedAI = () => {
+interface Props {
+  /**
+   * When true (default), defers animation using requestIdleCallback for better Speed Index.
+   * Set to false for above-the-fold content to avoid flashing effect.
+   */
+  deferAnimation?: boolean
+}
+
+const FeaturedAI = ( { deferAnimation = true }: Props ) => {
   const containerRef = useRef<HTMLDivElement | null>( null )
   const cardRef = useRef<HTMLDivElement | null>( null )
   const sparklesRef = useRef<HTMLDivElement[] | null[]>( [] )
   const t = useTranslations( 'featured_ai' )
 
   useEffect( () => {
-    const ctx = gsap.context( () => {
-      // Animate the main card
-      gsap.to( cardRef.current, {
-        y             : 0,
-        opacity       : 1,
-        ease          : 'power2.out',
-        duration      : 0.75,
-        delay         : 0.2,
-        scrollTrigger : {
-          trigger       : containerRef.current,
-          start         : 'top 80%',
-          toggleActions : 'play none none none',
-        },
+    const runAnimation = () => {
+      const ctx = gsap.context( () => {
+        // Animate the main card
+        gsap.to( cardRef.current, {
+          y             : 0,
+          opacity       : 1,
+          ease          : 'power2.out',
+          duration      : 0.75,
+          scrollTrigger : {
+            trigger       : containerRef.current,
+            start         : 'top 80%',
+            toggleActions : 'play none none none',
+          },
+        } )
+
+        // Animate floating sparkles
+        sparklesRef.current.forEach( ( sparkle, index ) => {
+          if ( sparkle ) {
+            gsap.to( sparkle, {
+              y        : -10,
+              duration : 1.5 + index * 0.3,
+              ease     : 'power1.inOut',
+              repeat   : -1,
+              yoyo     : true,
+              delay    : index * 0.2,
+            } )
+          }
+        } )
       } )
 
-      // Animate floating sparkles
-      sparklesRef.current.forEach( ( sparkle, index ) => {
-        if ( sparkle ) {
-          gsap.to( sparkle, {
-            y        : -10,
-            duration : 1.5 + index * 0.3,
-            ease     : 'power1.inOut',
-            repeat   : -1,
-            yoyo     : true,
-            delay    : index * 0.2,
-          } )
-        }
-      } )
-    } )
+      return () => ctx.revert()
+    }
 
-    return () => ctx.revert()
-  }, [] )
+    // For above-the-fold content, run immediately without defer
+    if ( !deferAnimation ) {
+      gsap.set( cardRef.current, { y : 128, opacity : 0 } )
+
+      return runAnimation()
+    }
+
+    // Defer animation to after page is interactive
+    const startAnimations = () => {
+      gsap.set( cardRef.current, { y : 128, opacity : 0 } )
+      
+      return runAnimation()
+    }
+
+    // Use requestIdleCallback to defer non-critical animations
+    if ( 'requestIdleCallback' in window ) {
+      const id = requestIdleCallback( startAnimations, { timeout : 2000 } )
+
+      return () => cancelIdleCallback( id )
+    } else {
+      // Fallback for Safari
+      const timeout = setTimeout( startAnimations, 100 )
+
+      return () => clearTimeout( timeout )
+    }
+  }, [deferAnimation] )
 
   return (
     <div ref={containerRef}>
@@ -68,7 +103,7 @@ const FeaturedAI = () => {
 
       <div
         ref={cardRef}
-        className="mt-12 relative opacity-0 translate-y-32"
+        className="mt-12 relative"
       >
         {/* Floating sparkles decoration */}
         <div

@@ -27,6 +27,11 @@ interface Props {
   biggerColumn?: 'image' | 'content'
   buttonsVariation?: 'primary' | 'secondary'
   scaling?: 'cover' | 'contain'
+  /**
+   * When true (default), defers animation using requestIdleCallback for better Speed Index.
+   * Set to false for above-the-fold content to avoid flashing effect.
+   */
+  deferAnimation?: boolean
 }
 
 const TextLeftImageRight: React.FC<Props> = ( {
@@ -41,44 +46,80 @@ const TextLeftImageRight: React.FC<Props> = ( {
   biggerColumn = '',
   buttonsVariation,
   scaling = 'cover',
+  deferAnimation = true,
 } ) => {
   const containerRef = useRef<HTMLDivElement | null>( null )
   const itemsRef = useRef<HTMLDivElement[] | null[]>( [] )
 
   useEffect( () => {
-    const ctx = gsap.context( () => {
-      const tl = gsap.timeline( {
-        scrollTrigger : {
-          trigger : containerRef.current,
-          start   : 'top 100%',
+    const runAnimation = () => {
+      const ctx = gsap.context( () => {
+        const tl = gsap.timeline( {
+          scrollTrigger : {
+            trigger : containerRef.current,
+            start   : 'top 100%',
 
-          toggleActions : 'play none none none',
-        },
-      } )
+            toggleActions : 'play none none none',
+          },
+        } )
 
-      tl.to( itemsRef.current[0], {
-        ease       : 'power2.out',
-        translateX : 0,
-        duration   : 1,
-        opacity    : 1,
-        delay      : 0.2,
-      } )
-
-      tl.to(
-        itemsRef.current[1],
-        {
+        tl.to( itemsRef.current[0], {
           ease       : 'power2.out',
           translateX : 0,
           duration   : 1,
           opacity    : 1,
-          delay      : 0.2,
-        },
-        '<'
-      )
-    } )
+        } )
 
-    return () => ctx.revert()
-  }, [] )
+        tl.to(
+          itemsRef.current[1],
+          {
+            ease       : 'power2.out',
+            translateX : 0,
+            duration   : 1,
+            opacity    : 1,
+          },
+          '<'
+        )
+      } )
+
+      return () => ctx.revert()
+    }
+
+    const setInitialState = () => {
+      if ( itemsRef.current[0] ) {
+        gsap.set( itemsRef.current[0], { x : reverse ? 64 : -64, opacity : 0 } )
+      }
+      if ( itemsRef.current[1] ) {
+        gsap.set( itemsRef.current[1], { x : reverse ? -64 : 64, opacity : 0 } )
+      }
+    }
+
+    // For above-the-fold content, run immediately without defer
+    if ( !deferAnimation ) {
+      setInitialState()
+
+      return runAnimation()
+    }
+
+    // Defer animation to after page is interactive
+    const startAnimations = () => {
+      setInitialState()
+      
+      return runAnimation()
+    }
+
+    // Use requestIdleCallback to defer non-critical animations
+    if ( 'requestIdleCallback' in window ) {
+      const id = requestIdleCallback( startAnimations, { timeout : 2000 } )
+
+      return () => cancelIdleCallback( id )
+    } else {
+      // Fallback for Safari
+      const timeout = setTimeout( startAnimations, 100 )
+
+      return () => clearTimeout( timeout )
+    }
+  }, [deferAnimation, reverse] )
 
   return (
     <div ref={containerRef}
@@ -106,13 +147,9 @@ const TextLeftImageRight: React.FC<Props> = ( {
               !fullWidthBgImage && biggerColumn === 'image',
             'md:basis-[calc(60%-1rem)]' :
               !fullWidthBgImage && biggerColumn === 'content',
-            'basis-full'      : fullWidthBgImage,
-            'lg:pr-8'         : !reverse,
-            'lg:pl-8'         : reverse,
-            // Transition
-            '-translate-x-16' : !reverse,
-            'translate-x-16'  : reverse,
-            'opacity-0'       : true,
+            'basis-full' : fullWidthBgImage,
+            'lg:pr-8'    : !reverse,
+            'lg:pl-8'    : reverse,
           } )}
         >
           <div
@@ -169,10 +206,6 @@ const TextLeftImageRight: React.FC<Props> = ( {
                 biggerColumn === 'content' && fullWidth,
               'flex flex-col gap-8' : accordian?.length,
               'max-h-[796px]'       : !accordian?.length,
-              // Transition
-              'translate-x-16'      : !reverse,
-              '-translate-x-16'     : reverse,
-              'opacity-0'           : true,
             } )}
           >
             <div className="relative w-full h-full">

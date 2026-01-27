@@ -10,30 +10,67 @@ import { useTranslations } from 'next-intl'
 
 gsap.registerPlugin( ScrollTrigger )
 
-const FeaturedFeature = () => {
+interface Props {
+  /**
+   * When true (default), defers animation using requestIdleCallback for better Speed Index.
+   * Set to false for above-the-fold content to avoid flashing effect.
+   */
+  deferAnimation?: boolean
+}
+
+const FeaturedFeature = ( { deferAnimation = true }: Props ) => {
   const itemsRef = useRef<HTMLDivElement[] | null[]>( [] )
   const containerRef = useRef<HTMLDivElement | null>( null )
   const t = useTranslations( 'discover_features' )
 
   useEffect( () => {
-    const ctx = gsap.context( () => {
-      gsap.to( itemsRef.current, {
-        y             : 0,
-        opacity       : 1,
-        ease          : 'power2.out',
-        stagger       : 0.2,
-        duration      : 0.75,
-        delay         : 0.2,
-        scrollTrigger : {
-          trigger       : containerRef.current,
-          start         : 'top 80%',
-          toggleActions : 'play none none none',
-        },
+    const runAnimation = () => {
+      const ctx = gsap.context( () => {
+        gsap.to( itemsRef.current, {
+          y             : 0,
+          opacity       : 1,
+          ease          : 'power2.out',
+          stagger       : 0.2,
+          duration      : 0.75,
+          scrollTrigger : {
+            trigger       : containerRef.current,
+            start         : 'top 80%',
+            toggleActions : 'play none none none',
+          },
+        } )
       } )
-    } )
 
-    return () => ctx.revert()
-  }, [] )
+      return () => ctx.revert()
+    }
+
+    // For above-the-fold content, run immediately without defer
+    if ( !deferAnimation ) {
+      // Set initial state
+      gsap.set( itemsRef.current, { y : 128, opacity : 0 } )
+
+      return runAnimation()
+    }
+
+    // Defer animation to after page is interactive
+    const startAnimations = () => {
+      // Set initial state via JS instead of CSS classes
+      gsap.set( itemsRef.current, { y : 128, opacity : 0 } )
+      
+      return runAnimation()
+    }
+
+    // Use requestIdleCallback to defer non-critical animations
+    if ( 'requestIdleCallback' in window ) {
+      const id = requestIdleCallback( startAnimations, { timeout : 2000 } )
+
+      return () => cancelIdleCallback( id )
+    } else {
+      // Fallback for Safari
+      const timeout = setTimeout( startAnimations, 100 )
+
+      return () => clearTimeout( timeout )
+    }
+  }, [deferAnimation] )
 
   return (
     <div ref={containerRef}>
@@ -53,7 +90,7 @@ const FeaturedFeature = () => {
       <div className="flex flex-col md:grid md:grid-cols-2 gap-8 mt-12">
         <div
           ref={( el ) => ( itemsRef.current[0] = el )}
-          className="bg-dark-secondary flex flex-col justify-between h-full rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
+          className="bg-dark-secondary flex flex-col justify-between h-full rounded-lg border border-dark-secondary overflow-hidden"
         >
           <div className="p-6">
             <h2>{t( 'chart.title' )}</h2>
@@ -74,7 +111,7 @@ const FeaturedFeature = () => {
           </div>
         </div>
         <div ref={( el ) => ( itemsRef.current[1] = el )}
-          className="bg-dark-secondary flex flex-col justify-between h-full rounded-lg border border-dark-secondary overflow-hidden opacity-0 translate-y-32"
+          className="bg-dark-secondary flex flex-col justify-between h-full rounded-lg border border-dark-secondary overflow-hidden"
         >
           <div className="p-6">
             <h2>{t( 'add_transaction.title' )}</h2>
