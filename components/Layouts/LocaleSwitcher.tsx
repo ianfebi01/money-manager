@@ -43,6 +43,7 @@ export default function LocaleSwitcher() {
                 'ring-0 focus:ring-0 outline-none',
                 'text-orange'
               )}
+              aria-label="Change language"
             >
               <FontAwesomeIcon icon={faGlobe}
                 size="xl"
