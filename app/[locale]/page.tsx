@@ -14,7 +14,7 @@ export default async function HomePage( props: Omit<Props, 'children'> ) {
   const t = await getTranslations( { locale } )
   
   return (
-    <div className="grow ">
+    <main className="grow ">
       <section className="max-w-7xl px-6 lg:px-8 mx-auto w-full min-h-[70vh] flex items-center justify-center">
         <CallToAction />
       </section>
@@ -46,6 +46,6 @@ export default async function HomePage( props: Omit<Props, 'children'> ) {
           bodyCopy={t( 'text_left_image_right.body_copy' )}
         />
       </section>
-    </div>
+    </main>
   )
 }

@@ -32,7 +32,7 @@ const MoneyManagerNavbar = () => {
   }
 
   return (
-    <div className="flex items-center gap-8 h-16">
+    <nav className="flex items-center gap-8 h-16">
       {status !== 'unauthenticated' && (
         <>
           <NavigationLink
@@ -86,7 +86,7 @@ const MoneyManagerNavbar = () => {
           <Login />
         </>
       )}
-    </div>
+    </nav>
   )
 }
 
