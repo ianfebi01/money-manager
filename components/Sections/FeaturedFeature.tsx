@@ -67,6 +67,9 @@ const FeaturedFeature = () => {
               alt="Transaction Summary"
               fill
               className="object-cover object-left-top rounded-tl-lg"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              quality={70}
+              loading="lazy"
             />
           </div>
         </div>
@@ -85,6 +88,9 @@ const FeaturedFeature = () => {
               alt="Add Transaction"
               fill
               className="object-cover object-right-bottom rounded-tr-lg"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              quality={70}
+              loading="lazy"
             />
           </div>
         </div>

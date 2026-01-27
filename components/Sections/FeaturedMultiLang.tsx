@@ -133,7 +133,9 @@ const FeaturedMultiLang = () => {
               alt="Panel 2 Image"
               fill
               className="object-cover object-center"
-              priority // optional
+              sizes="1024px"
+              quality={75}
+              priority
             />
           </div>
         </div>
@@ -151,7 +153,9 @@ const FeaturedMultiLang = () => {
                 alt="Panel 2 Image"
                 fill
                 className="object-cover object-center"
-                priority // optional: loads image ASAP
+                sizes="1280px"
+                quality={75}
+                priority
               />
             </div>
           </div>
@@ -172,6 +176,9 @@ const FeaturedMultiLang = () => {
               alt="Panel 1 Image"
               fill
               className="object-cover object-center w-full h-full"
+              sizes="1280px"
+              quality={75}
+              loading="lazy"
             />
           </div>
         </div>

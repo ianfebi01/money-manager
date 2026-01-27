@@ -172,7 +172,7 @@ const ScrolledImages = () => {
               loading={[1, 3, 5].includes( index ) ? 'eager' : 'lazy'}
               placeholder={imageLoader}
               quality={50}
-              sizes="(max-width: 768px) 80vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="100px"
             />
             {/* MD up */}
             <Image
@@ -182,8 +182,8 @@ const ScrolledImages = () => {
               alt={`Image ${index}`}
               loading={[0, 2, 3].includes( index ) ? 'eager' : 'lazy'}
               placeholder={imageLoader}
-              quality={80}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={75}
+              sizes="600px"
             />
           </div>
         ) )}
@@ -201,7 +201,7 @@ const ScrolledImages = () => {
             loading="lazy"
             placeholder={imageLoader}
             quality={50}
-            sizes="80vw"
+            sizes="100px"
           />
         </div>
       </div>
