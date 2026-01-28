@@ -77,7 +77,7 @@ const MoneyManagerNavbar = () => {
               height={24}
               priority
             />
-            <span className="text-base m-0 font-medium text-white-overlay translate-y-1">
+            <span className="text-base m-0 font-medium text-white translate-y-1">
               Money Manager
             </span>
           </Link>
