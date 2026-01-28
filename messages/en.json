@@ -79,6 +79,7 @@
     "category": "Category",
     "description": "Description",
     "no-option": "No options",
+    "no_suggestions": "No suggestions",
     "monthly_transaction": "Monthly Transactions",
     "top_expense": "Top Expenses",
     "summary": "Summary",

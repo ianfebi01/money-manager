@@ -7,6 +7,7 @@ import capitalizeFirst from '@/utils/capitalize-first'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import useDebounce from '@/lib/hooks/useDebounce'
+import { useTranslations } from 'next-intl'
 
 interface AutocompleteTextFieldProps {
   value: string
@@ -38,6 +39,7 @@ export default function AutocompleteTextField( {
   capitalizeFirstChar = false,
   enabled = true,
 }: AutocompleteTextFieldProps ) {
+  const t = useTranslations()
   const [query, setQuery] = useState( value )
 
   // Sync query with external value changes
@@ -48,7 +50,7 @@ export default function AutocompleteTextField( {
   // Use existing debounce hook
   const debouncedQuery = useDebounce( query, 300 )
 
-  const { data: suggestions = [] } = useQuery( {
+  const { data: suggestions = [], isFetching } = useQuery( {
     queryKey : ['descriptions', debouncedQuery],
     queryFn  : () => fetchDescriptions( debouncedQuery ),
     enabled  : enabled && debouncedQuery.length > 0,
@@ -112,9 +114,14 @@ export default function AutocompleteTextField( {
               'py-1 text-base shadow-lg focus:outline-none mx-0 text-left'
             )}
           >
-            {filteredSuggestions.length === 0 && query !== '' ? (
+            {isFetching ? (
+              <div className="relative cursor-default select-none py-2 px-4 text-white-overlay flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white-overlay border-t-transparent rounded-full animate-spin" />
+                {t( 'search' )}...
+              </div>
+            ) : filteredSuggestions.length === 0 ? (
               <div className="relative cursor-default select-none py-2 px-4 text-white-overlay">
-                No suggestions
+                {t( 'no_suggestions' )}
               </div>
             ) : (
               filteredSuggestions.map( ( suggestion, index ) => (
