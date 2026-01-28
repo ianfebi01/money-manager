@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl'
 import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
 import toast from 'react-hot-toast'
 import TransactionForm from '../Form/TransactionForm'
+import AITransactionField from '../Inputs/AITransactionField'
 
 interface ITransactionFormInput
   extends Omit<IBodyTransaction, 'date' | 'category'> {
@@ -215,6 +216,7 @@ const AddTransaction = () => {
             enabled={isOpen}
             onClick={handleClickRecentTransaction}
           />
+          <AITransactionField />
           <form onSubmit={( e ) => handleAddTransaction( e )}>
             <TransactionForm
               form={form}
