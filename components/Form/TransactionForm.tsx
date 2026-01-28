@@ -4,6 +4,7 @@ import { IOptions } from '@/types/form'
 import TextField from '../Inputs/TextField'
 import DropdownSelect from '../Inputs/DropdownSelect'
 import DropdownCategories from '../Inputs/DropdownCategories'
+import AutocompleteTextField from '../Inputs/AutocompleteTextField'
 import { useTranslations } from 'next-intl'
 import { LegacyRef, ReactNode } from 'react'
 
@@ -132,13 +133,13 @@ const TransactionForm = ( {
         >
           <span>{t( 'description' )}</span>
         </label>
-        <TextField
-          type="text"
+        <AutocompleteTextField
           value={form.description}
           name="description"
           placeholder="eg. Burger"
           onChange={( val: string ) => onChange( val, 'description' )}
           capitalizeFirstChar
+          enabled={isOpen}
         />
       </div>
 
