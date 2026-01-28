@@ -150,7 +150,10 @@
         "error_no_transactions": "No valid transactions to save.",
         "error_date_required": "Please select a date first.",
         "export_success": "Export successful!",
-        "error_export": "Error exporting transactions"
+        "error_export": "Error exporting transactions",
+        "transactions_parsed": "Transactions successfully parsed by AI",
+        "transactions_parsed_image": "Transactions from image successfully parsed",
+        "error_parsing": "Failed to parse transactions"
     },
     "export_excel": "Export Excel",
     "exporting": "Exporting...",
