@@ -38,7 +38,6 @@ const config: Config = {
       },
       fontFamily : {
         primary : [
-          'Inter',
           'Arial',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -50,7 +49,6 @@ const config: Config = {
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
         ],
-        code   : ['"Source Code Pro"'],
         roboto : ['Roboto', 'Arial', 'sans-serif'],
       },
     },
