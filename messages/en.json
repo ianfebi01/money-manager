@@ -205,5 +205,14 @@
         "regenerate": "Regenerate",
         "generating": "Analyzing your transactions...",
         "try_again": "Try again"
+    },
+    "pwa_install": {
+        "title": "Install Money Manager",
+        "description": "Add to your home screen for quick and easy access",
+        "install": "Install",
+        "dismiss": "Not now",
+        "ios_instructions": "To install this app on your iPhone:",
+        "ios_step1": "Tap the Share button",
+        "ios_step2": "Select \"Add to Home Screen\""
     }
 }

@@ -205,5 +205,14 @@
         "regenerate": "Buat Ulang",
         "generating": "Menganalisis transaksi...",
         "try_again": "Coba lagi"
+    },
+    "pwa_install": {
+        "title": "Instal Money Manager",
+        "description": "Tambahkan ke layar utama untuk akses cepat dan mudah",
+        "install": "Instal",
+        "dismiss": "Nanti saja",
+        "ios_instructions": "Untuk menginstal aplikasi ini di iPhone Anda:",
+        "ios_step1": "Ketuk tombol Bagikan",
+        "ios_step2": "Pilih \"Tambahkan ke Layar Utama\""
     }
 }
