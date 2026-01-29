@@ -143,6 +143,8 @@ const AddTransaction = () => {
       },
     } )
 
+    setAiText( '' )
+
     setTransactions( [] )
     setSharedDate( new Date() )
   }
