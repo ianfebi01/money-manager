@@ -2,13 +2,23 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 export async function GET( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const { searchParams } = new URL( req.url )
@@ -38,14 +48,20 @@ export async function GET( req: NextRequest ) {
       category_name : t.category_name,
     } ) )
 
-    return NextResponse.json( { data : result } )
+    return addRateLimitHeaders(
+      NextResponse.json( { data : result } ),
+      rateLimitResult
+    )
   } catch ( err ) {
     // eslint-disable-next-line no-console
     console.error( '[GET /transactions/recent]', err )
 
-    return NextResponse.json(
-      { error : 'Internal Server Error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { error : 'Internal Server Error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }

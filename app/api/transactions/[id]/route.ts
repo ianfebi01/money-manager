@@ -3,6 +3,7 @@ import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import * as yup from 'yup'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),
@@ -21,16 +22,28 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const transactionId = Number( params.id )
   if ( isNaN( transactionId ) ) {
-    return NextResponse.json( { message : 'Invalid ID' }, { status : 400 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { message : 'Invalid ID' }, { status : 400 } ),
+      rateLimitResult
+    )
   }
 
   try {
@@ -44,23 +57,32 @@ export async function DELETE(
     )
 
     if ( result.rowCount === 0 ) {
-      return NextResponse.json(
-        { message : 'Transaction not found or forbidden' },
-        { status : 404 }
+      return addRateLimitHeaders(
+        NextResponse.json(
+          { message : 'Transaction not found or forbidden' },
+          { status : 404 }
+        ),
+        rateLimitResult
       )
     }
 
-    return NextResponse.json(
-      { message : 'Transaction deleted' },
-      { status : 200 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Transaction deleted' },
+        { status : 200 }
+      ),
+      rateLimitResult
     )
   } catch ( err ) {
     // eslint-disable-next-line no-console
     console.error( '[DELETE /transactions/:id]', err )
 
-    return NextResponse.json(
-      { message : 'Internal server error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Internal server error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }
@@ -69,16 +91,28 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const transactionId = Number( params.id )
   if ( isNaN( transactionId ) ) {
-    return NextResponse.json( { message : 'Invalid ID' }, { status : 400 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { message : 'Invalid ID' }, { status : 400 } ),
+      rateLimitResult
+    )
   }
 
   let transaction: NewTx
@@ -87,15 +121,21 @@ export async function PUT(
     transaction = await transactionSchema.validate( body, { abortEarly : false } )
   } catch ( err ) {
     if ( err instanceof yup.ValidationError ) {
-      return NextResponse.json(
-        { message : 'Validation failed', errors : err.errors },
-        { status : 400 }
+      return addRateLimitHeaders(
+        NextResponse.json(
+          { message : 'Validation failed', errors : err.errors },
+          { status : 400 }
+        ),
+        rateLimitResult
       )
     }
 
-    return NextResponse.json(
-      { message : 'Invalid request body' },
-      { status : 400 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Invalid request body' },
+        { status : 400 }
+      ),
+      rateLimitResult
     )
   }
 
@@ -117,20 +157,29 @@ export async function PUT(
     )
 
     if ( rowCount === 0 ) {
-      return NextResponse.json(
-        { message : 'Transaction not found or forbidden' },
-        { status : 404 }
+      return addRateLimitHeaders(
+        NextResponse.json(
+          { message : 'Transaction not found or forbidden' },
+          { status : 404 }
+        ),
+        rateLimitResult
       )
     }
 
-    return NextResponse.json( { data : rows[0] }, { status : 200 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { data : rows[0] }, { status : 200 } ),
+      rateLimitResult
+    )
   } catch ( err ) {
     // eslint-disable-next-line no-console
     console.error( '[PUT /transactions]', err )
 
-    return NextResponse.json(
-      { message : 'Internal Server Error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Internal Server Error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }

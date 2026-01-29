@@ -4,13 +4,23 @@ import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { fromZonedTime } from 'date-fns-tz'
 import { addMonths } from 'date-fns'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 export async function GET( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const { searchParams } = new URL( req.url )
@@ -19,15 +29,21 @@ export async function GET( req: NextRequest ) {
   const timezone = searchParams.get( 'timezone' )
 
   if ( !month || !year ) {
-    return NextResponse.json(
-      { message : 'Month and year are required' },
-      { status : 400 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Month and year are required' },
+        { status : 400 }
+      ),
+      rateLimitResult
     )
   }
   if ( !timezone ) {
-    return NextResponse.json(
-      { message : 'Timezone is required' },
-      { status : 400 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Timezone is required' },
+        { status : 400 }
+      ),
+      rateLimitResult
     )
   }
 
@@ -55,10 +71,13 @@ export async function GET( req: NextRequest ) {
   const series = rows.map( ( r ) => Number( r.total ) )
   const categories = rows.map( ( r ) => r.name )
 
-  return NextResponse.json( {
-    data : {
-      series,
-      categories,
-    },
-  } )
+  return addRateLimitHeaders(
+    NextResponse.json( {
+      data : {
+        series,
+        categories,
+      },
+    } ),
+    rateLimitResult
+  )
 }

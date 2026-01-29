@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import { fromZonedTime } from 'date-fns-tz'
 import { addMonths, format } from 'date-fns'
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rateLimit'
 
 import enMessages from '@/messages/en.json'
 import idMessages from '@/messages/id.json'
@@ -16,7 +17,7 @@ const openai = createOpenAI( {
 } )
 
 // Categories translation map
-const messages: Record<string, any> = {
+const messages: Record<string, typeof enMessages> = {
   en : enMessages,
   id : idMessages,
 }
@@ -35,10 +36,16 @@ const translateCategory = ( categoryName: string, locale: string ): string => {
     .replace( /--+/g, '-' )
     .trim()
 
-  return categoryTranslations[key] || categoryName || ( locale === 'id' ? 'Lainnya' : 'Other' )
+  return ( categoryTranslations as Record<string, string> )[key] || categoryName || ( locale === 'id' ? 'Lainnya' : 'Other' )
 }
 
 export async function POST( req: NextRequest ) {
+  // Rate limit check - AI endpoints use strict limits
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.strict )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 

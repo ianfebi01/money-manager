@@ -4,13 +4,23 @@ import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { startOfYear, endOfYear, getMonth } from 'date-fns'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 export async function GET( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const { searchParams } = new URL( req.url )
@@ -18,12 +28,18 @@ export async function GET( req: NextRequest ) {
   const timezone = searchParams.get( 'timezone' )
 
   if ( !year ) {
-    return NextResponse.json( { message : 'Year is required' }, { status : 400 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { message : 'Year is required' }, { status : 400 } ),
+      rateLimitResult
+    )
   }
   if ( !timezone ) {
-    return NextResponse.json(
-      { message : 'Timezone is required' },
-      { status : 400 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Timezone is required' },
+        { status : 400 }
+      ),
+      rateLimitResult
     )
   }
 
@@ -63,19 +79,22 @@ export async function GET( req: NextRequest ) {
   }
 
   // Return all months, categories as month indices
-  return NextResponse.json( {
-    data : {
-      series : [
-        {
-          name : 'Income',
-          data : monthlyStats.map( ( r ) => r.income ),
-        },
-        {
-          name : 'Expense',
-          data : monthlyStats.map( ( r ) => r.expense ),
-        },
-      ],
-      categories : monthlyStats.map( ( r ) => r.monthIndex ),
-    },
-  } )
+  return addRateLimitHeaders(
+    NextResponse.json( {
+      data : {
+        series : [
+          {
+            name : 'Income',
+            data : monthlyStats.map( ( r ) => r.income ),
+          },
+          {
+            name : 'Expense',
+            data : monthlyStats.map( ( r ) => r.expense ),
+          },
+        ],
+        categories : monthlyStats.map( ( r ) => r.monthIndex ),
+      },
+    } ),
+    rateLimitResult
+  )
 }

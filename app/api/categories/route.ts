@@ -1,15 +1,25 @@
 import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 // app/api/categories/route.ts
-export async function GET( req: Request ) {
+export async function GET( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const { searchParams } = new URL( req.url )
@@ -24,7 +34,7 @@ export async function GET( req: Request ) {
         FROM categories
         WHERE user_id = $1
     `
-    const values: any[] = [userId]
+    const values: ( string | number )[] = [userId]
 
     if ( type !== 'all' ) {
       query += ` AND type = $2`
@@ -45,22 +55,28 @@ export async function GET( req: Request ) {
       [userId]
     )
 
-    return NextResponse.json( {
-      data : categories,
-      meta : {
-        total : parseInt( count ),
-        page,
-        pageSize,
-        pages : Math.ceil( parseInt( count ) / pageSize ),
-      },
-    } )
+    return addRateLimitHeaders(
+      NextResponse.json( {
+        data : categories,
+        meta : {
+          total : parseInt( count ),
+          page,
+          pageSize,
+          pages : Math.ceil( parseInt( count ) / pageSize ),
+        },
+      } ),
+      rateLimitResult
+    )
   } catch ( err ) {
     // eslint-disable-next-line no-console
     console.error( err )
 
-    return NextResponse.json(
-      { error : 'Internal Server Error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { error : 'Internal Server Error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }

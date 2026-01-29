@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { z } from 'zod'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 // Create Google Gemini provider instance
 const google = createGoogleGenerativeAI( {
@@ -57,11 +58,20 @@ const findCategoryMatch = (
 }
 
 export async function POST( req: NextRequest ) {
+  // Rate limit check - AI endpoints use strict limits
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.strict )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   try {
@@ -200,14 +210,20 @@ Available INCOME categories:
       }
     } )
     
-    return NextResponse.json( { transactions : transactionsWithCategories } )
+    return addRateLimitHeaders(
+      NextResponse.json( { transactions : transactionsWithCategories } ),
+      rateLimitResult
+    )
   } catch ( error ) {
     // eslint-disable-next-line no-console
     console.error( '[POST /ai/parse-transaction]', error )
 
-    return NextResponse.json(
-      { error : 'Failed to parse transaction' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { error : 'Failed to parse transaction' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }

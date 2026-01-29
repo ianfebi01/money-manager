@@ -4,13 +4,23 @@ import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import { addMonths } from 'date-fns'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 export async function GET( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const { searchParams } = new URL( req.url )
@@ -19,15 +29,21 @@ export async function GET( req: NextRequest ) {
   const timezone = searchParams.get( 'timezone' )
 
   if ( !month || !year ) {
-    return NextResponse.json(
-      { message : 'Month and year are required' },
-      { status : 400 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Month and year are required' },
+        { status : 400 }
+      ),
+      rateLimitResult
     )
   }
   if ( !timezone ) {
-    return NextResponse.json(
-      { message : 'Timezone is required' },
-      { status : 400 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Timezone is required' },
+        { status : 400 }
+      ),
+      rateLimitResult
     )
   }
 
@@ -60,13 +76,23 @@ export async function GET( req: NextRequest ) {
   }
 
   // Group by day
+  interface TransactionItem {
+    id: number
+    category_id: number
+    category_name: string
+    amount: number
+    description: string
+    date: string
+    type: string
+  }
+
   const grouped: Record<
     string,
     {
       day: string
       income: number
       expense: number
-      transactions: any[]
+      transactions: TransactionItem[]
     }
   > = {}
 
@@ -101,11 +127,14 @@ export async function GET( req: NextRequest ) {
     ( a, b ) => b.day.localeCompare( a.day ) // DESC by day: '31', '30', ..., '01'
   )
 
-  return NextResponse.json( {
-    data : {
-      income,
-      expense,
-      transactions : transactionsArray,
-    },
-  } )
+  return addRateLimitHeaders(
+    NextResponse.json( {
+      data : {
+        income,
+        expense,
+        transactions : transactionsArray,
+      },
+    } ),
+    rateLimitResult
+  )
 }

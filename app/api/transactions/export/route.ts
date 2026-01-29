@@ -6,13 +6,23 @@ import authOptions from '@/lib/authOptions'
 import { addMonths, format } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import ExcelJS from 'exceljs'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 export async function GET( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const { searchParams } = new URL( req.url )
@@ -35,9 +45,12 @@ export async function GET( req: NextRequest ) {
 
     if ( month && year ) {
       if ( !timezone ) {
-        return NextResponse.json(
-          { message : 'Timezone is required' },
-          { status : 400 }
+        return addRateLimitHeaders(
+          NextResponse.json(
+            { message : 'Timezone is required' },
+            { status : 400 }
+          ),
+          rateLimitResult
         )
       }
       const start = new Date( `${year}-${month.padStart( 2, '0' )}-01` )
@@ -169,20 +182,25 @@ export async function GET( req: NextRequest ) {
       : `transactions_export.xlsx`
 
     // Return as downloadable file
-    return new NextResponse( buffer, {
+    const response = new NextResponse( buffer, {
       status  : 200,
       headers : {
         'Content-Type'        : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition' : `attachment; filename="${filename}"`,
       },
     } )
+
+    return addRateLimitHeaders( response, rateLimitResult )
   } catch ( err ) {
     // eslint-disable-next-line no-console
     console.error( '[GET /transactions/export]', err )
 
-    return NextResponse.json(
-      { error : 'Internal Server Error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { error : 'Internal Server Error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }
