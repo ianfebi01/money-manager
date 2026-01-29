@@ -55,6 +55,7 @@ jobs:
           NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
 
           OPENAI_SECRET=${{ secrets.OPENAI_SECRET }}
+          GEMINI_SECRET=${{ secrets.GEMINI_SECRET }}
 
           NODE_ENV=production
           EOF
