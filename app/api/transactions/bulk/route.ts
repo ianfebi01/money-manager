@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 import * as yup from 'yup'
 
@@ -22,11 +23,20 @@ const bulkTransactionSchema = yup.array().of( transactionSchema ).min( 1 )
 type NewTx = yup.InferType<typeof transactionSchema>
 
 export async function POST( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   let items: NewTx[] = []
@@ -96,17 +106,23 @@ export async function POST( req: NextRequest ) {
     const { rows } = await client.query( insertSql, values )
     await client.query( 'COMMIT' )
 
-    return NextResponse.json( {
-      data : rows,
-    }, { status : 201 } ) // array of inserted rows
+    return addRateLimitHeaders(
+      NextResponse.json( {
+        data : rows,
+      }, { status : 201 } ),
+      rateLimitResult
+    )
   } catch ( err ) {
     await client.query( 'ROLLBACK' )
     // eslint-disable-next-line no-console
     console.error( '[POST /transactions/bulk]', err )
 
-    return NextResponse.json(
-      { message : 'Internal Server Error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Internal Server Error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   } finally {
     client.release()

@@ -11,10 +11,12 @@ import { cn } from '@/lib/utils'
 import formatCurency from '@/utils/format-curency'
 import { IOptions } from '@/types/form'
 import { useCreate } from '@/lib/hooks/api/cashFlow'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
 import toast from 'react-hot-toast'
 import TransactionForm from '../Form/TransactionForm'
+import AITransactionField from '../Inputs/AITransactionField'
+import { IParsedTransaction, IParseTransactionResponse } from '@/types/api/ai'
 
 interface ITransactionFormInput
   extends Omit<IBodyTransaction, 'date' | 'category'> {
@@ -26,11 +28,14 @@ interface ITransactionForm extends Omit<IBodyTransaction, 'category'> {
 
 const AddTransaction = () => {
   const t = useTranslations()
+  const locale = useLocale()
 
   const { createMultiple } = useCreate()
   const [isOpen, setIsOpen] = useState<boolean>( false )
   const [loading, setLoading] = useState( false )
   const [sharedDate, setSharedDate] = useState<Date | null>( new Date() )
+  const [aiText, setAiText] = useState( '' )
+  const [aiLoading, setAiLoading] = useState( false )
   const [form, setForm] = useState<ITransactionFormInput>( {
     type        : 'expense',
     amount      : 0,
@@ -138,6 +143,8 @@ const AddTransaction = () => {
       },
     } )
 
+    setAiText( '' )
+
     setTransactions( [] )
     setSharedDate( new Date() )
   }
@@ -169,6 +176,104 @@ const AddTransaction = () => {
         value : val?.category_id,
       },
     } )
+  }
+
+  /**
+   * Handle AI transaction parsing
+   */
+  const handleAIParse = async () => {
+    if ( !aiText.trim() ) return
+
+    setAiLoading( true )
+    try {
+      const response = await fetch( '/api/ai/parse-transaction', {
+        method  : 'POST',
+        headers : { 'Content-Type' : 'application/json' },
+        body    : JSON.stringify( {
+          text   : aiText,
+          locale : locale,
+        } ),
+      } )
+
+      if ( !response.ok ) {
+        throw new Error( 'Failed to parse transaction' )
+      }
+
+      const data: IParseTransactionResponse = await response.json()
+
+      if ( data.transactions && data.transactions.length > 0 ) {
+        // Convert parsed transactions to form format and add to list
+        const newTransactions: ITransactionForm[] = data.transactions.map( ( parsed: IParsedTransaction ) => ( {
+          type        : parsed.type,
+          amount      : parsed.amount,
+          description : parsed.description,
+          date        : sharedDate ? new Date( sharedDate ).toISOString() : new Date().toISOString(),
+          category    : {
+            label : parsed.category_name,
+            value : parsed.category_id ?? '',
+          },
+        } ) )
+
+        setTransactions( ( prev ) => [...prev, ...newTransactions] )
+        setAiText( '' ) // Clear input after successful parse
+        toast.success( t( 'toast.transactions_parsed' ) || `${data.transactions.length} transaction(s) parsed` )
+      }
+    } catch ( error ) {
+      toast.error( t( 'toast.error_parsing' ) || 'Failed to parse transaction' )
+    } finally {
+      setAiLoading( false )
+    }
+  }
+
+  const handleAIImageSelect = async ( file: File ) => {
+    setAiLoading( true )
+    try {
+      // Convert file to base64
+      const reader = new FileReader()
+      reader.onload = async () => {
+        const base64 = reader.result as string
+
+        const response = await fetch( '/api/ai/parse-transaction', {
+          method  : 'POST',
+          headers : { 'Content-Type' : 'application/json' },
+          body    : JSON.stringify( {
+            image  : base64,
+            locale : locale,
+          } ),
+        } )
+
+        if ( !response.ok ) {
+          throw new Error( 'Failed to parse image' )
+        }
+
+        const data: IParseTransactionResponse = await response.json()
+
+        if ( data.transactions && data.transactions.length > 0 ) {
+          const newTransactions: ITransactionForm[] = data.transactions.map( ( parsed: IParsedTransaction ) => ( {
+            type        : parsed.type,
+            amount      : parsed.amount,
+            description : parsed.description,
+            date        : sharedDate ? new Date( sharedDate ).toISOString() : new Date().toISOString(),
+            category    : {
+              label : parsed.category_name,
+              value : parsed.category_id ?? '',
+            },
+          } ) )
+
+          setTransactions( ( prev ) => [...prev, ...newTransactions] )
+          toast.success( t( 'toast.transactions_parsed' ) || `${data.transactions.length} transaction(s) parsed from image` )
+        }
+        setAiLoading( false )
+      }
+      reader.onerror = () => {
+        toast.error( t( 'toast.error_parsing' ) || 'Failed to read image' )
+        setAiLoading( false )
+      }
+      reader.readAsDataURL( file )
+    } catch ( error ) {
+      toast.error( t( 'toast.error_parsing' ) || 'Failed to parse image' )
+      setAiLoading( false )
+    }
   }
 
   return (
@@ -214,6 +319,13 @@ const AddTransaction = () => {
           <RecentTransactions
             enabled={isOpen}
             onClick={handleClickRecentTransaction}
+          />
+          <AITransactionField
+            value={aiText}
+            onChange={setAiText}
+            onSubmit={handleAIParse}
+            onImageSelect={handleAIImageSelect}
+            loading={aiLoading}
           />
           <form onSubmit={( e ) => handleAddTransaction( e )}>
             <TransactionForm

@@ -6,6 +6,7 @@ import * as yup from 'yup'
 import authOptions from '@/lib/authOptions'
 import { addMonths, format } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
+import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),
@@ -21,11 +22,20 @@ const transactionSchema = yup.object( {
 type NewTx = yup.InferType<typeof transactionSchema>
 
 export async function POST( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   let transaction: NewTx
@@ -63,25 +73,40 @@ export async function POST( req: NextRequest ) {
       [userId, category, amount, description || null, date, type]
     )
 
-    return NextResponse.json( { data : rows[0] }, { status : 201 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { data : rows[0] }, { status : 201 } ),
+      rateLimitResult
+    )
   } catch ( err ) {
     // eslint-disable-next-line no-console
     console.error( '[POST /transactions]', err )
 
-    return NextResponse.json(
-      { message : 'Internal Server Error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { message : 'Internal Server Error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }
 
 // Get Transactions
 export async function GET( req: NextRequest ) {
+  // Rate limit check
+  const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
+  if ( !rateLimitResult.success ) {
+    return rateLimitResponse( rateLimitResult )
+  }
+
   const session = await getServerSession( authOptions )
   const userId = session?.user?.id
 
   if ( !userId ) {
-    return NextResponse.json( { error : 'Unauthorized' }, { status : 401 } )
+    return addRateLimitHeaders(
+      NextResponse.json( { error : 'Unauthorized' }, { status : 401 } ),
+      rateLimitResult
+    )
   }
 
   const { searchParams } = new URL( req.url )
@@ -175,28 +200,34 @@ export async function GET( req: NextRequest ) {
       }
     } )
 
-    return NextResponse.json( {
-      data : result,
-      meta : {
-        pagination : {
-          total      : totalCount,
-          page       : page,
-          limit      : limit,
-          totalPages : Math.ceil( totalCount / limit ),
+    return addRateLimitHeaders(
+      NextResponse.json( {
+        data : result,
+        meta : {
+          pagination : {
+            total      : totalCount,
+            page       : page,
+            limit      : limit,
+            totalPages : Math.ceil( totalCount / limit ),
+          },
+          search   : search,
+          month    : month,
+          year     : year,
+          timezone : timezone,
         },
-        search   : search,
-        month    : month,
-        year     : year,
-        timezone : timezone,
-      },
-    } )
+      } ),
+      rateLimitResult
+    )
   } catch ( err ) {
     // eslint-disable-next-line no-console
     console.error( '[GET /transactions]', err )
 
-    return NextResponse.json(
-      { error : 'Internal Server Error' },
-      { status : 500 }
+    return addRateLimitHeaders(
+      NextResponse.json(
+        { error : 'Internal Server Error' },
+        { status : 500 }
+      ),
+      rateLimitResult
     )
   }
 }
