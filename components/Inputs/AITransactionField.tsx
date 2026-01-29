@@ -3,15 +3,47 @@
 import { cn } from '@/lib/utils'
 import Button from '../Buttons/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUp, faFileImage } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUp, faFileImage, faMicrophone, faStop } from '@fortawesome/free-solid-svg-icons'
 import {
   useState,
   useRef,
   useEffect,
+  useCallback,
   TextareaHTMLAttributes,
   forwardRef,
   useImperativeHandle,
 } from 'react'
+
+// Type declaration for Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList
+  resultIndex: number
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string
+  message?: string
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  start: () => void
+  stop: () => void
+  abort: () => void
+  onresult: ( event: SpeechRecognitionEvent ) => void
+  onerror: ( event: SpeechRecognitionErrorEvent ) => void
+  onend: () => void
+  onstart: () => void
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition
+    webkitSpeechRecognition: new () => SpeechRecognition
+  }
+}
 
 interface AITransactionFieldProps extends Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
@@ -52,16 +84,101 @@ const AITransactionField = forwardRef<
     // Use controlled value if provided, otherwise use internal state
     const value =
       controlledValue !== undefined ? controlledValue : internalValue
-    const setValue = ( newValue: string ) => {
+    const setValue = useCallback( ( newValue: string ) => {
       if ( controlledOnChange ) {
         controlledOnChange( newValue )
       } else {
         setInternalValue( newValue )
       }
-    }
+    }, [controlledOnChange] )
 
     const textareaRef = useRef<HTMLTextAreaElement>( null )
     const fileInputRef = useRef<HTMLInputElement>( null )
+    const recognitionRef = useRef<SpeechRecognition | null>( null )
+
+    // Speech recognition state
+    const [isListening, setIsListening] = useState( false )
+    const [isSpeechSupported, setIsSpeechSupported] = useState( false )
+
+    // Check if speech recognition is supported
+    useEffect( () => {
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
+      setIsSpeechSupported( !!SpeechRecognitionAPI )
+    }, [] )
+
+    // Start speech recognition
+    const startListening = useCallback( () => {
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
+      if ( !SpeechRecognitionAPI ) return
+
+      const recognition = new SpeechRecognitionAPI()
+      recognitionRef.current = recognition
+      
+      recognition.continuous = true
+      recognition.interimResults = true
+      recognition.lang = 'id-ID' // Indonesian language
+      
+      recognition.onstart = () => {
+        setIsListening( true )
+      }
+      
+      recognition.onresult = ( event: SpeechRecognitionEvent ) => {
+        let finalTranscript = ''
+        
+        for ( let i = event.resultIndex; i < event.results.length; i++ ) {
+          const transcript = event.results[i][0].transcript
+          if ( event.results[i].isFinal ) {
+            finalTranscript += transcript
+          }
+        }
+        
+        // Append final transcript to existing value
+        if ( finalTranscript ) {
+          const currentValue = controlledValue !== undefined ? controlledValue : internalValue
+          const trimmedCurrent = currentValue.trim()
+          const newValue = trimmedCurrent ? `${trimmedCurrent} ${finalTranscript}` : finalTranscript
+          setValue( newValue )
+        }
+      }
+      
+      recognition.onerror = () => {
+        setIsListening( false )
+      }
+      
+      recognition.onend = () => {
+        setIsListening( false )
+        recognitionRef.current = null
+      }
+      
+      recognition.start()
+    }, [controlledValue, internalValue, setValue] )
+
+    // Stop speech recognition
+    const stopListening = useCallback( () => {
+      if ( recognitionRef.current ) {
+        recognitionRef.current.stop()
+        recognitionRef.current = null
+      }
+      setIsListening( false )
+    }, [] )
+
+    // Toggle speech recognition
+    const toggleListening = useCallback( () => {
+      if ( isListening ) {
+        stopListening()
+      } else {
+        startListening()
+      }
+    }, [isListening, startListening, stopListening] )
+
+    // Cleanup on unmount
+    useEffect( () => {
+      return () => {
+        if ( recognitionRef.current ) {
+          recognitionRef.current.abort()
+        }
+      }
+    }, [] )
 
     // Merge forwarded ref with internal ref
     useImperativeHandle(
@@ -158,21 +275,30 @@ const AITransactionField = forwardRef<
       </Button>
     )
 
-    // Send button component to avoid duplication
-    const SendButton = (
+    // Action button: shows microphone when empty, stop when listening, send when has text
+    const hasText = value.trim().length > 0
+    
+    const ActionButton = (
       <Button
         variant="icon"
         type="button"
-        onClick={onSubmit}
-        disabled={!value.trim() || loading || disabled}
+        onClick={hasText ? onSubmit : toggleListening}
+        disabled={( hasText && loading ) || disabled || ( !hasText && !isSpeechSupported )}
         className={cn(
           'bg-dark-secondary aspect-square h-[36px] w-[36px] flex-shrink-0 transition-all duration-200',
-          value.trim() && !loading ? 'opacity-100' : 'opacity-50',
+          // Show full opacity when has text or when listening
+          ( hasText || isListening ) && !loading ? 'opacity-100' : 'opacity-70',
+          // Add pulsing animation when listening
+          isListening && 'animate-pulse bg-red-500/20',
         )}
       >
         <FontAwesomeIcon
-          icon={faArrowUp}
-          className={cn( loading && 'animate-pulse' )}
+          icon={isListening ? faStop : hasText ? faArrowUp : faMicrophone}
+          className={cn(
+            'transition-all duration-200',
+            loading && 'animate-pulse',
+            isListening && 'text-red-400',
+          )}
         />
       </Button>
     )
@@ -234,7 +360,7 @@ const AITransactionField = forwardRef<
             )}
           >
             {ImageButton}
-            {SendButton}
+            {ActionButton}
           </div>
         </div>
       </div>
