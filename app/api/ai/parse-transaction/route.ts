@@ -92,7 +92,9 @@ Aturan parsing:
 - "jt", "juta" = jutaan (contoh: 1.5jt = 1500000)
 - Pisahkan item yang berbeda menjadi transaksi terpisah
 - Jika tidak ada tipe yang disebutkan, asumsikan sebagai 'expense'
-- Untuk struk belanja, ekstrak setiap item baris sebagai transaksi terpisah
+- PENTING: Untuk struk belanja dengan format "QTY x HARGA = TOTAL", SELALU gunakan nilai TOTAL baris (hasil perkalian), BUKAN harga satuan
+- Contoh: "3 PCS x 8.550 = 25.650" harus menghasilkan amount 25650, bukan 8550
+- Untuk struk belanja, ekstrak setiap item baris sebagai transaksi terpisah dengan total masing-masing
 - Capitalisasi huruf pertama deskripsi
 
 Kategori EXPENSE yang tersedia (gunakan key persis seperti ini):
@@ -102,7 +104,7 @@ Kategori EXPENSE yang tersedia (gunakan key persis seperti ini):
 - culture: budaya, museum, konser, teater
 - beauty: kecantikan, skincare, makeup, salon
 - health: obat, dokter, rumah sakit, vitamin
-- education: pendidikan, kursus, buku, sekolah
+- education: pendidikan, kursus, buku, sekolah, ATK, alat tulis, kertas, pena
 - gift: hadiah, kado
 - bill-subscription: tagihan, listrik, air, internet, pulsa, langganan, spotify, netflix
 - house-hold: rumah tangga, perabotan, cleaning
@@ -123,7 +125,9 @@ Parsing rules:
 - "jt", "juta" = millions (e.g., 1.5jt = 1500000)
 - Separate different items into individual transactions
 - If no type is mentioned, assume 'expense'
-- For receipts, extract each line item as a separate transaction
+- IMPORTANT: For receipts with format "QTY x PRICE = TOTAL", ALWAYS use the line TOTAL (multiplication result), NOT the unit price
+- Example: "3 PCS x 8,550 = 25,650" should result in amount 25650, not 8550
+- For receipts, extract each line item as a separate transaction with its respective total
 - Capitalize the first letter of each description
 
 Available EXPENSE categories (use these exact keys):
@@ -133,7 +137,7 @@ Available EXPENSE categories (use these exact keys):
 - culture: culture, museums, concerts, theater
 - beauty: beauty, skincare, makeup, salon
 - health: medicine, doctor, hospital, vitamins
-- education: education, courses, books, school
+- education: education, courses, books, school, stationery, office supplies, paper, pens
 - gift: gifts, presents
 - bill-subscription: bills, utilities, electricity, water, internet, phone credit, subscriptions
 - house-hold: household items, furniture, cleaning
