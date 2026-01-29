@@ -153,7 +153,8 @@
         "error_export": "Gagal mengekspor transaksi",
         "transactions_parsed": "Transaksi berhasil diproses oleh AI",
         "transactions_parsed_image": "Transaksi dari gambar berhasil diproses",
-        "error_parsing": "Gagal memproses transaksi"
+        "error_parsing": "Gagal memproses transaksi",
+        "error_rate_limit": "Terlalu banyak permintaan. Mohon tunggu sebentar."
     },
     "export_excel": "Ekspor Excel",
     "exporting": "Mengekspor...",

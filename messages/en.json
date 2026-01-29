@@ -153,7 +153,8 @@
         "error_export": "Error exporting transactions",
         "transactions_parsed": "Transactions successfully parsed by AI",
         "transactions_parsed_image": "Transactions from image successfully parsed",
-        "error_parsing": "Failed to parse transactions"
+        "error_parsing": "Failed to parse transactions",
+        "error_rate_limit": "Too many requests. Please wait a moment."
     },
     "export_excel": "Export Excel",
     "exporting": "Exporting...",

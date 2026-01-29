@@ -2,10 +2,11 @@
 import { useEffect } from 'react'
 import { apiAuth } from '../api'
 import { useRemoveUserData } from './api/auth'
-// import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
+import toast from 'react-hot-toast'
 
 const useAxiosAuth = () => {
-  // const t = useTranslations()
+  const t = useTranslations()
 
   // const refreshPromise: any = null
   const removeUserData = useRemoveUserData()
@@ -16,6 +17,10 @@ const useAxiosAuth = () => {
         return response
       },
       async ( error ) => {
+        // Rate limit error (429)
+        if ( error?.response?.status === 429 ) {
+          toast.error( t( 'toast.error_rate_limit' ), { id : 'rate-limit' } )
+        }
         // Error 500
         // if ( error?.response?.status === 500 ) {
         //   toast.error( t( 'something_went_wrong_title' ) )
