@@ -3,7 +3,12 @@
 import { cn } from '@/lib/utils'
 import Button from '../Buttons/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUp, faFileImage, faMicrophone, faStop } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowUp,
+  faFileImage,
+  faMicrophone,
+  faStop,
+} from '@fortawesome/free-solid-svg-icons'
 import {
   useState,
   useRef,
@@ -13,6 +18,7 @@ import {
   forwardRef,
   useImperativeHandle,
 } from 'react'
+import Spinner from '../Icons/Spinner'
 
 // Type declaration for Web Speech API
 interface SpeechRecognitionEvent extends Event {
@@ -84,13 +90,16 @@ const AITransactionField = forwardRef<
     // Use controlled value if provided, otherwise use internal state
     const value =
       controlledValue !== undefined ? controlledValue : internalValue
-    const setValue = useCallback( ( newValue: string ) => {
-      if ( controlledOnChange ) {
-        controlledOnChange( newValue )
-      } else {
-        setInternalValue( newValue )
-      }
-    }, [controlledOnChange] )
+    const setValue = useCallback(
+      ( newValue: string ) => {
+        if ( controlledOnChange ) {
+          controlledOnChange( newValue )
+        } else {
+          setInternalValue( newValue )
+        }
+      },
+      [controlledOnChange],
+    )
 
     const textareaRef = useRef<HTMLTextAreaElement>( null )
     const fileInputRef = useRef<HTMLInputElement>( null )
@@ -102,54 +111,59 @@ const AITransactionField = forwardRef<
 
     // Check if speech recognition is supported
     useEffect( () => {
-      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
+      const SpeechRecognitionAPI =
+        window.SpeechRecognition || window.webkitSpeechRecognition
       setIsSpeechSupported( !!SpeechRecognitionAPI )
     }, [] )
 
     // Start speech recognition
     const startListening = useCallback( () => {
-      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
+      const SpeechRecognitionAPI =
+        window.SpeechRecognition || window.webkitSpeechRecognition
       if ( !SpeechRecognitionAPI ) return
 
       const recognition = new SpeechRecognitionAPI()
       recognitionRef.current = recognition
-      
+
       recognition.continuous = true
       recognition.interimResults = true
       recognition.lang = 'id-ID' // Indonesian language
-      
+
       recognition.onstart = () => {
         setIsListening( true )
       }
-      
+
       recognition.onresult = ( event: SpeechRecognitionEvent ) => {
         let finalTranscript = ''
-        
+
         for ( let i = event.resultIndex; i < event.results.length; i++ ) {
           const transcript = event.results[i][0].transcript
           if ( event.results[i].isFinal ) {
             finalTranscript += transcript
           }
         }
-        
+
         // Append final transcript to existing value
         if ( finalTranscript ) {
-          const currentValue = controlledValue !== undefined ? controlledValue : internalValue
+          const currentValue =
+            controlledValue !== undefined ? controlledValue : internalValue
           const trimmedCurrent = currentValue.trim()
-          const newValue = trimmedCurrent ? `${trimmedCurrent} ${finalTranscript}` : finalTranscript
+          const newValue = trimmedCurrent
+            ? `${trimmedCurrent} ${finalTranscript}`
+            : finalTranscript
           setValue( newValue )
         }
       }
-      
+
       recognition.onerror = () => {
         setIsListening( false )
       }
-      
+
       recognition.onend = () => {
         setIsListening( false )
         recognitionRef.current = null
       }
-      
+
       recognition.start()
     }, [controlledValue, internalValue, setValue] )
 
@@ -193,24 +207,25 @@ const AITransactionField = forwardRef<
 
       // Temporarily set to single-line mode width to check if it would wrap
       const wasMultiline = isMultiline
-      
+
       // Force single-line padding to measure accurately
       textarea.style.paddingRight = '96px'
       textarea.style.height = 'auto'
-      
+
       const lineHeight = 24
       const singleLineThreshold = 40 // 24px line + 16px padding
       const maxHeight = lineHeight * maxRows
-      
+
       // Detect if should be multiline based on scrollHeight with single-line padding
-      const shouldBeMultiline = textarea.scrollHeight > singleLineThreshold || value.includes( '\n' )
-      
+      const shouldBeMultiline =
+        textarea.scrollHeight > singleLineThreshold || value.includes( '\n' )
+
       // Apply correct padding based on multiline state
       if ( shouldBeMultiline ) {
         textarea.style.paddingRight = '8px' // px-2 in multiline mode
       }
       // If still single line, keep the 96px padding
-      
+
       // Recalculate height with correct padding
       textarea.style.height = 'auto'
       const newHeight = Math.min( textarea.scrollHeight, maxHeight )
@@ -231,7 +246,7 @@ const AITransactionField = forwardRef<
       adjustHeight()
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value] )
-    
+
     // Handle input change
     const handleChange = ( e: React.ChangeEvent<HTMLTextAreaElement> ) => {
       setValue( e.target.value )
@@ -277,13 +292,13 @@ const AITransactionField = forwardRef<
 
     // Action button: shows microphone when empty, stop when listening, send when has text
     const hasText = value.trim().length > 0
-    
+
     const ActionButton = (
       <Button
         variant="icon"
         type="button"
         onClick={hasText ? onSubmit : toggleListening}
-        disabled={( hasText && loading ) || disabled || ( !hasText && !isSpeechSupported )}
+        disabled={loading || disabled || ( !hasText && !isSpeechSupported )}
         className={cn(
           'bg-dark-secondary aspect-square h-[36px] w-[36px] flex-shrink-0 transition-all duration-200',
           // Show full opacity when has text or when listening
@@ -292,14 +307,18 @@ const AITransactionField = forwardRef<
           isListening && 'animate-pulse bg-red-500/20',
         )}
       >
-        <FontAwesomeIcon
-          icon={isListening ? faStop : hasText ? faArrowUp : faMicrophone}
-          className={cn(
-            'transition-all duration-200',
-            loading && 'animate-pulse',
-            isListening && 'text-red-400',
-          )}
-        />
+        {loading ? (
+          <Spinner />
+        ) : (
+          <FontAwesomeIcon
+            icon={isListening ? faStop : hasText ? faArrowUp : faMicrophone}
+            className={cn(
+              'transition-all duration-200',
+              loading && 'animate-pulse',
+              isListening && 'text-red-400',
+            )}
+          />
+        )}
       </Button>
     )
 
@@ -356,7 +375,7 @@ const AITransactionField = forwardRef<
               'transition-all duration-300 ease-in-out',
               isMultiline
                 ? 'top-full right-0 mt-0' // Below textarea when multiline
-                : 'top-1/2 right-0 -translate-y-1/2' // Center right when single line
+                : 'top-1/2 right-0 -translate-y-1/2', // Center right when single line
             )}
           >
             {ImageButton}
