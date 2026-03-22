@@ -10,7 +10,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Transition } from '@headlessui/react'
 import { useTranslations } from 'next-intl'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface Props {
   enabled: boolean
@@ -29,8 +29,16 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
     10,
     1,
     { ...filter, search : debouncedSearch },
-    enabled
+    enabled,
   )
+
+  const scrollContainerRef = useRef<HTMLDivElement>( null )
+
+  useEffect( () => {
+    if ( scrollContainerRef.current ) {
+      scrollContainerRef.current.scrollTo( { left : 0, behavior : 'smooth' } )
+    }
+  }, [data] )
 
   /**
    * Show transaction search input
@@ -86,7 +94,7 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
           onBlur={() => setShowSearchInput( false )}
         />
       </Transition>
-      <div className="flex overflow-auto gap-2 items-center pb-4">
+      <div ref={scrollContainerRef} className="flex overflow-auto gap-2 items-center pb-4">
         {!isFetching &&
           !!data &&
           data?.data?.length > 0 &&
@@ -99,7 +107,10 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
                 [item.type === 'income' && 'border border-blue-400'],
                 [item.type === 'expense' && 'border border-orange']
               )}
-              onClick={() => onClick( item )}
+              onClick={() => {
+                onClick( item )
+                setFilter( ( prev ) => ( { ...prev, search : '' } ) )
+              }}
             >
               <span className="font-bold text-sm m-0 w-full truncate text-ellipsis whitespace-nowrap overflow-hidden text-center line-clamp-1">
                 {formatCurency( item.amount )}
