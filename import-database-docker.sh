@@ -22,8 +22,11 @@ echo "Restoring database to PostgreSQL in Docker container ($DOCKER_CONTAINER_NA
 # Drop and recreate the public schema inside the container
 docker exec -i $DOCKER_CONTAINER_NAME psql -U $POSTGRES_USER -d $DATABASE_NAME -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 
+# Get the database dump file from parameter, default to database.sql
+DB_FILE=${1:-database.sql}
+
 # Restore the database using a .sql file
-docker exec -i $DOCKER_CONTAINER_NAME psql -U $POSTGRES_USER -d $DATABASE_NAME < ./database.sql
+docker exec -i $DOCKER_CONTAINER_NAME psql -U $POSTGRES_USER -d $DATABASE_NAME < "$DB_FILE"
 
 # Unset all environment variables
 unset PGPASSWORD
