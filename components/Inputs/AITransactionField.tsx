@@ -104,6 +104,12 @@ const AITransactionField = forwardRef<
     const textareaRef = useRef<HTMLTextAreaElement>( null )
     const fileInputRef = useRef<HTMLInputElement>( null )
     const recognitionRef = useRef<SpeechRecognition | null>( null )
+    const latestValueRef = useRef( value )
+
+    // Update ref whenever value changes
+    useEffect( () => {
+      latestValueRef.current = value
+    }, [value] )
 
     // Speech recognition state
     const [isListening, setIsListening] = useState( false )
@@ -145,8 +151,7 @@ const AITransactionField = forwardRef<
 
         // Append final transcript to existing value
         if ( finalTranscript ) {
-          const currentValue =
-            controlledValue !== undefined ? controlledValue : internalValue
+          const currentValue = latestValueRef.current
           const trimmedCurrent = currentValue.trim()
           const newValue = trimmedCurrent
             ? `${trimmedCurrent} ${finalTranscript}`
@@ -165,7 +170,7 @@ const AITransactionField = forwardRef<
       }
 
       recognition.start()
-    }, [controlledValue, internalValue, setValue] )
+    }, [setValue] )
 
     // Stop speech recognition
     const stopListening = useCallback( () => {
@@ -297,8 +302,8 @@ const AITransactionField = forwardRef<
       <Button
         variant="icon"
         type="button"
-        onClick={hasText ? onSubmit : toggleListening}
-        disabled={loading || disabled || ( !hasText && !isSpeechSupported )}
+        onClick={isListening ? toggleListening : ( hasText ? onSubmit : toggleListening )}
+        disabled={loading || disabled || ( !hasText && !isSpeechSupported && !isListening )}
         className={cn(
           'bg-dark-secondary aspect-square h-[36px] w-[36px] flex-shrink-0 transition-all duration-200',
           // Show full opacity when has text or when listening
