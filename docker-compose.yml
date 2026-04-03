@@ -2,7 +2,7 @@ services:
   money-manager:
     restart: always
     build: .
-    image: money-manager:latest  # Make sure this is the correct tag
+    image: ghcr.io/ianfebi01/money-manager:latest
     container_name: money-manager
     # ports:
     #   - 3000:3000
