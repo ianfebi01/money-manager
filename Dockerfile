@@ -8,6 +8,8 @@ ARG DIR=usr/app
 FROM node:${VERSION} as builder
 # redeclare ARG because ARG not in build environment
 ARG DIR 
+ARG NEXT_PUBLIC_GOOGLE_ANALYTICS
+ENV NEXT_PUBLIC_GOOGLE_ANALYTICS=$NEXT_PUBLIC_GOOGLE_ANALYTICS
 WORKDIR /${DIR}
 COPY . .
 RUN npm install -g pnpm

@@ -5,3 +5,5 @@ node_modules
 README.md
 .dockerignore
 .git
+.env
+.env.production
