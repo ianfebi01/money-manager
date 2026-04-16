@@ -27,14 +27,21 @@ const authMiddleware = withAuth(
 )
 
 export default async function middleware( req: NextRequest ): Promise<NextResponse> {
+  const pathname = req.nextUrl.pathname
+
+  // Explicitly ignore static files and api routes to prevent next-intl from returning 404
+  if (pathname.includes('.') || pathname.startsWith('/_next') || pathname.startsWith('/api')) {
+    return NextResponse.next()
+  }
+
   const publicPathnameRegex = new RegExp(
-    `^(/(${locales.join( '|' )}))?(${publicPages
+    `^(/(${ locales.join( '|' ) }))?(${ publicPages
       .flatMap( ( p ) => ( p === '/' ? ['', '/'] : p ) )
-      .join( '|' )})/?$`,
+      .join( '|' ) })/?$`,
     'i'
   )
 
-  const isPublicPage = publicPathnameRegex.test( req.nextUrl.pathname )
+  const isPublicPage = publicPathnameRegex.test( pathname )
 
   const token = await getToken( {
     req,
