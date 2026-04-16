@@ -63,7 +63,7 @@ export async function generateMetadata( {
       siteName    : 'Money Manager',
       images      : [
         {
-          url    : '/logo.svg',
+          url    : '/icon-512x512.png',
           width  : 512,
           height : 512,
           alt    : tSeo( 'ogAlt' ), // localized image alt text
@@ -74,7 +74,7 @@ export async function generateMetadata( {
       card        : 'summary_large_image',
       title       : t( 'title' ),
       description : t( 'desc' ),
-      images      : ['/logo.svg'],
+      images      : ['/icon-512x512.png'],
     },
   }
 }
