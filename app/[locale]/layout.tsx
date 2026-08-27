@@ -15,7 +15,7 @@ import { getTranslations } from 'next-intl/server'
 import Toast from '../../components/Toast'
 import TopLoader from '../../components/TopLoader'
 
-config.autoAddCss = false
+config.autoAddCss = false 
 
 export function generateStaticParams() {
   return routing.locales.map( ( locale ) => ( { locale } ) )
