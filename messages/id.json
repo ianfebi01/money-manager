@@ -150,6 +150,8 @@
         "error_no_transactions": "Tidak ada transaksi yang valid untuk disimpan.",
         "error_date_required": "Silakan pilih tanggal terlebih dahulu.",
         "export_success": "Ekspor berhasil!",
+        "copy_success": "Berhasil disalin ke papan klip!",
+        "copy_failed": "Gagal menyalin ke papan klip",
         "error_export": "Gagal mengekspor transaksi",
         "transactions_parsed": "Transaksi berhasil diproses oleh AI",
         "transactions_parsed_image": "Transaksi dari gambar berhasil diproses",

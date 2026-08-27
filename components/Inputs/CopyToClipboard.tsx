@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import Button from '@/components/Buttons/Button'
 import CopyIcon from '../Icons/CopyIcon'
@@ -9,6 +10,8 @@ type Props = {
   size?: number
 }
 const CopyToClipboard = ( { copyText, className = '', size = 16 }: Props ) => {
+  const t = useTranslations()
+
   // This is the function we wrote earlier
   async function copyTextToClipboard( text: string ) {
     if ( 'clipboard' in navigator ) {
@@ -23,9 +26,11 @@ const CopyToClipboard = ( { copyText, className = '', size = 16 }: Props ) => {
     // Asynchronously call copyTextToClipboard
     copyTextToClipboard( copyText )
       .then( () => {
-        toast.success( 'Successfully copy text!' )
+        toast.success( t( 'mm_transactions.copy_success' ) )
       } )
-      .catch( () => {} )
+      .catch( () => {
+        toast.error( t( 'mm_transactions.copy_failed' ) )
+      } )
   }
 
   return (
