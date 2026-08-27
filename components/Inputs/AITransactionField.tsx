@@ -105,6 +105,17 @@ const AITransactionField = forwardRef<
     const fileInputRef = useRef<HTMLInputElement>( null )
     const recognitionRef = useRef<SpeechRecognition | null>( null )
     const latestValueRef = useRef( value )
+    // Tracks how many speech results we've already committed to the textarea.
+    // Android Chrome can re-deliver already-final results via onresult, which
+    // caused the same word to be appended repeatedly. Keeping our own index
+    // avoids relying on the unreliable event.resultIndex.
+    const lastProcessedIndexRef = useRef( 0 )
+    // When true, the mic keeps listening. Used to auto-restart the recognition
+    // session in onend, since Chrome Android ignores the `continuous` flag.
+    const keepListeningRef = useRef( false )
+    const restartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+      null,
+    )
 
     // Update ref whenever value changes
     useEffect( () => {
@@ -128,52 +139,105 @@ const AITransactionField = forwardRef<
         window.SpeechRecognition || window.webkitSpeechRecognition
       if ( !SpeechRecognitionAPI ) return
 
-      const recognition = new SpeechRecognitionAPI()
-      recognitionRef.current = recognition
+      keepListeningRef.current = true
 
-      recognition.continuous = true
-      recognition.interimResults = true
-      recognition.lang = 'id-ID' // Indonesian language
+      // Creates a fresh recognition session. `continuous` is ignored on
+      // Android Chrome, which causes the same final transcript to be
+      // delivered over and over (duplicating the word). Instead we use
+      // single-utterance sessions (`continuous = false`) and restart in
+      // `onend` to keep the mic listening.
+      const createRecognition = () => {
+        const recognition = new SpeechRecognitionAPI()
+        recognitionRef.current = recognition
 
-      recognition.onstart = () => {
-        setIsListening( true )
-      }
+        recognition.continuous = false
+        recognition.interimResults = true
+        recognition.lang = 'id-ID' // Indonesian language
 
-      recognition.onresult = ( event: SpeechRecognitionEvent ) => {
-        let finalTranscript = ''
+        // Each session gets a fresh results list, so reset our tracker.
+        lastProcessedIndexRef.current = 0
 
-        for ( let i = event.resultIndex; i < event.results.length; i++ ) {
-          const transcript = event.results[i][0].transcript
-          if ( event.results[i].isFinal ) {
-            finalTranscript += transcript
+        recognition.onstart = () => {
+          setIsListening( true )
+        }
+
+        recognition.onresult = ( event: SpeechRecognitionEvent ) => {
+          let finalTranscript = ''
+          let lastIndex = lastProcessedIndexRef.current
+
+          // Only process results we haven't already committed, so re-delivered
+          // final results from Android Chrome don't get appended again.
+          for ( let i = lastIndex; i < event.results.length; i++ ) {
+            const result = event.results[i]
+            if ( result.isFinal ) {
+              finalTranscript += result[0].transcript
+              lastIndex = i + 1
+            }
+          }
+
+          // Append final transcript to existing value
+          if ( finalTranscript ) {
+            lastProcessedIndexRef.current = lastIndex
+            const currentValue = latestValueRef.current
+            const trimmedCurrent = currentValue.trim()
+            const newValue = trimmedCurrent
+              ? `${trimmedCurrent} ${finalTranscript}`
+              : finalTranscript
+            setValue( newValue )
           }
         }
 
-        // Append final transcript to existing value
-        if ( finalTranscript ) {
-          const currentValue = latestValueRef.current
-          const trimmedCurrent = currentValue.trim()
-          const newValue = trimmedCurrent
-            ? `${trimmedCurrent} ${finalTranscript}`
-            : finalTranscript
-          setValue( newValue )
+        recognition.onerror = ( event: SpeechRecognitionErrorEvent ) => {
+          // Stop trying on fatal errors; otherwise ignore and let onend
+          // restart the session to keep listening.
+          if (
+            event.error === 'not-allowed' ||
+            event.error === 'service-not-allowed' ||
+            event.error === 'network' ||
+            event.error === 'language-not-supported'
+          ) {
+            keepListeningRef.current = false
+            setIsListening( false )
+          }
         }
+
+        recognition.onend = () => {
+          recognitionRef.current = null
+          if ( keepListeningRef.current ) {
+            // Restart to keep listening. The small delay avoids
+            // "recognition has already started" errors on some browsers.
+            restartTimeoutRef.current = setTimeout( () => {
+              restartTimeoutRef.current = null
+              if ( keepListeningRef.current ) {
+                createRecognition()
+                recognitionRef.current?.start()
+              }
+            }, 150 )
+          } else {
+            setIsListening( false )
+          }
+        }
+
+        return recognition
       }
 
-      recognition.onerror = () => {
-        setIsListening( false )
-      }
-
-      recognition.onend = () => {
-        setIsListening( false )
+      const recognition = createRecognition()
+      try {
+        recognition.start()
+      } catch {
+        // e.g. already started; clean up and let the user retry
+        keepListeningRef.current = false
         recognitionRef.current = null
       }
-
-      recognition.start()
     }, [setValue] )
 
     // Stop speech recognition
     const stopListening = useCallback( () => {
+      keepListeningRef.current = false
+      if ( restartTimeoutRef.current ) {
+        clearTimeout( restartTimeoutRef.current )
+        restartTimeoutRef.current = null
+      }
       if ( recognitionRef.current ) {
         recognitionRef.current.stop()
         recognitionRef.current = null
@@ -193,8 +257,14 @@ const AITransactionField = forwardRef<
     // Cleanup on unmount
     useEffect( () => {
       return () => {
+        keepListeningRef.current = false
+        if ( restartTimeoutRef.current ) {
+          clearTimeout( restartTimeoutRef.current )
+          restartTimeoutRef.current = null
+        }
         if ( recognitionRef.current ) {
           recognitionRef.current.abort()
+          recognitionRef.current = null
         }
       }
     }, [] )
