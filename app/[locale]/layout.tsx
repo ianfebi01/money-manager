@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import ReactQueryProvider from '@/components/Context/ReactQueryProvider'
-import { Toaster } from 'react-hot-toast'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import NextTopLoader from 'nextjs-toploader'
 import SectionProvider from '@/components/Context/SectionProvider'
@@ -14,6 +13,7 @@ import { routing } from '@/i18n/routing'
 import MoneyManagerNavbar from '@/components/Layouts/MoneyManagerNavbar'
 import SessionProviderWrapper from '@/components/Context/SessionPrviderWrapper'
 import { getTranslations } from 'next-intl/server'
+import Toast from '../../components/Toast'
 
 config.autoAddCss = false
 
@@ -33,9 +33,7 @@ export async function generateMetadata( {
   const t = await getTranslations( { locale, namespace : 'pages.home' } )
   const tSeo = await getTranslations( { locale, namespace : 'seo' } )
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    'https://moneymanager.id'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://moneymanager.id'
 
   return {
     title        : t( 'title' ), // e.g. "Money Manager | by ianfebi01" / "oleh ianfebi01"
@@ -52,7 +50,7 @@ export async function generateMetadata( {
     alternates : {
       canonical : `/${locale}`,
       languages : Object.fromEntries(
-        routing.locales.map( ( loc ) => [loc, `/${loc}`] )
+        routing.locales.map( ( loc ) => [loc, `/${loc}`] ),
       ),
     },
     openGraph : {
@@ -113,21 +111,7 @@ export default async function LocaleLayout( {
                   speed={200}
                   shadow="0 0 10px #F26B50,0 0 5px #F26B50"
                 />
-                <Toaster
-                  toastOptions={{
-                    // icon : (
-                    // 	<div className="text-20" data-cy="modal-information-icon">
-                    // 		<ModalInformationIcon />
-                    // 	</div>
-                    // ),
-                    position  : 'top-right',
-                    className : 'bg-white text-dark text-md',
-                    style     : {
-                      boxShadow : '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                      height    : '44px',
-                    },
-                  }}
-                />
+                <Toast />
                 <div className="min-h-screen flex flex-col">
                   <div className="max-w-7xl px-6 lg:px-8 mx-auto w-full">
                     <MoneyManagerNavbar />
