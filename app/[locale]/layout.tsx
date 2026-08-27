@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import ReactQueryProvider from '@/components/Context/ReactQueryProvider'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
-import NextTopLoader from 'nextjs-toploader'
 import SectionProvider from '@/components/Context/SectionProvider'
 import Footer from '@/components/Layouts/Footer'
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
@@ -14,6 +13,7 @@ import MoneyManagerNavbar from '@/components/Layouts/MoneyManagerNavbar'
 import SessionProviderWrapper from '@/components/Context/SessionPrviderWrapper'
 import { getTranslations } from 'next-intl/server'
 import Toast from '../../components/Toast'
+import TopLoader from '../../components/TopLoader'
 
 config.autoAddCss = false
 
@@ -100,17 +100,7 @@ export default async function LocaleLayout( {
           >
             <SessionProviderWrapper>
               <NextIntlClientProvider>
-                <NextTopLoader
-                  color="#F26B50"
-                  initialPosition={0.08}
-                  crawlSpeed={200}
-                  height={3}
-                  crawl={true}
-                  showSpinner={false}
-                  easing="ease"
-                  speed={200}
-                  shadow="0 0 10px #F26B50,0 0 5px #F26B50"
-                />
+                <TopLoader/>
                 <Toast />
                 <div className="min-h-screen flex flex-col">
                   <div className="max-w-7xl px-6 lg:px-8 mx-auto w-full">
