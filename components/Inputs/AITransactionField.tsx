@@ -157,11 +157,19 @@ const AITransactionField = forwardRef<
         // Each session gets a fresh results list, so reset our tracker.
         lastProcessedIndexRef.current = 0
 
+        // Ignore events from recognitions that are no longer the active one.
+        // A stale `onend` from a stopped session can otherwise clobber the new
+        // session, causing subsequent speech to not be recorded.
+        const isCurrent = () => recognitionRef.current === recognition
+
         recognition.onstart = () => {
+          if ( !isCurrent() ) return
           setIsListening( true )
         }
 
         recognition.onresult = ( event: SpeechRecognitionEvent ) => {
+          if ( !isCurrent() ) return
+
           let finalTranscript = ''
           let lastIndex = lastProcessedIndexRef.current
 
@@ -188,6 +196,7 @@ const AITransactionField = forwardRef<
         }
 
         recognition.onerror = ( event: SpeechRecognitionErrorEvent ) => {
+          if ( !isCurrent() ) return
           // Stop trying on fatal errors; otherwise ignore and let onend
           // restart the session to keep listening.
           if (
@@ -202,6 +211,7 @@ const AITransactionField = forwardRef<
         }
 
         recognition.onend = () => {
+          if ( !isCurrent() ) return
           recognitionRef.current = null
           if ( keepListeningRef.current ) {
             // Restart to keep listening. The small delay avoids
@@ -209,8 +219,17 @@ const AITransactionField = forwardRef<
             restartTimeoutRef.current = setTimeout( () => {
               restartTimeoutRef.current = null
               if ( keepListeningRef.current ) {
-                createRecognition()
-                recognitionRef.current?.start()
+                const next = createRecognition()
+                try {
+                  next.start()
+                } catch {
+                  // Restart failed (e.g. iOS blocks start() outside a user
+                  // gesture). Clean up so the next tap on the mic works
+                  // instead of leaving a stuck "listening" state.
+                  recognitionRef.current = null
+                  keepListeningRef.current = false
+                  setIsListening( false )
+                }
               }
             }, 150 )
           } else {
