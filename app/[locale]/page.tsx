@@ -7,7 +7,7 @@ import TextLeftImageRight from '@/components/TextLeftImageRight'
 import Quote from '@/components/Sections/Quote'
 import { Props } from '@/types'
 import { getTranslations } from 'next-intl/server'
-import SmoothScrollProvider from '@/components/Context/SmoothScrollProvider copy'
+import SmoothScrollProvider from '@/components/Context/SmoothScrollProvider'
 
 export default async function HomePage( props: Omit<Props, 'children'> ) {
   const { locale } = await props.params
