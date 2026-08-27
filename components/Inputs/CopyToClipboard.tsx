@@ -26,10 +26,10 @@ const CopyToClipboard = ( { copyText, className = '', size = 16 }: Props ) => {
     // Asynchronously call copyTextToClipboard
     copyTextToClipboard( copyText )
       .then( () => {
-        toast.success( t( 'mm_transactions.copy_success' ) )
+        toast.success( t( 'toast.copy_success' ) )
       } )
       .catch( () => {
-        toast.error( t( 'mm_transactions.copy_failed' ) )
+        toast.error( t( 'toast.copy_failed' ) )
       } )
   }
 
