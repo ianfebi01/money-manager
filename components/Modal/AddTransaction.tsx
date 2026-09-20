@@ -184,8 +184,8 @@ const AddTransaction = () => {
   const handleAIParse = async () => {
     if ( !aiText.trim() ) return
 
-    setAiLoading( true )
     try {
+      setAiLoading( true )
       const response = await fetch( '/api/ai/parse-transaction', {
         method  : 'POST',
         headers : { 'Content-Type' : 'application/json' },
@@ -227,51 +227,52 @@ const AddTransaction = () => {
 
   const handleAIImageSelect = async ( file: File ) => {
     setAiLoading( true )
+
     try {
-      // Convert file to base64
-      const reader = new FileReader()
-      reader.onload = async () => {
-        const base64 = reader.result as string
+      // Read the file first so any failure (read, fetch or parse) lands in the
+      // catch below. Doing the fetch inside `reader.onload` would escape this
+      // try/catch and leave the loading state stuck on.
+      const base64 = await new Promise<string>( ( resolve, reject ) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve( reader.result as string )
+        reader.onerror = () =>
+          reject( reader.error ?? new Error( 'Failed to read image' ) )
+        reader.readAsDataURL( file )
+      } )
 
-        const response = await fetch( '/api/ai/parse-transaction', {
-          method  : 'POST',
-          headers : { 'Content-Type' : 'application/json' },
-          body    : JSON.stringify( {
-            image  : base64,
-            locale : locale,
-          } ),
-        } )
+      const response = await fetch( '/api/ai/parse-transaction', {
+        method  : 'POST',
+        headers : { 'Content-Type' : 'application/json' },
+        body    : JSON.stringify( {
+          image  : base64,
+          locale : locale,
+        } ),
+      } )
 
-        if ( !response.ok ) {
-          throw new Error( 'Failed to parse image' )
-        }
-
-        const data: IParseTransactionResponse = await response.json()
-
-        if ( data.transactions && data.transactions.length > 0 ) {
-          const newTransactions: ITransactionForm[] = data.transactions.map( ( parsed: IParsedTransaction ) => ( {
-            type        : parsed.type,
-            amount      : parsed.amount,
-            description : parsed.description,
-            date        : sharedDate ? new Date( sharedDate ).toISOString() : new Date().toISOString(),
-            category    : {
-              label : parsed.category_name,
-              value : parsed.category_id ?? '',
-            },
-          } ) )
-
-          setTransactions( ( prev ) => [...prev, ...newTransactions] )
-          toast.success( t( 'toast.transactions_parsed' ) || `${data.transactions.length} transaction(s) parsed from image` )
-        }
-        setAiLoading( false )
+      if ( !response.ok ) {
+        throw new Error( 'Failed to parse image' )
       }
-      reader.onerror = () => {
-        toast.error( t( 'toast.error_parsing' ) || 'Failed to read image' )
-        setAiLoading( false )
+
+      const data: IParseTransactionResponse = await response.json()
+
+      if ( data.transactions && data.transactions.length > 0 ) {
+        const newTransactions: ITransactionForm[] = data.transactions.map( ( parsed: IParsedTransaction ) => ( {
+          type        : parsed.type,
+          amount      : parsed.amount,
+          description : parsed.description,
+          date        : sharedDate ? new Date( sharedDate ).toISOString() : new Date().toISOString(),
+          category    : {
+            label : parsed.category_name,
+            value : parsed.category_id ?? '',
+          },
+        } ) )
+
+        setTransactions( ( prev ) => [...prev, ...newTransactions] )
+        toast.success( t( 'toast.transactions_parsed' ) || `${data.transactions.length} transaction(s) parsed from image` )
       }
-      reader.readAsDataURL( file )
     } catch ( error ) {
       toast.error( t( 'toast.error_parsing' ) || 'Failed to parse image' )
+    } finally {
       setAiLoading( false )
     }
   }
