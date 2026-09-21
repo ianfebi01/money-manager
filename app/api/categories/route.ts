@@ -3,9 +3,11 @@ import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
 // app/api/categories/route.ts
-export async function GET( req: NextRequest ) {
+async function handleGET( req: NextRequest ) {
   // Rate limit check
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
   if ( !rateLimitResult.success ) {
@@ -68,8 +70,7 @@ export async function GET( req: NextRequest ) {
       rateLimitResult
     )
   } catch ( err ) {
-    // eslint-disable-next-line no-console
-    console.error( err )
+    logger.error( { err }, 'Unhandled error in /api/categories' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -80,3 +81,5 @@ export async function GET( req: NextRequest ) {
     )
   }
 }
+
+export const GET = withLogger( handleGET )

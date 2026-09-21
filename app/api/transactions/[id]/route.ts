@@ -4,6 +4,8 @@ import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import * as yup from 'yup'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),
@@ -18,7 +20,7 @@ const transactionSchema = yup.object( {
 
 type NewTx = yup.InferType<typeof transactionSchema>
 
-export async function DELETE(
+async function handleDELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -74,8 +76,7 @@ export async function DELETE(
       rateLimitResult
     )
   } catch ( err ) {
-    // eslint-disable-next-line no-console
-    console.error( '[DELETE /transactions/:id]', err )
+    logger.error( { err }, '[DELETE /transactions/:id]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -87,7 +88,7 @@ export async function DELETE(
   }
 }
 
-export async function PUT(
+async function handlePUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -171,8 +172,7 @@ export async function PUT(
       rateLimitResult
     )
   } catch ( err ) {
-    // eslint-disable-next-line no-console
-    console.error( '[PUT /transactions]', err )
+    logger.error( { err }, '[PUT /transactions]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -183,3 +183,6 @@ export async function PUT(
     )
   }
 }
+
+export const DELETE = withLogger( handleDELETE )
+export const PUT = withLogger( handlePUT )

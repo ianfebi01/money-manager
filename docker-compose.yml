@@ -14,6 +14,10 @@ services:
     environment:
       HOSTNAME: 0.0.0.0
       PORT: 3000
+    volumes:
+      # Without this the log file lives in the container layer and is lost on
+      # every restart. WORKDIR is /usr/app, so that is where pino writes.
+      - ./logs:/usr/app/logs
   database:
     image: postgres:16
     environment:

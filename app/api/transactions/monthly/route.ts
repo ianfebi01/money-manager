@@ -5,8 +5,9 @@ import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import { addMonths } from 'date-fns'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
+import { withLogger } from '@/lib/logger/withLogger'
 
-export async function GET( req: NextRequest ) {
+async function handleGET( req: NextRequest ) {
   // Rate limit check
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
   if ( !rateLimitResult.success ) {
@@ -138,3 +139,5 @@ export async function GET( req: NextRequest ) {
     rateLimitResult
   )
 }
+
+export const GET = withLogger( handleGET )

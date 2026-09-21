@@ -7,8 +7,10 @@ import { addMonths, format } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import ExcelJS from 'exceljs'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
-export async function GET( req: NextRequest ) {
+async function handleGET( req: NextRequest ) {
   // Rate limit check
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
   if ( !rateLimitResult.success ) {
@@ -192,8 +194,7 @@ export async function GET( req: NextRequest ) {
 
     return addRateLimitHeaders( response, rateLimitResult )
   } catch ( err ) {
-    // eslint-disable-next-line no-console
-    console.error( '[GET /transactions/export]', err )
+    logger.error( { err }, '[GET /transactions/export]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -204,3 +205,6 @@ export async function GET( req: NextRequest ) {
     )
   }
 }
+
+// Builds an Excel workbook in memory.
+export const GET = withLogger( handleGET, { slowMs : 5000 } )

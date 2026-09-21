@@ -6,6 +6,8 @@ import authOptions from '@/lib/authOptions'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
 
 import * as yup from 'yup'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),
@@ -22,7 +24,7 @@ const bulkTransactionSchema = yup.array().of( transactionSchema ).min( 1 )
 
 type NewTx = yup.InferType<typeof transactionSchema>
 
-export async function POST( req: NextRequest ) {
+async function handlePOST( req: NextRequest ) {
   // Rate limit check
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
   if ( !rateLimitResult.success ) {
@@ -114,8 +116,7 @@ export async function POST( req: NextRequest ) {
     )
   } catch ( err ) {
     await client.query( 'ROLLBACK' )
-    // eslint-disable-next-line no-console
-    console.error( '[POST /transactions/bulk]', err )
+    logger.error( { err }, '[POST /transactions/bulk]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -128,3 +129,5 @@ export async function POST( req: NextRequest ) {
     client.release()
   }
 }
+
+export const POST = withLogger( handlePOST )
