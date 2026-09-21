@@ -52,3 +52,7 @@ public/sw.js.map
 public/workbox-*.js.map
 # local https certs
 certificates
+
+# Logs
+logs/
+*.log

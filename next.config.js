@@ -53,6 +53,12 @@ const nextConfig = {
       },
     ],
   },
+  experimental : {
+    // Next 14 uses this key (serverExternalPackages is the Next 15 name).
+    // Pino must stay unbundled or webpack rewrites the thread-stream worker path
+    // and the file/pretty transports fail to boot.
+    serverComponentsExternalPackages : ['pino', 'pino-pretty', 'thread-stream'],
+  },
 }
 
 const withNextIntl = createNextIntlPlugin( './i18n/request.tsx' )

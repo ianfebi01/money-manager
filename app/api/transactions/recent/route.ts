@@ -3,8 +3,10 @@ import { getServerSession } from 'next-auth'
 import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
-export async function GET( req: NextRequest ) {
+async function handleGET( req: NextRequest ) {
   // Rate limit check
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
   if ( !rateLimitResult.success ) {
@@ -53,8 +55,7 @@ export async function GET( req: NextRequest ) {
       rateLimitResult
     )
   } catch ( err ) {
-    // eslint-disable-next-line no-console
-    console.error( '[GET /transactions/recent]', err )
+    logger.error( { err }, '[GET /transactions/recent]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -65,3 +66,5 @@ export async function GET( req: NextRequest ) {
     )
   }
 }
+
+export const GET = withLogger( handleGET )

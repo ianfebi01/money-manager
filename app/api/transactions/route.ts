@@ -1,4 +1,3 @@
-// app/api/transactions/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import connectionPool from '@/lib/db'
 import { getServerSession } from 'next-auth'
@@ -7,6 +6,8 @@ import authOptions from '@/lib/authOptions'
 import { addMonths, format } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
 const transactionSchema = yup.object( {
   category    : yup.number().required(),
@@ -21,7 +22,8 @@ const transactionSchema = yup.object( {
 
 type NewTx = yup.InferType<typeof transactionSchema>
 
-export async function POST( req: NextRequest ) {
+async function handlePOST( req: NextRequest ) {
+
   // Rate limit check
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
   if ( !rateLimitResult.success ) {
@@ -78,8 +80,7 @@ export async function POST( req: NextRequest ) {
       rateLimitResult
     )
   } catch ( err ) {
-    // eslint-disable-next-line no-console
-    console.error( '[POST /transactions]', err )
+    logger.error( { err }, '[POST /transactions]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -92,7 +93,7 @@ export async function POST( req: NextRequest ) {
 }
 
 // Get Transactions
-export async function GET( req: NextRequest ) {
+async function handleGET( req: NextRequest ) {
   // Rate limit check
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.standard )
   if ( !rateLimitResult.success ) {
@@ -219,8 +220,7 @@ export async function GET( req: NextRequest ) {
       rateLimitResult
     )
   } catch ( err ) {
-    // eslint-disable-next-line no-console
-    console.error( '[GET /transactions]', err )
+    logger.error( { err }, '[GET /transactions]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -231,3 +231,6 @@ export async function GET( req: NextRequest ) {
     )
   }
 }
+
+export const POST = withLogger( handlePOST )
+export const GET = withLogger( handleGET )

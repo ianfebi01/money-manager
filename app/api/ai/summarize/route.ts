@@ -10,6 +10,8 @@ import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rateLimit'
 
 import enMessages from '@/messages/en.json'
 import idMessages from '@/messages/id.json'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
 // Create OpenAI provider instance
 const openai = createOpenAI( {
@@ -39,7 +41,7 @@ const translateCategory = ( categoryName: string, locale: string ): string => {
   return ( categoryTranslations as Record<string, string> )[key] || categoryName || ( locale === 'id' ? 'Lainnya' : 'Other' )
 }
 
-export async function POST( req: NextRequest ) {
+async function handlePOST( req: NextRequest ) {
   // Rate limit check - AI endpoints use strict limits
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.strict )
   if ( !rateLimitResult.success ) {
@@ -191,8 +193,7 @@ Please provide a summary and insights for this month. Use Rupiah (Rp) currency f
     // Return streaming response
     return result.toTextStreamResponse()
   } catch ( error ) {
-    // eslint-disable-next-line no-console
-    console.error( '[POST /ai/summarize]', error )
+    logger.error( { err : error }, '[POST /ai/summarize]' )
 
     return NextResponse.json(
       { error : 'Failed to generate summary' },
@@ -200,3 +201,6 @@ Please provide a summary and insights for this month. Use Rupiah (Rp) currency f
     )
   }
 }
+
+// Streams an LLM response; durationMs here is time-to-first-byte.
+export const POST = withLogger( handlePOST, { slowMs : 10000 } )

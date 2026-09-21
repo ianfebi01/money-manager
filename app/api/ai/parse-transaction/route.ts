@@ -6,6 +6,8 @@ import authOptions from '@/lib/authOptions'
 import connectionPool from '@/lib/db'
 import { z } from 'zod'
 import { checkRateLimit, rateLimitResponse, addRateLimitHeaders, RATE_LIMITS } from '@/lib/rateLimit'
+import { logger } from '@/lib/logger/logger'
+import { withLogger } from '@/lib/logger/withLogger'
 
 // Create Google Gemini provider instance
 const google = createGoogleGenerativeAI( {
@@ -57,7 +59,7 @@ const findCategoryMatch = (
     : { id : null, name : suggestion }
 }
 
-export async function POST( req: NextRequest ) {
+async function handlePOST( req: NextRequest ) {
   // Rate limit check - AI endpoints use strict limits
   const rateLimitResult = checkRateLimit( req, RATE_LIMITS.strict )
   if ( !rateLimitResult.success ) {
@@ -215,8 +217,7 @@ Available INCOME categories:
       rateLimitResult
     )
   } catch ( error ) {
-    // eslint-disable-next-line no-console
-    console.error( '[POST /ai/parse-transaction]', error )
+    logger.error( { err : error }, '[POST /ai/parse-transaction]' )
 
     return addRateLimitHeaders(
       NextResponse.json(
@@ -227,3 +228,6 @@ Available INCOME categories:
     )
   }
 }
+
+// Full LLM round trip before responding.
+export const POST = withLogger( handlePOST, { slowMs : 15000 } )
