@@ -22,7 +22,30 @@ const transactionSchema = z.object( {
     type                : z.enum( ['expense', 'income'] ).describe( 'Transaction type' ),
     category_suggestion : z.string().describe( 'Suggested category key. For expenses: food, social-life, apparel, culture, beauty, health, education, gift, bill-subscription, house-hold, transportation, other. For income: work, freelance, bonus, gift-income, interest, investment' ),
   } ) ),
+  final_total : z.number().nullable().describe( 'Final amount actually paid as printed on the receipt/order (e.g. "Total Pesanan", "Total Pembayaran", "Grand Total", "Total Bayar"), after discounts, vouchers, shipping, fees and tax. null if no such total is shown' ),
 } )
+
+// Receipts often have order-level discounts/fees, so item prices don't add up
+// to what was actually paid. Rescale expense amounts to match the final total.
+const reconcileWithFinalTotal = <T extends { amount: number; type: string }>(
+  transactions: T[],
+  finalTotal: number | null
+): T[] => {
+  if ( !finalTotal || finalTotal <= 0 ) return transactions
+  if ( transactions.length === 0 || transactions.some( tx => tx.type !== 'expense' ) ) return transactions
+
+  const sum = transactions.reduce( ( acc, tx ) => acc + tx.amount, 0 )
+  if ( sum <= 0 || sum === finalTotal ) return transactions
+
+  let allocated = 0
+  return transactions.map( ( tx, i ) => {
+    const amount = i === transactions.length - 1
+      ? finalTotal - allocated
+      : Math.round( ( tx.amount / sum ) * finalTotal )
+    allocated += amount
+    return { ...tx, amount }
+  } )
+}
 
 // Helper to find closest category match
 const findCategoryMatch = (
@@ -108,6 +131,9 @@ Aturan parsing:
 - Contoh: "3 PCS x 8.550 = 25.650" harus menghasilkan amount 25650, bukan 8550
 - Untuk struk belanja, ekstrak setiap item baris sebagai transaksi terpisah dengan total masing-masing
 - Capitalisasi huruf pertama deskripsi
+- Format angka Indonesia: titik adalah pemisah ribuan (contoh: "Rp96.175" = 96175, "Rp1.250.000" = 1250000)
+- Abaikan harga yang dicoret (harga asli sebelum diskon)
+- Isi final_total dengan jumlah akhir yang benar-benar dibayar (contoh: "Total Pesanan", "Total Pembayaran", "Total Bayar", "Grand Total") setelah diskon, voucher, ongkir, dan biaya. Isi null jika tidak ada
 
 Kategori EXPENSE yang tersedia (gunakan key persis seperti ini):
 - food: makanan, minuman, restoran, kafe, makan
@@ -141,6 +167,9 @@ Parsing rules:
 - Example: "3 PCS x 8,550 = 25,650" should result in amount 25650, not 8550
 - For receipts, extract each line item as a separate transaction with its respective total
 - Capitalize the first letter of each description
+- Indonesian number format: dots are thousand separators (e.g., "Rp96.175" = 96175, "Rp1.250.000" = 1250000)
+- Ignore struck-through prices (original prices before discount)
+- Set final_total to the final amount actually paid (e.g., "Total Pesanan", "Total Pembayaran", "Grand Total", "Total") after discounts, vouchers, shipping and fees. Use null if not shown
 
 Available EXPENSE categories (use these exact keys):
 - food: food, drinks, restaurants, cafes, meals
@@ -196,7 +225,9 @@ Available INCOME categories:
     } )
 
     // Map AI results to include actual category IDs from database
-    const transactionsWithCategories = result.object.transactions.map( tx => {
+    const reconciled = reconcileWithFinalTotal( result.object.transactions, result.object.final_total )
+
+    const transactionsWithCategories = reconciled.map( tx => {
       const categoryMatch = findCategoryMatch( 
         tx.category_suggestion, 
         userCategories, 
