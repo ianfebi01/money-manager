@@ -38,11 +38,13 @@ const reconcileWithFinalTotal = <T extends { amount: number; type: string }>(
   if ( sum <= 0 || sum === finalTotal ) return transactions
 
   let allocated = 0
+  
   return transactions.map( ( tx, i ) => {
     const amount = i === transactions.length - 1
       ? finalTotal - allocated
       : Math.round( ( tx.amount / sum ) * finalTotal )
     allocated += amount
+    
     return { ...tx, amount }
   } )
 }
