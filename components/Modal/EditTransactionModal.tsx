@@ -1,0 +1,175 @@
+'use client'
+import Modal from './Modal'
+import { useEffect, useRef, useState } from 'react'
+import { IBodyTransaction, ITransaction } from '@/types/api/transaction'
+import SingleDatePicker from '../Inputs/SingleDatePicker'
+import { IOptions } from '@/types/form'
+import { useEdit } from '@/lib/hooks/api/cashFlow'
+import { useTranslations } from 'next-intl'
+import RecentTransactions from '../Pages/CashFlow/RecentTransactions'
+import toast from 'react-hot-toast'
+import TransactionForm from '../Form/TransactionForm'
+
+interface ITransactionFormInput
+  extends Omit<IBodyTransaction, 'date' | 'category'> {
+  category: number
+}
+
+interface Props {
+  isOpen: boolean
+  setIsOpen: ( value: boolean ) => void
+  initialValue?: ITransaction
+}
+
+const EditTransactionModal = ( { isOpen, setIsOpen, initialValue }: Props ) => {
+  const t = useTranslations()
+
+  const { edit } = useEdit()
+  const [loading, setLoading] = useState( false )
+  const [sharedDate, setSharedDate] = useState<Date | null>( new Date() )
+  const [form, setForm] = useState<ITransactionFormInput>( {
+    type        : initialValue?.type || 'expense',
+    amount      : initialValue?.amount || 0,
+    description : initialValue?.description || '',
+    category    : initialValue?.category_id || 0,
+  } )
+
+  useEffect( () => {
+    if ( isOpen && initialValue ) {
+      setForm( {
+        type        : initialValue?.type,
+        amount      : initialValue?.amount,
+        description : initialValue?.description,
+        category    : initialValue?.category_id,
+      } )
+
+      if ( initialValue?.date ) setSharedDate( new Date( initialValue?.date ) )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialValue] )
+
+  const handleChange = ( value: string | number | IOptions, name: string ) => {
+    setForm( ( prev ) => {
+      let newValue: string | number
+
+      if ( name === 'amount' ) {
+        newValue = Number( value )
+      } else if ( name === 'category' ) {
+        newValue = Number( ( value as IOptions ).value )
+      } else {
+        newValue = value as string | number
+      }
+
+      return {
+        ...prev,
+        [name] : newValue,
+      }
+    } )
+  }
+
+  const handleSubmit = async () => {
+    if ( !form.amount ) {
+      return toast.error( t( 'toast.error_amount_required' ) )
+    }
+
+    if ( !sharedDate ) {
+      return toast.error( t( 'toast.error_date_required' ) )
+    }
+
+    if ( !form.category ) {
+      return toast.error( t( 'toast.error_category_required' ) )
+    }
+
+    if ( initialValue?.id ) {
+      try {
+        setLoading( true )
+        await edit(
+          {
+            ...form,
+            date : sharedDate
+              ? new Date( sharedDate ).toISOString()
+              : new Date().toISOString(),
+            category : Number( form.category ),
+          },
+          initialValue?.id
+        )
+        resetForm()
+        setIsOpen( false )
+        setLoading( false )
+      } catch ( error ) {
+        setLoading( false )
+      }
+    }
+  }
+
+  const resetForm = () => {
+    setForm( {
+      type        : 'expense',
+      amount      : 0,
+      description : '',
+      category    : 0,
+    } )
+
+    setSharedDate( new Date() )
+  }
+
+  const modalRef = useRef<HTMLDivElement | null>( null )
+
+  /**
+   * Handle Recent transaction
+   */
+
+  const handleClickRecentTransaction = ( val: ITransaction ) => {
+    setForm( {
+      type        : val?.type,
+      amount      : val?.amount,
+      description : val?.description,
+      category    : val?.category_id,
+    } )
+  }
+
+  return (
+    <Modal
+      title={t( 'edit_transaction' )}
+      confirmText={t( 'edit' )}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      variant="fullscreen"
+      loading={loading}
+      onConfirm={() => handleSubmit()}
+      onCancel={() => {
+        resetForm()
+        setIsOpen( false )
+      }}
+    >
+      <div
+        ref={modalRef}
+        className="flex flex-col gap-2 w-full max-w-2xl mx-auto"
+      >
+        <div className="flex flex-col gap-2 relative mb-4">
+          <label htmlFor={'date'}
+            className="w-fit text-sm lg:text-base"
+          >
+            <span>{t( 'date' )}</span>
+          </label>
+          <SingleDatePicker
+            value={sharedDate}
+            setValue={setSharedDate}
+            boundaryRef={modalRef}
+          />
+        </div>
+        <RecentTransactions
+          enabled={isOpen}
+          onClick={handleClickRecentTransaction}
+        />
+        <TransactionForm
+          form={form}
+          onChange={handleChange}
+          isOpen={isOpen}
+        />
+      </div>
+    </Modal>
+  )
+}
+
+export default EditTransactionModal

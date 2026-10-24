@@ -1,6 +1,7 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+
 type ClientPortalInterface = {
   children: React.ReactNode
   show?: boolean
@@ -8,13 +9,18 @@ type ClientPortalInterface = {
   selector: string
 }
 
-const ClientPortal = ( { children, selector, show }: ClientPortalInterface ) => {
-  const ref = useRef<Element | null>( null )
+const ClientPortal = ( { children, selector, show = true }: ClientPortalInterface ) => {
+  const [mounted, setMounted] = useState( false )
+
   useEffect( () => {
-    ref.current = document.getElementById( selector )
-  }, [selector] )
-  
-  return show && ref.current ? createPortal( children, ref.current ) : null
+    setMounted( true )
+  }, [] )
+
+  if ( !show || !mounted ) return null
+
+  const target = document.getElementById( selector )
+
+  return target ? createPortal( children, target ) : null
 }
 
 export default ClientPortal

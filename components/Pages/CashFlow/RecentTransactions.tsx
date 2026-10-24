@@ -94,7 +94,9 @@ const RecentTransactions = ( { enabled = false, onClick }: Props ) => {
           onBlur={() => setShowSearchInput( false )}
         />
       </Transition>
-      <div ref={scrollContainerRef} className="flex overflow-auto gap-2 items-center pb-4">
+      <div ref={scrollContainerRef}
+        className="flex overflow-auto gap-2 items-center pb-4"
+      >
         {!isFetching &&
           !!data &&
           data?.data?.length > 0 &&
