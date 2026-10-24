@@ -10,14 +10,15 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import TransactionTable from './TransactionTable'
-import TransactionCards from './TransactionCards'
 import { Switch } from '@headlessui/react'
 import { cn } from '@/lib/utils'
 import Spinner from '@/components/Icons/Spinner'
+
+const TransactionTable = lazy( () => import( './TransactionTable' ) )
+const TransactionCards = lazy( () => import( './TransactionCards' ) )
 
 const VIEW_KEY = 'cashflow_view_mode'
 
@@ -187,19 +188,27 @@ const CashFlow = () => {
             <span className="text-xs text-white-overlay ml-2">Cards</span>
           </div>
           <div className="mt-6">
-            {viewMode === 'table' ? (
-              <TransactionTable
-                filter={filter}
-                handleDelete={handleDelete}
-                handleEdit={handleEdit}
-              />
-            ) : (
-              <TransactionCards
-                filter={filter}
-                handleDelete={handleDelete}
-                handleEdit={handleEdit}
-              />
-            )}
+            <Suspense
+              fallback={(
+                <div className="flex items-center justify-center h-48">
+                  <Spinner classes="!h-10 !w-10" />
+                </div>
+              )}
+            >
+              {viewMode === 'table' ? (
+                <TransactionTable
+                  filter={filter}
+                  handleDelete={handleDelete}
+                  handleEdit={handleEdit}
+                />
+              ) : (
+                <TransactionCards
+                  filter={filter}
+                  handleDelete={handleDelete}
+                  handleEdit={handleEdit}
+                />
+              )}
+            </Suspense>
           </div>
         </>
       )}
