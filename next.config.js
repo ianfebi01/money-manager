@@ -1,5 +1,10 @@
+import bundleAnalyzer from '@next/bundle-analyzer'
 import createNextIntlPlugin from 'next-intl/plugin'
 import withPWAInit from 'next-pwa'
+
+const withBundleAnalyzer = bundleAnalyzer( {
+  enabled : process.env.ANALYZE === 'true',
+} )
 
 const withPWA = withPWAInit( {
   dest        : 'public',
@@ -62,4 +67,4 @@ const nextConfig = {
 }
 
 const withNextIntl = createNextIntlPlugin( './i18n/request.tsx' )
-export default withPWA( withNextIntl( nextConfig ) )
+export default withBundleAnalyzer( withPWA( withNextIntl( nextConfig ) ) )
