@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { cn } from '@/lib/utils'
 import capitalizeFirst from '@/utils/capitalize-first'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import useDebounce from '@/lib/hooks/useDebounce'
 import { useTranslations } from 'next-intl'
@@ -51,9 +51,10 @@ export default function AutocompleteTextField( {
   const debouncedQuery = useDebounce( query, 300 )
 
   const { data: suggestions = [], isFetching } = useQuery( {
-    queryKey : ['descriptions', debouncedQuery],
-    queryFn  : () => fetchDescriptions( debouncedQuery ),
-    enabled  : enabled && debouncedQuery.length > 0,
+    queryKey        : ['descriptions', debouncedQuery],
+    queryFn         : () => fetchDescriptions( debouncedQuery ),
+    enabled         : enabled && debouncedQuery.length > 0,
+    placeholderData : keepPreviousData,
   } )
 
   const handleInputChange = ( e: React.ChangeEvent<HTMLInputElement> ) => {
@@ -79,73 +80,83 @@ export default function AutocompleteTextField( {
     ( s ) => s.toLowerCase() !== query.toLowerCase()
   )
 
+  // Like Nuxt UI InputMenu `content.hideWhenEmpty`: never render an empty dropdown
+  const hasItems = !!query && filteredSuggestions.length > 0
+
+  // Freeze the last rendered content (loading or items) so the leave
+  // transition fades out exactly what was on screen, not an empty box
+  // and not stale items that were already replaced by the loading state
+  const currentView = { loading : isFetching && hasItems, items : filteredSuggestions }
+  const lastViewRef = useRef( currentView )
+  if ( hasItems ) lastViewRef.current = currentView
+  const view = hasItems ? currentView : lastViewRef.current
+
   return (
     <Combobox
       value={value}
       onChange={handleSelect}
       disabled={disabled}
     >
-      <div className="relative">
-        <Combobox.Input
-          id={name}
-          name={name}
-          placeholder={placeholder}
-          displayValue={() => query}
-          onChange={handleInputChange}
-          className={cn(
-            'w-full',
-            [small ? 'py-1 px-2 text-xs rounded-md' : 'py-2 px-2 text-base rounded-lg'],
-            'text-white border bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
-            'focus:border-white/50 border-white/25',
-            disabled && 'opacity-50 cursor-not-allowed'
-          )}
-        />
-
-        <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Combobox.Options
+      {( { open } ) => (
+        <div className="relative">
+          <Combobox.Input
+            id={name}
+            name={name}
+            placeholder={placeholder}
+            displayValue={() => query}
+            onChange={handleInputChange}
             className={cn(
-              'absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded-lg',
-              'bg-dark border border-white/25',
-              'py-1 text-base shadow-lg focus:outline-none mx-0 text-left'
+              'w-full',
+              [small ? 'py-1 px-2 text-xs rounded-md' : 'py-2 px-2 text-base rounded-lg'],
+              'text-white border bg-transparent ring-0 focus:ring-0 shadow-none focus:outline-none transition-colors duration-500 ease-in-out placeholder:text-white-overlay',
+              'focus:border-white/50 border-white/25',
+              disabled && 'opacity-50 cursor-not-allowed'
             )}
+          />
+
+          <Transition
+            as={Fragment}
+            show={open && hasItems}
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            {isFetching ? (
-              <div className="relative cursor-default select-none py-2 px-4 text-white-overlay flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white-overlay border-t-transparent rounded-full animate-spin" />
-                {t( 'search' )}...
-              </div>
-            ) : filteredSuggestions.length === 0 ? (
-              <div className="relative cursor-default select-none py-2 px-4 text-white-overlay">
-                {t( 'no_suggestions' )}
-              </div>
-            ) : (
-              filteredSuggestions.map( ( suggestion, index ) => (
-                <Combobox.Option
-                  key={index}
-                  value={suggestion}
-                  className={( { active } ) =>
-                    cn(
-                      'relative cursor-pointer select-none py-2 px-4',
-                      active ? 'bg-dark-secondary text-white' : 'text-white-overlay'
-                    )
-                  }
-                >
-                  {( { selected } ) => (
-                    <span className={cn( selected ? 'font-semibold' : 'font-normal' )}>
-                      {suggestion}
-                    </span>
-                  )}
-                </Combobox.Option>
-              ) )
-            )}
-          </Combobox.Options>
-        </Transition>
-      </div>
+            <Combobox.Options
+              className={cn(
+                'absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded-lg',
+                'bg-dark border border-white/25',
+                'py-1 text-base shadow-lg focus:outline-none mx-0 text-left'
+              )}
+            >
+              {view.loading ? (
+                <div className="relative cursor-default select-none py-2 px-4 text-white-overlay flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white-overlay border-t-transparent rounded-full animate-spin" />
+                  {t( 'search' )}...
+                </div>
+              ) : (
+                view.items.map( ( suggestion, index ) => (
+                  <Combobox.Option
+                    key={index}
+                    value={suggestion}
+                    className={( { active } ) =>
+                      cn(
+                        'relative cursor-pointer select-none py-2 px-4',
+                        active ? 'bg-dark-secondary text-white' : 'text-white-overlay'
+                      )
+                    }
+                  >
+                    {( { selected } ) => (
+                      <span className={cn( selected ? 'font-semibold' : 'font-normal' )}>
+                        {suggestion}
+                      </span>
+                    )}
+                  </Combobox.Option>
+                ) )
+              )}
+            </Combobox.Options>
+          </Transition>
+        </div>
+      )}
     </Combobox>
   )
 }
