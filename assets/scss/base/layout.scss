@@ -27,12 +27,26 @@
         @apply h-4 static top-0 left-0 right-0 bg-red-500 origin-[0%];
     }
 
-    .scroll-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        overflow: hidden;
-        will-change: transform;
-    }
+}
+
+// Lenis smooth scroll (mirrors lenis/dist/lenis.css)
+html.lenis,
+html.lenis body {
+    height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: clip;
+}
+
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch],
+.lenis [data-lenis-prevent-vertical],
+.lenis [data-lenis-prevent-horizontal] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+    pointer-events: none;
 }
