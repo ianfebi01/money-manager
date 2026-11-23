@@ -215,7 +215,7 @@ Available INCOME categories:
 
     // Generate structured output using Gemini
     const result = await generateObject( {
-      model    : google( 'gemini-2.5-flash-lite' ),
+      model    : google( 'gemini-3.5-flash-lite' ),
       system   : systemPrompt,
       messages : [
         {
